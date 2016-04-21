@@ -1,0 +1,404 @@
+﻿;!@Lang2@!UTF-8!
+;  9.29 : Patriccollu di Santa Maria Sichè
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+0
+7-Zip
+Corsican
+Corsu
+401
+OK
+Abbandunà
+
+
+
+&Iè
+I&nnò
+&Chjode
+Aiutu
+
+&Cuntinuà
+440
+Iè per tutti
+Innò per tutti
+Fermà
+Rilancià
+&Arci pianu
+P&rimu pianu
+&Pausa
+In pausa
+Site sicuru di vulè annullà ?
+500
+&Schedariu
+&Mudificà
+&Affissu
+&Favuriti
+A&ttrezzi
+A&iutu
+540
+&Apre
+Apre &Dentru
+Apre &Fora
+&Vede
+&Mudificazione
+Rinu&mà
+&Cupià versu...
+&Dispiazzà versu...
+&Toglie
+&Sparte u schedariu...
+&Unisce i schedarii...
+P&ruprietà
+Cumme&ntariu
+Somma di cuntrollu
+Comparazione sfarenza (Diff)
+Crià unu cartulare
+Crià unu schedariu
+&Esce
+600
+&Selezziunà tuttu
+Ùn selezziunà micca tuttu
+Arritrusà a selezzione
+Selezziunà...
+Ùn selezziunà micca...
+Selezziunà da u tipu
+Ùn selezziunà da u tipu
+700
+Icone &maiò
+Icone &chjuche
+&Lista
+&Ditaglii
+730
+Non urdinatu
+Vista semplice
+&2 Finestre
+Barre d'a&ttrezzi
+Apre u cartulare di a radica
+Livellu superiore
+Crunulugia di i cartulari...
+Attuali&zà
+750
+Barra d'attrezzi d'archiviu
+Barra d'attrezzi classica
+Buttoni maiò
+Prisentà u testu di i buttoni
+800
+&Aghjunghje u cartulare à i favuriti
+Indetta
+900
+&Ozzioni...
+Sperimentu di pussibilità
+960
+&Cuntinutu in inglese...
+&Apprupositu di 7-Zip...
+1003
+Caminu
+Nome
+Stinzione
+Cartulare
+Dimensione
+Cumpressu
+Attributi
+Criatu u
+Accessu u
+Mudificatu u
+Solidu
+Cummentatu
+Cifratu
+Frazziunà avanti
+Frazziunà dopu
+Dizziunariu
+CRC
+Tipu
+Anti
+Metoda
+OS ospite
+Sistemu di schedarii
+Utilizatore
+Gruppu
+Bloccu
+Cummentariu
+Pusizione
+Prefissu
+Cartulari
+Schedarii
+Versione
+Vulume
+Multivulume
+Offset
+Liami
+Blocchi
+Vulumi
+
+64-bits
+Big-endian
+CPU
+Dimensione fisica
+Dimensione di l'in-capi
+Somma di cuntrollu
+Caratteristiche
+Indirizzu virtuale
+ID
+Nome cortu
+Applizione di urigine
+Dimensione di u settore
+Modu
+Liame
+Sbagliu
+Dimensione tutale
+Spaziu liberu
+Dimensione di u cluster
+Nome di u vulume
+Nome lucale
+Furnidore
+2100
+Ozzioni
+Lingua
+Lingua :
+Editore
+&Editore :
+Comparà e sfarenze (Diff):
+2200
+Sistemu
+Assucià 7-Zip cù :
+2301
+Integrà 7-Zip à u menu di u cuntestu
+Menu di u cuntestu in cascata
+Elementi di u menu di u cuntestu :
+2320
+<Cartulare>
+<Archiviu>
+Apre l'archiviu
+Estrae i schedarii...
+Aghjunghje à l'archiviu...
+Verificà l'archiviu
+Estrae quì
+Estrae verdi {0}
+Aghjunghje à {0}
+Stringhje è mandà da email...
+Stringhje verdi {0} è mandà da email.
+2400
+Cartulari
+Cartulare di &travagliu
+Cartulare timpurariu di u &sistemu
+Cartulare &currente
+Cartulare s&pecificatu :
+Impiegà solu per i dischi amuvibili
+Specificate unu cartulare per i schedarii timpurarii.
+2500
+Parametri
+Affissà l'elementu ".."
+Affissà e vere icone di i schedarii
+Affissà u menu sistemu
+Selezziunà tutta a linea
+Affissà a ferriata
+Cliccu simplice per apre unu elementu
+Modu di selezzione &Alternativa
+Impiegà pagine maiò di memoria
+2900
+Apprupositu di 7-Zip
+Traduttu da Patriccollu di Santa Maria Sichè.\n\n7-Zip hè un prugrammu liberu. Ma, registrassi hè una manera di sustene u so sviluppu.
+3000
+U sistemu ùn pò micca attribuisce a quantita di memoria richiesa
+Ùn c'hè micca sbagliu
+{0} ughjettu(i) selezziunatu(i)
+U cartulare '{0}' ùn pò micca esse criatu
+L'azzioni di mudificazione ùn sò micca pussibule per quessu archiviu.
+U schedariu '{0}' ùn pò micca esse apertu tale un'archiviu
+L'archiviu cifratu '{0}' ùn pò micca esse apertu. Falsa parolla d'intrata ?
+Stu tipu d'archiviu ùn hè micca accettatu
+U schedariu {0} esiste dighjà
+U schedariu '{0}' hè statu mudificatu.\nVulete cambiallu in l'archiviu ?
+Ùn hè micca pussibule di cambià u schedariu\n'{0}'
+Ùn hè micca pussibule di avvià l'editore.
+U schedariu hè podasse infettatu da unu virus perchè u so nome pare stranu.
+St'azzione ùn pò micca fassi dapoi unu cartulare cù u nome di caminu cusì longu.
+Duvete selezziunà unu schedariu
+Duvete selezziunà al menu unu schedariu
+Troppu elementi
+3300
+Estrazzione in corsu
+Cumpressione
+Cuntrollu
+Apertura...
+Esplurazione...
+3400
+Extrae
+E&xtrae nantu :
+Sciglite un cartulare per l'estrazzione di i schedarii.
+3410
+Camini
+Nomi di camini cumpletti
+Alcunu nome di caminu
+3420
+Modu di rimpiazzamentu
+Cunfirmà nanzu à rimpiazzà
+Rimpiazzà senza dumandà
+Ignurà i schedarii esistenti
+Rinumà autumaticamente
+Rinumà i schedarii esistenti
+3500
+Cunfirmà u rimpiazzamentu di schedariu
+U cartulare di distinazione cuntene dighjà unu schedariu cù stu nome.
+Vulete rimpiazzà u schedariu esistentu
+cù quessu ?
+{0} octets
+Rinumà &autumaticamente
+3700
+Metodu di cumpressione micca accettatu per '{0}'.
+Datu gativu in u schedariu '{0}'. U schedariu hè alteratu.
+Fiascu di l'ispezzione CRC per u schedariu '{0}'. U schedariu hè alteratu.
+Datu gativu in u schedariu cifratu '{0}'. Falsa parolla d'intrata?
+Fiascu di l'ispezzione CRC per u schedariu cifratu '{0}'. Falsa parolla d'intrata?
+3800
+Entrite a parolla d'intrata
+Entrite a parolla d'intrata :
+Entrite a parolla d'intrata un'altra volta :
+&Affissà a parolla d'intrata
+E parolle d'intrata ùn currispondenu micca
+Per a parolla d'intrata, pudete impiegà solu : lettere senza aletta, cifri è sti segni particulari (!, #, $, ...)
+A parolla d'intrata hè troppu longa
+Parolla d'intrata
+3900
+Tempu passatu :
+Tempu rimanentu :
+Dimensione :
+Velucità :
+Prucessu :
+Reditu di cumpressione :
+Sbaglii :
+Archivi :
+4000
+Aghjunghje à l'archiviu
+&Archiviu :
+Modu di m&udificazione :
+&Trinca d'archiviu :
+&Livellu de cumpressione :
+&Metodu di cumpressione :
+&Dimensione di u dizziunariu :
+Dimensione di &e parolle :
+Dimensione di bloccu solidu :
+Numeru di flussu CPU :
+&Parametri :
+Ozzioni
+Crià unu archiviu SF&X
+Stringhje schedarii sparti
+Cifratura
+Metodu di cifratura :
+Cifrà i &nomi di schedarii
+Memoria per a cumpressione :
+Memoria per a scumpressione :
+4050
+Alcuna
+U più veloce
+Veloce
+Nurmale
+Massima
+Ultra
+4060
+Aghjunghje è rimpiazzà i schedarii
+Mudificà è aghjunghje i schedarii
+Rinfriscà i schedarii esistenti
+Sincrunizà i schedarii
+4070
+Sceglie
+Tutti i schedarii
+Non-solidu
+Solidu
+6000
+Cupià
+Dispiazzà
+Cupià verdi :
+Dispiazzà verdi :
+Cupiendu...
+Dispiazzendu...
+Cambiamentu di u nome...
+Selezziunà u cartulare di distinazione.
+St'azzione ùn hè micca pussibule per stu cartulare.
+Problemu mentre u cambiu di nome di u schedariu o di u cartulare
+Cunfirmazione di a cupiatura di i schedarii
+Site sicuru di vulè cupià u(i) schedariu(i) verdi l'archiviu
+6100
+Cunfirmà a sguassatura di u schedariu
+Cunfirmà a sguassatura di u cartulare
+Cunfirmà a sguassatura di tutti i schedarii
+Site sicuru di vulè sguassà '{0}'?
+Site sicuru di vulè sguassà u cartulare '{0}' è tuttu u so cuntenutu ?
+Site sicuru di vulè sguassà sti {0} ughetti ?
+Sguassatura in corsu...
+Problemu mentre a sguassatura di u schedariu o di u cartulare
+U sistemu ùn pò micca mette à a rumenzula unu schedariu cù u nome di caminu cusì longu
+6300
+Crià unu cartulare
+Crià unu schedariu
+Nome di u cartulare :
+Nome di u schedariu :
+Novu cartulare
+Novu schedariu
+Problemu mentre a creazione di u cartulare
+Problemu mentre a creazione di u schedariu
+6400
+Cummentariu
+&Cummentariu :
+Selezziunà
+Ùn selezziunà
+Mascara :
+6600
+Pruprietà
+Crunulugia di i cartulari
+Messaghji di diagnosticu
+Messaghjiu
+7100
+Ordinatore
+Reta
+Ducumenti
+Sistemu
+7200
+Aghjunghje
+Extrae
+Verificà
+Cupià
+Dispiazzà
+Sguassà
+Infurmazione
+7300
+Sparte u schedariu
+&Sparte in :
+Taglià di &vulumi, octets :
+Spartimentu...
+Cunfirmà u spartimentu
+Site sicuru di vulè sparte u schedariu da {0} vulumi ?
+A dimensione di u vulume deve esse più chjucu chì u schedariu d'urighjine
+Dimensione di vulume false
+Dimensione di vulume specificata : {0} octets.\nSite sicuru di vulè taglià l'archiviu di tali vulumi ?
+7400
+Unisce i schedarii
+&Unisce verdi :
+Unione...
+Selezziunà solu a prima parte di u schedariu divisi
+Ùn c'hè micca di schedariu in l'archiviu divisu
+C'hè solu unu schedariu in l'archiviu divisu
+7500
+Calculu di a somma di cuntrollu...
+Infurmazione nantu à a somma di cuntrollu
+Somma di cuntrollu CRC per i dati
+Somma di cuntrollu CRC per i dati è i nomi
+7600
+Sperimentu di pussibilità
+Memoria aduprata :
+Cumprezzione in corsu
+Scumprezzione in corsu
+Reditu
+Reditu tutale
+Currente
+Risultante
+Utilizazione CPU
+Stima / Utilizazione
+Passagi :

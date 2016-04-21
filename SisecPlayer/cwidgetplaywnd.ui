@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CWidgetPlayWnd</class>
+ <widget class="QWidget" name="CWidgetPlayWnd">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>826</width>
+    <height>333</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CWidgetPlayWnd</string>
+  </property>
+  <widget class="QWidget" name="widgetRender" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>771</width>
+     <height>321</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QWidget" name="widgetToolBar" native="true">
+   <property name="geometry">
+    <rect>
+     <x>12</x>
+     <y>12</y>
+     <width>761</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>40</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QWidget{
+font-size:14px;
+	font-family:Microsoft Yahei;	
+color:rgb(0,0,255);
+	background-color: rgb(0, 0, 0)
+}
+</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
+     <number>5</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="2">
+     <widget class="QLabel" name="labelFileName">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="labelSpeed">
+      <property name="minimumSize">
+       <size>
+        <width>65</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>65</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(0, 170, 127);</string>
+      </property>
+      <property name="text">
+       <string>速率*1</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QPushButton" name="BtnPicRepeat">
+      <property name="minimumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>连拍</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/picmore.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/picmore.png)22 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/picmore.png)44 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/picmore.png)66 0 0 0 repeat
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QPushButton" name="BtnPic">
+      <property name="minimumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>抓图</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/pic.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/pic.png)22 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/pic.png)44 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/pic.png)66 0 0 0 repeat
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="6">
+     <widget class="QPushButton" name="BtnFullScreen">
+      <property name="minimumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>全屏</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/fullscreen.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/fullscreen.png)22 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/fullscreen.png)44 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/fullscreen.png)66 0 0 0 repeat
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QPushButton" name="BtnFix">
+      <property name="minimumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>始终置顶</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/fix.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/fix.png)22 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/fix.png)44 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/fix.png)66 0 0 0 repeat
+}</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="labelPause">
+      <property name="minimumSize">
+       <size>
+        <width>35</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>35</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(0, 170, 127);</string>
+      </property>
+      <property name="text">
+       <string>暂停</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="sisecplayer.qrc"/>
+ </resources>
+ <connections/>
+</ui>
