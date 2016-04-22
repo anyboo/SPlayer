@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VerifyDialog</class>
+ <widget class="QDialog" name="VerifyDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>541</width>
+    <height>313</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>关于</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>images/logo.png</normaloff>images/logo.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog
+{
+	background-image: url(:/images/mainBackgound.png);
+}
+QWidget
+{
+  	font-size:18px;
+}
+QPushButton
+{
+	font-size:18px;
+	font-family:Microsoft Yahei;
+}
+QPushButton
+{
+background-color: rgb(192, 192, 224);
+border-color: rgb(176, 186, 221);
+border-width: 2px;
+border-style: solid;
+border-radius: 4;
+}
+QPushButton:hover
+{
+border-color: rgb(240, 240, 240);
+}
+QPushButton:pressed
+{
+		border-color: rgb(240, 240, 240);
+}
+QLineEdit
+{
+border-width: 0px;
+border-style: solid;
+border-radius: 4;
+background-color:rgb(89, 107, 169);
+selection-background-color:rgb(136,150,199);
+color:white;
+}
+QCheckBox
+{
+  	font-size:18px;
+	color: rgb(255, 255, 255);
+	font-family:Microsoft Yahei;
+}
+QLabel
+{
+font-size:18px;
+color: rgb(255, 255, 255);
+font-family:Microsoft Yahei;
+}
+QGroupBox
+{
+font-size:20px;
+font-family:Microsoft Yahei;
+}
+QTreeView::item{height: 35px; }
+
+QTableWidget,QTableView,QTreeView{
+background: rgb(229,227,231);
+selection-color:black;
+}
+QHeaderView{
+	background-color: rgb(201, 212, 242);
+	border-bottom:1px;
+	border-style:solid;
+	border-color: rgb(160, 160, 160);
+}
+QHeaderView::section{
+	height:25px;
+	margin-top:5px;
+	margin-bottom:5px;
+	background-color: rgb(201, 212, 242);
+	color:black;
+	border:0px;
+	border-right:1px solid;
+	border-color:rgb(94, 98, 143);
+	}
+QTableWidget::item{
+	height:45px;
+	border-bottom:1px solid;
+	border-color: rgb(198, 207, 214);
+}
+QTableWidget::item:selected{
+	background-color: rgb(175, 211, 237);
+}</string>
+  </property>
+  <widget class="QPushButton" name="pushButtonOK">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>230</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>登入</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>120</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>请输入密码：</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_passwords">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>111</y>
+     <width>371</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="echoMode">
+    <enum>QLineEdit::Password</enum>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonPasswd">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>230</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>修改密码</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

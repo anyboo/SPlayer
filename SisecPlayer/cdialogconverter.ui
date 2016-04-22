@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CDialogConverter</class>
+ <widget class="QDialog" name="CDialogConverter">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>937</width>
+    <height>669</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>格式转换</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog{background-color: rgb(100, 100, 100);}
+QLabel{color:rgb(255, 255, 255)}
+
+QWidget
+{
+	font-size:15px;
+	font-family:Microsoft Yahei;	
+}
+
+
+QScrollBar:vertical {
+    background: #000000;
+    width: 16px;
+    margin: 16px 0 16px 0;
+}
+
+QScrollBar::handle:vertical {
+    background:rgb(229, 229, 229);
+    min-height: 16px;
+border-width:0px;
+border-radius:5px;
+/*	border-image: url(:/Skin/handle.png);*/
+}
+
+QScrollBar::add-line:vertical {
+    background: #444444;
+    height: 16px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    background: #444444;
+    height: 16px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+QScrollBar:up-arrow:vertical {
+    border: 2px solid #333333;
+    width: 6px;
+    height: 6px;
+    background: #5f5f5f;
+	border-image:url(:/Skin/up.png)
+}
+
+QScrollBar:down-arrow:vertical {
+    border: 2px solid #333333;
+    width: 6px;
+    height: 6px;
+    background: #5f5f5f;
+	border-image:url(:/Skin/down.png)
+}
+</string>
+  </property>
+  <widget class="QPushButton" name="BtnDstPathOpen">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>580</y>
+     <width>81</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:17px;   
+color:rgb(255, 255, 255)
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string>浏览</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditDstPath">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>580</y>
+     <width>321</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>d:/convert</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>590</y>
+     <width>72</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>输出目录:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>72</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>目标格式:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="cmbDstFormat">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>38</y>
+     <width>87</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>avi</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>mp4</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
+     <width>921</width>
+     <height>501</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QTableView {
+   /*background: rgb(229,227,231);;*/
+/*border-image:url(:/VisitorSystem/png/tableimage.png);*/
+border:1px solid;
+/*border-color: rgb(160,160,160);*/
+selection-background-color:rgb(99, 99, 99);
+	alternate-background-color: rgb(216, 216, 216);
+selection-color:rgb(255, 255, 255);
+
+}
+QTableView::item{
+    height:35px;
+}
+
+QHeaderView::section {
+	font-size:16px;
+	font-family:Microsoft Yahei;	
+/*
+background-color: rgb(90,90,90);
+padding:1px;
+border:0px;
+	color: rgb(255, 255, 255);
+padding:2px,0px,2px,0px;
+border-right:1px solid #6c6c6c;
+border-bottom:1px solid #6c6c6c;*/
+}</string>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="alternatingRowColors">
+    <bool>true</bool>
+   </property>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectRows</enum>
+   </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="horizontalHeaderHighlightSections">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <column>
+    <property name="text">
+     <string>文件名</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>所在目录</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>大小</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>总时间</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>屏幕尺寸</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>转换格式</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>进度</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>状态</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>截取片段</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QFrame" name="frameSysBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>938</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame
+{
+	border-image:url(:/Skin/bg-above2.png);
+}
+QLabel
+{
+border-image:null;
+color: rgb(255, 255, 255);
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="horizontalSpacing">
+       <number>2</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QLabel" name="labelTitle">
+        <property name="maximumSize">
+         <size>
+          <width>170</width>
+          <height>170</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel#labelTitle
+{
+	color: rgb(255, 255, 255);
+	font-size:18px;
+	font-family:Microsoft Yahei;	
+}</string>
+        </property>
+        <property name="text">
+         <string>格式转换</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="labelFileName">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>500</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="logo">
+        <property name="minimumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border-image: url(:/Skin/logo.png)</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QFrame" name="frame_sysmenu">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>122</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QFrame
+{border-image:null;
+}</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <widget class="QPushButton" name="BtnClose">
+         <property name="geometry">
+          <rect>
+           <x>90</x>
+           <y>0</y>
+           <width>30</width>
+           <height>30</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>关闭</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/close.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/close.png)30 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/close.png)60 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/close.png)90 0 0 0 repeat
+}
+</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="BtnMin">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>0</y>
+           <width>30</width>
+           <height>30</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>最小化</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/min.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/min.png)30 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/min.png)60 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/min.png)90 0 0 0 repeat
+}
+</string>
+         </property>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QFrame" name="frameTool">
+   <property name="geometry">
+    <rect>
+     <x>660</x>
+     <y>30</y>
+     <width>261</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>24</x>
+      <y>5</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="BtnFileDel">
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>从列表中移除文件</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgba(0,0,0,0);
+	border-image: url(:/Skin/Reduce.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/Reduce.png)28 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/Reduce.png)56 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/Reduce.png)84 0 0 0 repeat
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="BtnFileDelAll">
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>清空列表</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	
+	background-color: rgba(0,0,0,0);
+	border-image: url(:/Skin/Delete.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/Delete.png)28 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/Delete.png)56 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/Delete.png)84 0 0 0 repeat
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QPushButton" name="BtnListUp">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>上移</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgba(0,0,0,0);
+	border-image: url(:/Skin/listup.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/listup.png)28 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/listup.png)56 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/listup.png)84 0 0 0 repeat
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QPushButton" name="BtnListDown">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>下移</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgba(0,0,0,0);
+	border-image: url(:/Skin/listdown.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/listdown.png)28 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/listdown.png)56 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/listdown.png)84 0 0 0 repeat
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="BtnFileAdd">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>增加列表文件</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	background-color: rgba(0,0,0,0);
+	border-image: url(:/Skin/add.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/add.png)28 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/add.png)56 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/add.png)84 0 0 0 repeat
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="BtnEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>编辑</string>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton
+{
+	
+	background-color: rgba(0,0,0,0);
+	border-image: url(:/Skin/edit.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/edit.png)28 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/edit.png)56 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/edit.png)84 0 0 0 repeat
+}</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="BtnStart">
+   <property name="geometry">
+    <rect>
+     <x>750</x>
+     <y>630</y>
+     <width>81</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:17px;   
+color:rgb(255, 255, 255)
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string>开始转换</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="BtnStop">
+   <property name="geometry">
+    <rect>
+     <x>840</x>
+     <y>630</y>
+     <width>81</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:17px;   
+color:rgb(255, 255, 255)
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string>停止</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="sisecplayer.qrc"/>
+ </resources>
+ <connections/>
+</ui>
