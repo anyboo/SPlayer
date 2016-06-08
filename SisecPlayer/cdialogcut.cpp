@@ -17,7 +17,11 @@ CDialogCut::CDialogCut(QWidget *parent)
 	m_strDstPath = CDialogConfig::m_strCutPath;
 
 	m_PlayWnd = new CWidgetPlayWnd(0, this);
+	m_PlayWndTest = new CWidgetPlayWnd(1, this);
 	m_PlayCtrl = new CFormPlayCtrl(0, m_PlayWnd, this);
+	m_PlayCtrlTest = new CFormPlayCtrl(1, m_PlayWndTest, this);
+	m_PlayWndTest->hide();
+	m_PlayCtrlTest->hide();
 
 	m_getProgressTimer = new QTimer(this);
 
@@ -50,8 +54,23 @@ CDialogCut::~CDialogCut()
 {
 	delete m_PlayWnd;
 	delete m_PlayCtrl;
+	delete m_PlayWndTest;
+	delete m_PlayCtrlTest;
 	delete m_getProgressTimer;
 }
+
+void CDialogCut::UkeyDownStop()
+{
+	if (m_PlayCtrl->IsPlaying())
+	{
+		m_PlayCtrl->Pause(1);
+	}
+	if (!ui.BtnStartCut->isEnabled())
+	{	
+		OnBtnCutStopClick();	
+	}
+}
+
 
 void CDialogCut::OnBtnCloseClick()
 {
@@ -81,13 +100,26 @@ void  CDialogCut::TimeGetProgress()
 		if (progress == 100)
 		{
 			StopTask();
-			ui.labelState->setText(QStringLiteral("成功！"));
+
+			bool bRet = m_PlayCtrlTest->OpenAndPlayFile(m_strDstPathName, NULL);
+			if (bRet)
+			{
+				m_PlayCtrlTest->StopAudio();
+				ui.labelState->setText(QStringLiteral("成功"));
+			}
+			else
+			{
+				ui.progressBar->setValue(0);
+				ui.labelState->setText(QStringLiteral("失败(此文件不支持)"));
+			}
+			m_PlayCtrlTest->Stop();
 		}
+		/*
 		else if (progress == -1)//出错
 		{
 			StopTask();
 			ui.labelState->setText(QStringLiteral("出错！"));
-		}
+		}*/
 
 	}
 }
@@ -169,12 +201,13 @@ void  CDialogCut::OnBtnStartCutClick()
 		strDstPath.append("/").append(strName).append(QString("(%1-%2).avi").arg(t1.toString("hhmmss")).arg(t2.toString("hhmmss")));
 		char szDstFileName[1024];
 		strcpy(szDstFileName, textcode->fromUnicode(strDstPath).data());
+		m_strDstPathName = strDstPath;
 
 		bool bCut=Player_FileConvertStart(m_nPort, szFileName, szDstFileName, dStartTime, dStopTime, false, NULL);
 		if (!bCut)
 		{
 			StopTask();
-			ui.labelState->setText(QStringLiteral("失败！"));
+			ui.labelState->setText(QStringLiteral("失败(此文件不支持)"));
 			return;
 		}
 		ui.progressBar->setValue(0);

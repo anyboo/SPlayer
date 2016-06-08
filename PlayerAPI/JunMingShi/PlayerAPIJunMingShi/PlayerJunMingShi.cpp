@@ -150,6 +150,16 @@ BOOL  CPlayerJunMingShi::GetPictureSize(LONG *pWidth, LONG *pHeight)
 	return TLPlay_GetPictureSize(m_nPort, pWidth, pHeight);
 }
 
+BOOL  CPlayerJunMingShi::SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	return TLPlay_SetColor(m_nPort, nBrightness, nContrast, nSaturation, nHue);
+}
+
+BOOL  CPlayerJunMingShi::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	return TLPlay_GetColor(m_nPort, pBrightness, pContrast, pSaturation, pHue);
+}
+
 BOOL CPlayerJunMingShi::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
 	return false;

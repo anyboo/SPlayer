@@ -293,6 +293,17 @@ BOOL FFPlayer_SetFileEndCallback(LONG nID, FileEndCallback fileCallBack, void *p
 	return false;
 }
 
+BOOL FFPlayer_SetDisplayCallback(LONG nID, DisplayCallback displayCallBack, void *pUser)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexffplayers);
+	FFPlayer_Info *pPlayerInfo = FindPlayer(nID);;
+	if (pPlayerInfo->pPlayer)
+	{
+		return pPlayerInfo->pPlayer->SetDisplayCallback(nID, displayCallBack, pUser);
+	}
+	return false;
+}
+
 //剪切与转换调用同一接口
 BOOL FFPlayer_FileCutStart(LONG nID, const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime)
 {

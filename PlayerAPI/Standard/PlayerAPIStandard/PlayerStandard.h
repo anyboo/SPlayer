@@ -46,6 +46,7 @@ public:
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL  SetDisplayCallback(long nID, DisplayCallback displayCallback, void * nUser);
 
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime);
 	BOOL FileCutClose();

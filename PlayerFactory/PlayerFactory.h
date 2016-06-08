@@ -26,7 +26,8 @@ PLAYERFATORY_API BOOL InitPlayerFactory();
 PLAYERFATORY_API BOOL ReleasePlayerFactory();
 
 PLAYERFATORY_API BOOL  AnalyzeFileType(char *pFile, int *pfileType);//分析文件类型，pfileType为0表示通用，则调用通用的开源播放器，否则调用私有的
-PLAYERFATORY_API BOOL  IsSupportFastCut(int iFileType);//判断文件类型是否支持快速剪辑
+PLAYERFATORY_API BOOL IsSupportFastCut(int iFileType);//判断文件类型是否支持快速剪辑
+PLAYERFATORY_API int  FindFFmpegFactoryID();//获取FFMPEG公开播放器ID
 
 PLAYERFATORY_API BOOL GetPlayerInterface(LONG *nID);
 PLAYERFATORY_API BOOL FreePlayerInterface(LONG nID);
@@ -54,6 +55,11 @@ PLAYERFATORY_API BOOL   Player_GetPictureSize(LONG nID, LONG *pWidth, LONG *pHei
 
 PLAYERFATORY_API BOOL Player_CapturePic(LONG nID, char *pSaveFile, int iType);
 PLAYERFATORY_API BOOL Player_SetFileEndCallback(LONG nID, void (__stdcall *FileEndCallback)(LONG nID, void *pUser), void *pUser);
+PLAYERFATORY_API BOOL Player_SetDisPlayCallback(LONG nID, void(__stdcall *DisplayCallback)(DISPLAYCALLBCK_INFO *pstDisplayInfo), void *pUser);
+PLAYERFATORY_API BOOL Player_GetSystemTime(LONG nID, unsigned long long* systemTime);
+
+PLAYERFATORY_API BOOL Player_SetColor(LONG nID, DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
+PLAYERFATORY_API BOOL Player_GetColor(LONG nID, DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 PLAYERFATORY_API BOOL Player_FileCutStart(LONG nID, const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast = 1);
 PLAYERFATORY_API BOOL Player_FileCutClose(LONG nID);

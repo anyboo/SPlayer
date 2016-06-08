@@ -46,6 +46,8 @@ FFPLAYER_API BOOL  FFPlayer_GetPictureSize(LONG nID, LONG *pWidth, LONG *pHeight
 
 FFPLAYER_API BOOL FFPlayer_CapturePic(LONG nID, char *pSaveFile, int iType);
 FFPLAYER_API BOOL FFPlayer_SetFileEndCallback(LONG nID, void(CALLBACK*FileEndCallback)(LONG nID, void *pUser), void *pUser);
+FFPLAYER_API BOOL FFPlayer_SetDisplayCallback(LONG nID, void(CALLBACK*DisplayCallback)(DISPLAYCALLBCK_INFO*pInfo), void *pUser);
+
 
 FFPLAYER_API BOOL FFPlayer_FileCutStart(LONG nID, const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime);
 FFPLAYER_API BOOL FFPlayer_FileCutClose(LONG nID);

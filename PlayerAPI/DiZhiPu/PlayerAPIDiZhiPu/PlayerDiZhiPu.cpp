@@ -14,6 +14,11 @@ char* CPlayerFactoryDiZhiPu::Name()
 
 BOOL CPlayerFactoryDiZhiPu::IsBelongThis(char *pFile)
 {
+	if (strstr(pFile, ".h264") || strstr(pFile, ".H264"))//判断h264文件
+	{
+		return true;
+	}
+
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
 	if (pfd)//打开文件成功
@@ -160,6 +165,12 @@ BOOL  CPlayerDiZhiPu::GetPictureSize(LONG *pWidth, LONG *pHeight)
 	return H264_PLAY_GetPictureSize(m_nPort, pWidth, pHeight);
 }
 
+BOOL  CPlayerDiZhiPu::GetSystemTime(unsigned long long *pstSystemTime)
+{
+	*pstSystemTime = H264_PLAY_GetCurTimeStamp(m_nPort);
+	return true;
+}
+
 DWORD CPlayerDiZhiPu::GetPlayedTime()
 {
 	return H264_PLAY_GetPlayedTime(m_nPort);
@@ -173,6 +184,16 @@ BOOL  CPlayerDiZhiPu::SetFileEndCallback(long nID, FileEndCallback callBack, voi
 BOOL  CPlayerDiZhiPu::CapturePic(char *pSaveFile, int iType)
 {
 	return H264_PLAY_CatchPic(m_nPort, pSaveFile);
+}
+
+BOOL  CPlayerDiZhiPu::SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	return H264_PLAY_SetColor(m_nPort, nRegionNum, nBrightness, nContrast, nSaturation, nHue);
+}
+
+BOOL  CPlayerDiZhiPu::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	return H264_PLAY_GetColor(m_nPort, nRegionNum, (long*)pBrightness, (long*)pContrast, (long*)pSaturation, (long*)pHue);
 }
 
 BOOL CPlayerDiZhiPu::FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast)
@@ -198,7 +219,7 @@ void CPlayerDiZhiPu::CoverFileCallBackFun(DWORD CurrentPos, DWORD TotoalPos, lon
 
 BOOL CPlayerDiZhiPu::FileConvertStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, bool bConvert, T_ConverterParameters *pConvertPara)
 {
-	H264_PLAY_ConvertFile(srcFileName, destFileName, 0, CoverFileCallBackFun, (DWORD)this);
+	H264_PLAY_ConvertFile(srcFileName, destFileName, 1, CoverFileCallBackFun, (DWORD)this);
 	return true;
 }
 

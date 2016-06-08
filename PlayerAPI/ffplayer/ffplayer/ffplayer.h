@@ -28,9 +28,6 @@ typedef struct T_RemainPCM{
 	int serial;
 };
 
-
-typedef void(CALLBACK*FileEndCallback)(long nID, void *pUser);
-
 enum PLAY_STATE{
 	NO_PLAY = -1,
 	PLAYING = 0,
@@ -82,6 +79,7 @@ public:
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	bool SetFileEndCallback(long nID,FileEndCallback fileCallBack, void *pUser);
+	bool SetDisplayCallback(long nID, DisplayCallback disaplayCallBack, void *pUser);
 	/*
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime);
 	BOOL FileCutClose();
@@ -212,6 +210,10 @@ private:
 	void *m_pUser;
 	long m_nID;
 	bool m_bFileEnd;
+
+	DisplayCallback m_displayBak;
+	void *m_pDisplayUser;
+	long m_nDisplayID;
 
 	int  m_master_sync_type;
 	Clock m_vidclk;

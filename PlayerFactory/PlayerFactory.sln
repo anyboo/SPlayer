@@ -23,6 +23,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayerAPIDL", "..\PlayerAPI
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayerAPIStandard", "..\PlayerAPI\Standard\PlayerAPIStandard\PlayerAPIStandard.vcxproj", "{A563AED6-00ED-49EF-9FCD-465589FDB882}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayerAPIZNV", "..\PlayerAPI\ZNV\PlayerAPIZNV\PlayerAPIZNV.vcxproj", "{2D1FFB4A-F8E8-4B28-8480-F28A5BACDB37}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayerAPIViss", "..\PlayerAPI\Viss\PlayerAPIViss\PlayerAPIViss.vcxproj", "{B07FAB2E-5A95-4987-A6DE-0BCC5021D89D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -69,6 +73,14 @@ Global
 		{A563AED6-00ED-49EF-9FCD-465589FDB882}.Debug|Win32.Build.0 = Debug|Win32
 		{A563AED6-00ED-49EF-9FCD-465589FDB882}.Release|Win32.ActiveCfg = Release|Win32
 		{A563AED6-00ED-49EF-9FCD-465589FDB882}.Release|Win32.Build.0 = Release|Win32
+		{2D1FFB4A-F8E8-4B28-8480-F28A5BACDB37}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2D1FFB4A-F8E8-4B28-8480-F28A5BACDB37}.Debug|Win32.Build.0 = Debug|Win32
+		{2D1FFB4A-F8E8-4B28-8480-F28A5BACDB37}.Release|Win32.ActiveCfg = Release|Win32
+		{2D1FFB4A-F8E8-4B28-8480-F28A5BACDB37}.Release|Win32.Build.0 = Release|Win32
+		{B07FAB2E-5A95-4987-A6DE-0BCC5021D89D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B07FAB2E-5A95-4987-A6DE-0BCC5021D89D}.Debug|Win32.Build.0 = Debug|Win32
+		{B07FAB2E-5A95-4987-A6DE-0BCC5021D89D}.Release|Win32.ActiveCfg = Release|Win32
+		{B07FAB2E-5A95-4987-A6DE-0BCC5021D89D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

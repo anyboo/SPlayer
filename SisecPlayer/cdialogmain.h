@@ -10,7 +10,9 @@
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QMimeData>
+#include <qthread.h>
 #include "cdialogdubbing.h"
+#include <qmessagebox.h>
 
 enum PLAYLIST_MODE{
 	SINGLE = 0,
@@ -39,6 +41,26 @@ enum CapturePicType
 	JPG,
 };
 
+class UkeyThread :public QThread
+{
+	Q_OBJECT
+public:
+	UkeyThread();
+	~UkeyThread();
+signals:
+	void ukeyUp();
+	void ukeyDown();
+public:
+	//void SetOwner(QDialog *pOwner){ m_pOwner = pOwner; }
+	bool VerifyUkey();
+	void Stop();
+private:
+	bool m_stopFlag;
+//	QDialog *m_pOwner;
+protected:
+	void run();
+
+};
 
 class CDialogMain : public NoFlameDlg
 {
@@ -49,11 +71,13 @@ public:
 	~CDialogMain();
 	virtual void paintEvent(QPaintEvent *event);
 	bool eventFilter(QObject *obj, QEvent *e);
-	virtual void keyPressEvent(QKeyEvent * event);
+/*	virtual void keyPressEvent(QKeyEvent * event);
+	void keyReleaseEvent(QKeyEvent * keyEvent);*/
 	void dropEvent(QDropEvent * event);
 	void dragEnterEvent(QDragEnterEvent *event);
 /*	void dragMoveEvent(QDragMoveEvent *event);*/
 public:
+	static bool VerifyUkey();
 	void ShellExe(QString &strFile);
 	void ShellExe2();
 	bool IsPlayCtrlVisible(int x,int y);
@@ -100,6 +124,9 @@ protected slots:
 	void OnCutTriggered();
 	void OnUpdateTriggered();
 	void OnHelpTriggered();
+	void OnUkeyDown();
+	void OnUkeyUp();
+	void OnTerminated();
 private:
 	CFormPlayCtrl *m_PlayCtrl[NUM];
 	CWidgetPlayWnd *m_PlayWnd[NUM];
@@ -160,6 +187,10 @@ private:
 	int m_WndMode;
 	int m_curWndNum;
 
+	static UkeyThread s_ukeyThread;
+	QMessageBox m_ukeyDownMsgdlg;
+	QDialog *m_pConvertDlg;//指向转码对话框，如果ukey断开后要立即停止转码
+	QDialog *m_pCutDlg;//指向剪切对话框，如果ukey断开后要立即停止转码
 };
 
 #endif // CDIALOGMAIN_H

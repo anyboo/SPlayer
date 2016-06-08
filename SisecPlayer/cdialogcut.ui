@@ -234,7 +234,7 @@ QPushButton:disabled
   <widget class="QPushButton" name="BtnStartCut">
    <property name="geometry">
     <rect>
-     <x>730</x>
+     <x>737</x>
      <y>638</y>
      <width>93</width>
      <height>28</height>
@@ -250,8 +250,8 @@ QPushButton:disabled
 font-size:17px;   
 color:rgb(255, 255, 255)
 		}
-QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
-QPushButton:pressed{padding: 3px;}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);}
+QPushButton:pressed{background-color:rgb(0, 83, 121);}
 QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
    </property>
    <property name="text">
@@ -264,7 +264,7 @@ QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
    </property>
    <property name="geometry">
     <rect>
-     <x>830</x>
+     <x>837</x>
      <y>638</y>
      <width>93</width>
      <height>28</height>
@@ -281,7 +281,7 @@ font-size:17px;
 color:rgb(255, 255, 255)
 		}
 QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
-QPushButton:pressed{padding: 3px;}
+QPushButton:pressed{background-color:rgb(0, 83, 121);}
 QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
    </property>
    <property name="text">
@@ -293,7 +293,7 @@ QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
     <rect>
      <x>90</x>
      <y>643</y>
-     <width>485</width>
+     <width>411</width>
      <height>23</height>
     </rect>
    </property>
@@ -548,8 +548,8 @@ QPushButton:disabled
   <widget class="QFrame" name="frame_2">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>40</y>
+     <x>330</x>
+     <y>80</y>
      <width>931</width>
      <height>501</height>
     </rect>
@@ -570,7 +570,7 @@ QPushButton:disabled
     <rect>
      <x>20</x>
      <y>590</y>
-     <width>651</width>
+     <width>611</width>
      <height>41</height>
     </rect>
    </property>
@@ -585,7 +585,7 @@ QPushButton:disabled
      <rect>
       <x>0</x>
       <y>10</y>
-      <width>641</width>
+      <width>571</width>
       <height>31</height>
      </rect>
     </property>
@@ -619,7 +619,7 @@ font-size:17px;
 color:rgb(255, 255, 255)
 		}
 QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
-QPushButton:pressed{padding: 3px;}
+QPushButton:pressed{background-color:rgb(0, 83, 121);}
 QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
        </property>
        <property name="text">
@@ -633,9 +633,9 @@ QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
   <widget class="QLabel" name="labelState">
    <property name="geometry">
     <rect>
-     <x>583</x>
+     <x>503</x>
      <y>646</y>
-     <width>121</width>
+     <width>231</width>
      <height>20</height>
     </rect>
    </property>

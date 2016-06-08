@@ -26,7 +26,6 @@ public:
 	virtual IPlayer *CreatePlayer() = 0;
 };
 
-typedef void(CALLBACK*FileEndCallback)(long nID, void *pUser);
 
 PLAYERAPI class IPlayer
 {
@@ -56,9 +55,13 @@ public:
 	virtual  BOOL   GetPictureSize(LONG *pWidth, LONG *pHeight) = 0;
 
 	virtual BOOL CapturePic(char *pSaveFile,int iType) = 0;
-	virtual BOOL SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser){ return false; }
+	virtual BOOL SetFileEndCallback(LONG nID, FileEndCallback callBack, void *pUser){ return false; }
+	virtual BOOL SetDisplayCallback(LONG nID, DisplayCallback displayCallBack, void * nUser) { return false; }
+	virtual BOOL GetSystemTime(unsigned long long *systemTime){return false; }
 
-	
+	virtual BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue){ return false; }
+	virtual BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue){ return false; }
+
 	virtual BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime){ return false; }
 	virtual BOOL FileCutClose(){ return false; }
 	virtual int FileCutProcess(){ return 0; }
@@ -75,4 +78,6 @@ protected:
 	FileEndCallback m_FileEndCallbackFun;
 	void *m_pUser;
 
+	DisplayCallback m_DisplayCallbackFun;
+	void *m_DisplayCalUser;
 };

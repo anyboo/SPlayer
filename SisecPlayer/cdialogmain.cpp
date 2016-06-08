@@ -20,13 +20,57 @@
 
 #include "public_def.h"
 
+//#include "ukey/Sage_USB_API.h"
+//#pragma comment(lib,"ukey/Sage_USB_API.lib")
+#include "ukey/Verifier.h"
+#pragma comment(lib,"ukey/Verifier.lib")
+
 #define FILEPLAYLISTXML "playlist.xml"
 #define ROOTTEXT  "playFileList"
 #define NOTETEXT "fileName"
 #define DX 180
 
+UkeyThread::UkeyThread():m_stopFlag(false)
+{
+
+}
+
+UkeyThread::~UkeyThread()
+{
+
+}
+
+bool UkeyThread::VerifyUkey()
+{	
+	return IsPresent();
+}
+
+void UkeyThread::run()
+{
+	while (!m_stopFlag)
+	{
+		QThread::msleep(3000);//每3秒检测一次
+		if (!VerifyUkey())
+		{
+			emit ukeyDown();			
+		}
+		else
+		{
+			
+			emit ukeyUp();
+		}
+	}
+}
+
+void UkeyThread::Stop()
+{
+	m_stopFlag = true;
+}
+
+UkeyThread CDialogMain::s_ukeyThread;
+
 CDialogMain::CDialogMain(QWidget *parent)
-	: NoFlameDlg(parent)
+: NoFlameDlg(parent), m_pConvertDlg(NULL), m_pCutDlg(NULL)
 {
 	ui.setupUi(this);
 
@@ -64,7 +108,10 @@ CDialogMain::CDialogMain(QWidget *parent)
 	ui.frameComboBox->raise();
 	ui.BtnHideList->raise();
 
-
+	
+	connect(&s_ukeyThread, SIGNAL(ukeyDown()), this, SLOT(OnUkeyDown()));
+	connect(&s_ukeyThread, SIGNAL(ukeyUp()), this, SLOT(OnUkeyUp()));
+	connect(&m_ukeyDownMsgdlg, SIGNAL(accepted()), this, SLOT(OnTerminated()));
 	connect(m_configAct, SIGNAL(triggered()), this, SLOT(OnConfigTriggered()));
 	connect(m_converterAct, SIGNAL(triggered()), this, SLOT(OnConvertTriggered()));
 	connect(m_cutAct, SIGNAL(triggered()), this, SLOT(OnCutTriggered()));
@@ -88,11 +135,24 @@ CDialogMain::CDialogMain(QWidget *parent)
 	connect(ui.BtnHideList, SIGNAL(clicked()), this, SLOT(OnBtnHideListClick()));
 	connect(ui.listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(OnListWidgetItemDbClick(QListWidgetItem*)));
 	//connect(ui.listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(OnListWidgetItemDbClick(QListWidgetItem*)));
-
+	
 	installEventFilter(this);
+
+	ui.BtnWndMode->installEventFilter(this);
+	ui.BtnDiv4Time->installEventFilter(this);
+
+	ui.BtnHideList->installEventFilter(this);
+
+	ui.BtnMore->installEventFilter(this);
+	ui.BtnMin->installEventFilter(this);
+	ui.BtnMax->installEventFilter(this);
+
 	setAcceptDrops(true);
 
 	OnBtnHideListClick();//默认隐藏播放列表
+#ifdef UKey
+	s_ukeyThread.start();
+#endif
 }
 
 CDialogMain::~CDialogMain()
@@ -103,6 +163,79 @@ CDialogMain::~CDialogMain()
 		delete m_PlayWnd[i];
 	}
 
+}
+
+//启动时检测
+bool CDialogMain::VerifyUkey()
+{
+	//if (!s_ukeyThread.VerifyUkey())
+	int threadID = (int)QThread::currentThreadId();
+	if (!Verifiy(threadID))
+	{
+		QMessageBox::information(NULL, QStringLiteral("提示"), QStringLiteral("未检测到有效的UKey,无法运行！"));
+		return false;
+	}
+	return true;
+}
+
+void CDialogMain::OnTerminated()
+{
+	OnBtnCloseClick();
+	exit(0);//退出应用程序
+}
+
+void CDialogMain::OnUkeyDown()
+{
+	if (this->isEnabled())//
+	{
+		for (int i = 0; i < NUM; i++)
+		{
+			if (m_PlayCtrl[i]->IsPlaying())
+			{
+				m_PlayCtrl[i]->Pause(1);
+			}
+		}
+
+		if (m_pConvertDlg)
+		{
+			((CDialogConverter*)m_pConvertDlg)->UkeyDownStop();
+		}
+		if (m_pCutDlg )
+		{
+			((CDialogCut*)m_pCutDlg)->UkeyDownStop();
+		}
+
+		this->setEnabled(false);
+		//m_ukeyDownMsgdlg.setWindowFlags(Qt::FramelessWindowHint);
+		m_ukeyDownMsgdlg.setWindowTitle(QStringLiteral("提示"));
+		m_ukeyDownMsgdlg.setText(QStringLiteral("未检测到有效的UKey,关闭此对话框会退出应用程序！"));
+
+	//	m_ukeyDownMsgdlg.addButton(QStringLiteral("退出应用程序"), QMessageBox::AcceptRole);//QMessageBox::YesRole
+	//	int flag = m_ukeyDownMsgdlg.exec();//flag返回0，是QMessageBox::NoButton，什么原因？
+	//	if (QMessageBox::NoButton == m_ukeyDownMsgdlg.exec())
+		if (QMessageBox::Ok == m_ukeyDownMsgdlg.exec())
+	//	if (QMessageBox::Accepted == m_ukeyDownMsgdlg.exec())//不行，添加的按钮不行
+		{
+			emit m_ukeyDownMsgdlg.accepted();//需手动加发送信号，要不connect(&m_ukeyDownMsgdlg, SIGNAL(accepted()), this, SLOT(OnBtnCloseClick()))无效
+		}
+	}
+
+}
+
+void CDialogMain::OnUkeyUp()
+{
+	if (!this->isEnabled())
+	{	
+		m_ukeyDownMsgdlg.reject();
+		this->setEnabled(true);
+		for (int i = 0; i < NUM; i++)
+		{
+			if (m_PlayCtrl[i]->IsPlaying())
+			{
+				m_PlayCtrl[i]->Pause(0);
+			}
+		}
+	}
 }
 
 void  CDialogMain::IniSysMenu()
@@ -167,8 +300,8 @@ void  CDialogMain::IniWndMenu()
 	m_Wnd1Act->setChecked(true);
 	m_WndMode = WND1;
 	pWndMenu->addAction(m_Wnd4Act);
-//	pWndMenu->addAction(m_Wnd9Act);
-//	pWndMenu->addAction(m_Wnd16Act);
+	pWndMenu->addAction(m_Wnd9Act);
+	pWndMenu->addAction(m_Wnd16Act);
 	ui.BtnWndMode->setMenu(pWndMenu);
 
 	m_WndActGroup = new QActionGroup(this);
@@ -218,7 +351,9 @@ void  CDialogMain::OnConvertTriggered()
 	int iScreenHeigth = QApplication::desktop()->height();
 	QRect rc = dlg.geometry();
 	dlg.move((iScreenWidth - rc.width()) / 2, (iScreenHeigth - rc.height()) / 2);
+	m_pConvertDlg = &dlg;
 	dlg.exec();
+	m_pConvertDlg = NULL;
 }
 
 void  CDialogMain::OnCutTriggered()
@@ -228,7 +363,9 @@ void  CDialogMain::OnCutTriggered()
 	int iScreenHeigth = QApplication::desktop()->height();
 	QRect rc = dlg.geometry();
 	dlg.move((iScreenWidth - rc.width()) / 2, (iScreenHeigth - rc.height()) / 2);
+	m_pCutDlg = &dlg;
 	dlg.exec();
+	m_pCutDlg = NULL;
 }
 
 
@@ -361,9 +498,9 @@ void CDialogMain::OnBtnMaxClick()
 		ui.frame_fileList->setGeometry(m_iScreenWidth - 200, m_rcFrameFileList.top(), m_rcFrameFileList.width(), m_iScreenHeigth - 35);
 	//相对于frame_fileList位置
 		ui.listWidget->setGeometry(m_rcFileList.left(), m_rcFileList.top(), m_rcFileList.width(), m_iScreenHeigth - 65);
-
+		//top ..left
 		//ui.BtnMax->setStyleSheet("QPushButton{border-image: url(:/Skin/max.png)0 0 0 30 repeat}QPushButton:hover{border-image: url(:/Skin/max.png)30 0 0 30 repeat}QPushButton:pressed{border-image: url(:/Skin/max.png)60 0 0 60 repeat}QPushButton:disabled{border-image: url(:/Skin/max.png)90 0 0 90 repeat}");
-		ui.BtnMax->setStyleSheet("QPushButton{border-image: url(:/Skin/max.png)0 0 0 30 repeat}QPushButton:hover{border-image: url(:/Skin/max.png)30 0 0 30 repeat}QPushButton:pressed{border-image: url(:/Skin/max.png)60 0 0 60 repeat}QPushButton:disabled{border-image: url(: / Skin/max.png)90 0 0 90 repeat}");
+		ui.BtnMax->setStyleSheet("QPushButton{border-image: url(:/Skin/max.png)0 0 0 30 repeat}QPushButton:hover{border-image: url(:/Skin/max.png)30 0 0 30 repeat}QPushButton:pressed{border-image: url(:/Skin/max.png)60 0 0 30 repeat}QPushButton:disabled{border-image: url(:/Skin/max.png)90 0 0 30 repeat}");
 		ui.BtnMax->repaint();
 
 	}
@@ -375,7 +512,7 @@ void CDialogMain::OnBtnMaxClick()
 		ui.frame_fileList->setGeometry(m_rcFrameFileList);
 		ui.listWidget->setGeometry(m_rcFileList);
 		ui.frame_toolBar->setGeometry(m_rcFrameToolBar);
-		ui.BtnMax->setStyleSheet("QPushButton{border-image: url(:/Skin/max.png)0 0 0 0 repeat}QPushButton:hover{border-image: url(:/Skin/max.png)30 0 0 0 repeat}QPushButton:pressed{border-image: url(:/Skin/max.png)60 0 0 0 repeat}QPushButton:disabled{border-image: url(: / Skin/max.png)90 0 0 0 repeat}");
+		ui.BtnMax->setStyleSheet("QPushButton{border-image: url(:/Skin/max.png)0 0 0 0 repeat}QPushButton:hover{border-image: url(:/Skin/max.png)30 0 0 0 repeat}QPushButton:pressed{border-image: url(:/Skin/max.png)60 0 0 0 repeat}QPushButton:disabled{border-image: url(:/Skin/max.png)90 0 0 0 repeat}");
 		ui.BtnMax->repaint();
 		
 	}
@@ -658,6 +795,19 @@ bool  CDialogMain::OpenAndPlayFile(CFormPlayCtrl *pPlayCtrl, QString strFileName
 	}
 	if (!bRet)
 	{
+		CDialogMessageBox dlg;
+		QFile file(strFileName);
+		if (!file.exists())
+		{
+			dlg.SetText1(QStringLiteral("文件路径不存在！"));
+
+		}
+		else
+		{
+			dlg.SetText1(QStringLiteral("无法播放！文件可能被损坏！"));		
+		}
+		dlg.SetText2(strFileName);
+		dlg.exec();
 		if (m_playListMode == LIST || m_playListMode == SINGLE_REPEAT || m_playListMode == LIST_REPEAT)
 		{
 			if (m_PlayMode == SINGLE_MODE)
@@ -744,6 +894,10 @@ void  CDialogMain::SetRenderMode(int index)
 
 void CDialogMain::ShellExe2()
 {
+	if (!this->isEnabled())//ukey不在线
+	{
+		return;
+	}
 	QString strShellFileXml = QApplication::applicationDirPath() + "/" + "shellFile.xml";
 	QFile file(strShellFileXml);
 	QDomDocument doc;
@@ -808,7 +962,7 @@ void CDialogMain::ShellExe(QString &strFile)
 
 void  CDialogMain::StopAll()//分段播放切换到分屏播放，或分屏播放切换到分段播放
 {
-	for (int i = 0; i < m_curWndNum; i++)
+	for (int i = 0; i < NUM; i++)//这里不能用m_curWndNum了，因为16屏切换到9屏的时候，有些窗口还在播放，只是没显示
 	{
 		if (m_PlayCtrl[i]->IsPlaying())
 		{
@@ -819,9 +973,14 @@ void  CDialogMain::StopAll()//分段播放切换到分屏播放，或分屏播放切换到分段播放
 
 void CDialogMain::OnBtnCloseClick()
 {
+	s_ukeyThread.Stop();
+	s_ukeyThread.wait();
+
 	StopAll();
 	ReleasePlayerFactory();
 	WritePlayFileList();//写播放列表
+
+	
 	this->close();
 }
 
@@ -834,7 +993,7 @@ void CDialogMain::OnBtnDiv4TimeClick()
 	}
 
 	bool bPlaying = false;
-	for (int i = 0; i < m_curWndNum; i++)
+	for (int i = 0; i < NUM; i++)
 	{
 		if (m_PlayCtrl[i]->IsPlaying())
 		{
@@ -862,7 +1021,7 @@ void CDialogMain::OnBtnFileDelClick()
 		return;
 	}
 	QString strFile = m_strPlayFileList.at(row);
-	for (int i = 0; i < m_curWndNum; i++)
+	for (int i = 0; i < NUM; i++)
 	{
 		if (m_PlayCtrl[i]->IsPlaying())
 		{
@@ -1039,47 +1198,104 @@ void CDialogMain::OnListWidgetItemDbClick(QListWidgetItem * item)
 	//OpenAndPlayFile(m_PlayCtrl[m_iCurFocus],m_strPlayFileList.at(index));
 	QApplication::postEvent(this, new CMyEvent(CUSTOM_ListItemDbClick_EVENT, (QObject*)item));
 }
-
+/*
 void CDialogMain::keyPressEvent(QKeyEvent * keyEvent)
 {
+ 	if (keyEvent->key() == Qt::Key_Escape) {
+		if (m_bFullScreen)
+		{
+			SetFullScreen(m_PlayWnd[m_iCurFocus]);
+		}
+		keyEvent->accept();
+		return ;
+	}
+	else if (keyEvent->key() == Qt::Key_Enter) {
+		return ;
+	} 
+}
+
+void CDialogMain::keyReleaseEvent(QKeyEvent * keyEvent)
+{
+	keyEvent->accept();
 	if (keyEvent->key() == Qt::Key_Escape) {
 		if (m_bFullScreen)
 		{
 			SetFullScreen(m_PlayWnd[m_iCurFocus]);
 		}
-		return ;
+		return;
 	}
 	else if (keyEvent->key() == Qt::Key_Enter) {
-		return ;
+		return;
 	}
 }
+*/
 bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 {
+	//qDebug("e->type()；%d", e->type());
 	if (e->type() == QEvent::KeyPress)
 	{
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e); 
-		if (keyEvent->key() == Qt::Key_Escape) {
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+		if (keyEvent->key() == Qt::Key_Escape) {//Key_Escape如果在KeyRelease响应的话会直接退出了
 			if (m_bFullScreen)
 			{
 				SetFullScreen(m_PlayWnd[m_iCurFocus]);
 			}
 			return true;
 		}
-		else if (keyEvent->key() == Qt::Key_Enter) {
+		else if (keyEvent->key() == Qt::Key_Space) //按钮有下拉菜单栏的，比如右上角扩展功能按钮，按下空格键，只产生 QEvent::KeyPress，菜单栏被打开。屏蔽掉KeyPress后，会产生KeyRelease
+		{
 			return true;
 		}
-		/*else if (keyEvent->key() == Qt::Key_Space) {
+
+	//	屏蔽slider对上下左右键的按下的反应，使slider位置不改变，通过SetPlaySliderPos改变.但是
+		
+		else if (keyEvent->key() == Qt::Key_Left) {
+			return true;
+		}
+		else if (keyEvent->key() == Qt::Key_Right) {
+			return true;
+		}
+
+		if (!ui.listWidget->hasFocus())
+		{
+			if (keyEvent->key() == Qt::Key_Up) //
+			{
+				return true;
+			}
+			else if (keyEvent->key() == Qt::Key_Down) {
+				return true;
+			}
+		}
+	}
+	else if (e->type() == QEvent::KeyRelease)//方向键为什么没有QEvent::KeyPress事件，所以要用QEvent::KeyRelease
+	{
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+		//	else if (keyEvent->key() == Qt::Key_Enter) {
+		//	return true;
+		//	}
+		 if (keyEvent->key() == Qt::Key_Space) {
 			m_PlayCtrl[m_iCurFocus]->OnBtnPauseClick();
 			return true;
 		}
 		else if (keyEvent->key() == Qt::Key_Left) {
-			m_PlayCtrl[m_iCurFocus]->OnBtnSlowClick();
+			m_PlayCtrl[m_iCurFocus]->SetPlaySliderPos(-1);
 			return true;
 		}
 		else if (keyEvent->key() == Qt::Key_Right) {
-			m_PlayCtrl[m_iCurFocus]->OnBtnFastClick();
+			m_PlayCtrl[m_iCurFocus]->SetPlaySliderPos(1);
 			return true;
-		}*/
+		}
+		if (!ui.listWidget->hasFocus())
+		{
+			if (keyEvent->key() == Qt::Key_Up) {
+				m_PlayCtrl[m_iCurFocus]->SetVolumeSliderPos(0xffff * 0.1);
+				return true;
+			}
+			else if (keyEvent->key() == Qt::Key_Down) {
+				m_PlayCtrl[m_iCurFocus]->SetVolumeSliderPos(-0xffff * 0.1);
+				return true;
+			}
+		}
 	}
 	else if (e->type() == QEvent::MouseMove)
 	{
@@ -1091,8 +1307,11 @@ bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 	else if (e->type() == QEvent::MouseButtonDblClick)
 	{
 		QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
+		
 		QRect rc = ui.frameSysBar->geometry();
-		if (rc.contains(mouseEvent->x(), mouseEvent->y())){
+		QPoint mousePos = ui.frameSysBar->mapFromGlobal(QCursor::pos());
+
+		if (rc.contains(mousePos)){
 			OnBtnMaxClick();
 			return true;
 		}
@@ -1315,6 +1534,7 @@ bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 			strDivFile = strFileName;
 			m_PlayWnd[i]->SetTitleFileName(strDivFile.append(QStringLiteral("_分段%1")).arg(i+1));
 			SetRenderMode(i);
+			QThread::usleep(10);
 		}
 		return true;
 	}

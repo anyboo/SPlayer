@@ -28,7 +28,7 @@
     <rect>
      <x>12</x>
      <y>12</y>
-     <width>761</width>
+     <width>481</width>
      <height>41</height>
     </rect>
    </property>
@@ -69,13 +69,6 @@ color:rgb(0,0,255);
     <property name="spacing">
      <number>0</number>
     </property>
-    <item row="0" column="2">
-     <widget class="QLabel" name="labelFileName">
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="labelSpeed">
       <property name="minimumSize">
@@ -98,50 +91,7 @@ color:rgb(0,0,255);
       </property>
      </widget>
     </item>
-    <item row="0" column="5">
-     <widget class="QPushButton" name="BtnPicRepeat">
-      <property name="minimumSize">
-       <size>
-        <width>22</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>22</width>
-        <height>22</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>连拍</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton
-{
-	
-	border-image: url(:/Skin/picmore.png)0 0 repeat
-
-}
-QPushButton:hover
-{	
-	border-image: url(:/Skin/picmore.png)22 0 repeat
-
-}
-QPushButton:pressed
-{	
-	border-image: url(:/Skin/picmore.png)44 0 0 0 repeat
-}
-QPushButton:disabled
-{	
-	border-image: url(:/Skin/picmore.png)66 0 0 0 repeat
-}</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4">
+    <item row="0" column="6">
      <widget class="QPushButton" name="BtnPic">
       <property name="minimumSize">
        <size>
@@ -164,6 +114,7 @@ QPushButton:disabled
 	
 	border-image: url(:/Skin/pic.png)0 0 repeat
 
+
 }
 QPushButton:hover
 {	
@@ -184,7 +135,7 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="0" column="6">
+    <item row="0" column="8">
      <widget class="QPushButton" name="BtnFullScreen">
       <property name="minimumSize">
        <size>
@@ -227,7 +178,55 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="labelPause">
+      <property name="minimumSize">
+       <size>
+        <width>35</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>35</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(0, 170, 127);</string>
+      </property>
+      <property name="text">
+       <string>暂停</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="3">
+     <widget class="QLabel" name="labelCorrectTime">
+      <property name="minimumSize">
+       <size>
+        <width>60</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>300</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-size:16px;
+font-family:Microsoft Yahei;	
+color:rgb(255,0,0);
+
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
      <widget class="QPushButton" name="BtnFix">
       <property name="minimumSize">
        <size>
@@ -248,7 +247,7 @@ QPushButton:disabled
        <string notr="true">QPushButton
 {
 	
-	border-image: url(:/Skin/fix.png)0 0 repeat
+border-image: url(:/Skin/fix.png)0 0 repeat
 
 }
 QPushButton:hover
@@ -270,25 +269,96 @@ QPushButton:disabled
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="labelPause">
+    <item row="0" column="7">
+     <widget class="QPushButton" name="BtnPicRepeat">
       <property name="minimumSize">
        <size>
-        <width>35</width>
+        <width>22</width>
         <height>22</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>35</width>
-        <height>16777215</height>
+        <width>22</width>
+        <height>22</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>连拍</string>
+      </property>
       <property name="styleSheet">
-       <string notr="true">color: rgb(0, 170, 127);</string>
+       <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/picmore.png)0 0 repeat
+
+}
+QPushButton:hover
+{	
+	border-image: url(:/Skin/picmore.png)22 0 repeat
+
+}
+QPushButton:pressed
+{	
+	border-image: url(:/Skin/picmore.png)44 0 0 0 repeat
+}
+QPushButton:disabled
+{	
+	border-image: url(:/Skin/picmore.png)66 0 0 0 repeat
+}</string>
       </property>
       <property name="text">
-       <string>暂停</string>
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="labelFileName">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QPushButton" name="BtnColor">
+      <property name="minimumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>图像调节</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+	
+	border-image: url(:/Skin/color.png)
+}
+
+QPushButton:hover
+{	
+border-width:2px;
+
+}
+QPushButton:pressed
+{	
+	border-width:3px;
+}
+QPushButton:disabled
+{	
+	
+}</string>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>

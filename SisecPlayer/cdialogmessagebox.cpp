@@ -20,8 +20,9 @@ CDialogMessageBox::CDialogMessageBox(QWidget *parent)
 
 	connect(m_timer, SIGNAL(timeout()), this, SLOT(OnBtnOKClicked()));
 	connect(ui.BtnOK, SIGNAL(clicked()), this, SLOT(OnBtnOKClicked()));
+	connect(ui.BtnClose, SIGNAL(clicked()), this, SLOT(OnBtnOKClicked()));
 
-	m_timer->start(1000);
+	m_timer->start(2000);
 
 }
 

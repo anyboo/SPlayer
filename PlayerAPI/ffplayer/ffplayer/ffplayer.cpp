@@ -164,6 +164,9 @@ ffplayer::ffplayer()
 	m_bFileEnd = false;
 	m_pUser = NULL;
 	m_nID = 0;
+	m_displayBak = NULL;
+	m_pDisplayUser = NULL;
+	m_nDisplayID = 0;
 	m_fSeekRelativePos = 0.0;
 	m_fileSize = 0;
 	memset(m_strFileName, 0, LENGTH);
@@ -767,6 +770,14 @@ bool ffplayer::SetFileEndCallback(long nID,FileEndCallback fileCallBack, void *p
 	return true;
 }
 
+bool ffplayer::SetDisplayCallback(long nID, DisplayCallback displayCallback, void *pUser)
+{
+	m_displayBak = displayCallback;
+	m_pDisplayUser = pUser;
+	m_nDisplayID = nID;
+	return true;
+}
+
 void ffplayer::DemuxThread(void*lPalam)
 {
 	try
@@ -1026,7 +1037,7 @@ void ffplayer::VideoDecoderThreadRun()
 	bool bFirst = true;
 	while (1)
 	{
-		SDL_Delay(1);
+	//	SDL_Delay(1);
 		if (m_bStop){
 			break;
 		}
@@ -1034,6 +1045,7 @@ void ffplayer::VideoDecoderThreadRun()
 		PInfo pFrameInfo = m_videoPacketBuf.getInfoFromList();
 		if (!pFrameInfo)//事件等待
 		{
+			SDL_Delay(1);
 			continue;
 		}
 
@@ -1452,7 +1464,7 @@ void ffplayer::RefreshRender()
 
 void ffplayer::DestoryRender()
 {
-	std::lock_guard<std::recursive_mutex> lock(g_mutexSDL);
+	//std::lock_guard<std::recursive_mutex> lock(g_mutexSDL);//去掉，不去掉会导致航景科技.mp4分段播放会卡死
 	if (m_pTexture != NULL)
 	{
 		SDL_DestroyTexture(m_pTexture);
@@ -1497,7 +1509,7 @@ void ffplayer::RenderThreadRun()
 	bool bFirst = true;
 	while (1)
 	{
-		Sleep(10);
+	//	Sleep(10);
 		if (m_bStop)
 			break;
 		
@@ -1525,6 +1537,7 @@ void ffplayer::RenderThreadRun()
 				m_fileEndBak(m_nID, m_pUser);
 				break;
 			}
+			Sleep(10);
 			continue;
 		}else{
 			if (bFirst){
@@ -1556,8 +1569,17 @@ void ffplayer::RenderThreadRun()
 					continue;		
 				}
 			}
-		//	m_freeRenderBuf.insertList(pYuvInfo);//另一个系列不用显示，忽略
-		//	continue;
+			if (m_displayBak)
+			{
+				DISPLAYCALLBCK_INFO pDisplayInfo;
+				pDisplayInfo.pBuf = (char*)pYuvInfo->Data;
+				pDisplayInfo.nBufLen = pYuvInfo->width*pYuvInfo->height * 3 / 2;
+				pDisplayInfo.nWidth = pYuvInfo->width;
+				pDisplayInfo.nHeight = pYuvInfo->height;
+				pDisplayInfo.nUser = (long)m_pDisplayUser;
+				m_displayBak(&pDisplayInfo);
+			}
+			/*
 			int w, h;
 			RECT rc;
 			GetWindowRect(m_hwnd, &rc);
@@ -1568,7 +1590,7 @@ void ffplayer::RenderThreadRun()
 				iHeight = h;
 				SDL_SetWindowSize(m_sdlWindow, w, h);
 			}
-
+			
 			if (m_pTexture == NULL)
 				m_pTexture = SDL_CreateTexture(m_pRender, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING, pYuvInfo->width, pYuvInfo->height);
 
@@ -1581,7 +1603,7 @@ void ffplayer::RenderThreadRun()
 			SDL_RenderClear(m_pRender);
 			SDL_RenderCopy(m_pRender, m_pTexture, NULL, NULL);
 			SDL_RenderPresent(m_pRender);
-
+			*/
 			if (m_bReadFrameFinish)
 				m_curFrameCount++;
 			else

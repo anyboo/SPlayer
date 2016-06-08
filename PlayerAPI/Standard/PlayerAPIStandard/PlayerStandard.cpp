@@ -144,6 +144,12 @@ BOOL CPlayerStandard::SetFileEndCallback(long nID, FileEndCallback callBack, voi
 	return FFPlayer_SetFileEndCallback(m_nPort,callBack,pUser);
 }
 
+BOOL  CPlayerStandard::SetDisplayCallback(long nID, DisplayCallback displayCallback, void *pUser)
+{
+	return FFPlayer_SetDisplayCallback(m_nPort, displayCallback, pUser);
+
+}
+
 BOOL CPlayerStandard::FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime)
 {
 	return FFPlayer_FileCutStart(m_nPort, srcFileName, destFileName, startTime, endTime);

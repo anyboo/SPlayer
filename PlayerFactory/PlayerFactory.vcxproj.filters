@@ -27,6 +27,12 @@
     <ClInclude Include="PlayerFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="IPlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="struct_def.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

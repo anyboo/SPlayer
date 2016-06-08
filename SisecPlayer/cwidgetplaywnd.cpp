@@ -24,6 +24,7 @@ CWidgetPlayWnd::CWidgetPlayWnd(int index,QWidget *parent)
 	ui.widgetRender->setMouseTracking(true);
 
 	connect(ui.BtnFix, SIGNAL(clicked()), this, SLOT(OnBtnFixClick()));
+	connect(ui.BtnColor, SIGNAL(clicked()), this, SLOT(OnBtnColorClick()));
 	connect(ui.BtnPic, SIGNAL(clicked()), this, SLOT(OnBtnPicClick()));
 	connect(ui.BtnPicRepeat, SIGNAL(clicked()), this, SLOT(OnBtnPicRepeatClick()));
 	connect(ui.BtnFullScreen, SIGNAL(clicked()), this, SLOT(OnBtnFullScreenClick()));
@@ -223,4 +224,9 @@ void CWidgetPlayWnd::OnBtnPicRepeatClick()
 void CWidgetPlayWnd::OnBtnFullScreenClick()
 {
 	QApplication::postEvent(this->parentWidget(), new CMyEvent(CUSTOM_PLAYWNDDBCLICK_EVENT, this));
+}
+
+void CWidgetPlayWnd::OnBtnColorClick()
+{
+	emit ShowColorDlg();
 }

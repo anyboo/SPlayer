@@ -45,13 +45,20 @@ void execDlg(CDialogMain& dlg)
 	// 	}
 }
 void showMainDlg(SingleApplication& a, QString &strFile)
-{
-	CUpdateDlg dlg;
-	dlg.CheckNewVersion();
-	
+{	
+#ifdef UKey
+	if (!CDialogMain::VerifyUkey())
+	{
+		return;
+	}
+#endif
 	CDialogMain logd;
 	a.setMainWidget(&logd);
 	logd.ShellExe(strFile);
+	
+	CUpdateDlg dlg(&logd);
+	dlg.CheckNewVersion();
+
 	execDlg(logd);
 }
 
@@ -162,7 +169,11 @@ int main(int argc, char *argv[])
 
 	}*/
 #else
-	AuthorFile=QApplication::applicationDirPath() + "/AuthorFile";
+#ifdef UKey
+	showMainDlgNoExcept(a, strFile);
+	return 0;
+#else
+	/*AuthorFile=QApplication::applicationDirPath() + "/AuthorFile";
 	initDb();
 	MD5 md5_toApply;//用于生成申请码
 
@@ -188,18 +199,8 @@ int main(int argc, char *argv[])
 		w.show();
 		a.exec();
 		exit(0);
-	}
-	showMainDlgNoExcept(a, strFile);
-	/*
-	if (Verify::init())
-	{
-		checkDirectory();
-		qDebug() << "showMainDlgNoExcept";
-		showMainDlgNoExcept(a);
-		Verify::uninit();
 	}*/
-	//CDialogMain w;
-	//w.show();
-	//return a.exec();
+	showMainDlgNoExcept(a, strFile);
+#endif
 #endif 
 }

@@ -153,6 +153,16 @@ BOOL  CPlayerDH::GetPictureSize(LONG *pWidth, LONG *pHeight)
 	return PLAY_GetPictureSize(m_nPort, pWidth, pHeight);
 }
 
+BOOL  CPlayerDH::SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	return PLAY_SetColor(m_nPort, nRegionNum, nBrightness, nContrast, nSaturation, nHue);
+}
+
+BOOL  CPlayerDH::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	return PLAY_GetColor(m_nPort, nRegionNum, pBrightness, pContrast, pSaturation, pHue);
+}
+
 typedef void (CALLBACK *pFileEnd)(DWORD nPort, DWORD nUser);
 
 BOOL  CPlayerDH::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)

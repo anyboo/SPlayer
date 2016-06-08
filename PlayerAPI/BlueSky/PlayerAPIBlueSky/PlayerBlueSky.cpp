@@ -279,6 +279,18 @@ BOOL  CPlayerBlueSky::GetPictureSize(LONG *pWidth, LONG *pHeight)
 	return true;
 }
 
+BOOL  CPlayerBlueSky::SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	//return PlayM4_SetColor(m_nPort, nRegionNum, nBrightness, nContrast, nSaturation, nHue);
+	return false;
+}
+
+BOOL  CPlayerBlueSky::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	//return PlayM4_GetColor(m_nPort, nRegionNum, pBrightness, pContrast, pSaturation, pHue);
+	return false;
+}
+
 BOOL  CPlayerBlueSky::CapturePic(char *pSaveFile, int iType)
 {
 	int iRet = dvxPlayPictureEx(m_hLocalPlay, pSaveFile, iType);/*0 bitmap,1 jpg*/
@@ -299,12 +311,48 @@ int CPlayerBlueSky::NotifyRoutineCallBack(unsigned int notifyId, LPVOID lpUserDa
 	}
 	return true;
 }
+
 BOOL  CPlayerBlueSky::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
 	m_nID = nID;
 	m_FileEndCallbackFun = callBack;
 	m_pUser = pUser;
 	dvxSetLocalNotifyCallback(m_hLocalPlay, &NotifyRoutineCallBack,this);
+	return true;
+}
+
+void CPlayerBlueSky::DecCallback(dvxDecFrameInfo *pInfo, void* pUser)
+{
+	CPlayerBlueSky *pPlayer = (CPlayerBlueSky*)pUser;
+	if (pPlayer)
+	{
+		DISPLAYCALLBCK_INFO tDisplayInfo;
+		tDisplayInfo.pBuf = (char*)pInfo->pY;
+		//tDisplayInfo.nBufLen = pInfo->strideY + pInfo->strideU + pInfo->strideU;
+		tDisplayInfo.nBufLen = pInfo->width*pInfo->height*3/2;
+
+		tDisplayInfo.nWidth = pInfo->width;
+		tDisplayInfo.nHeight = pInfo->height;
+		tDisplayInfo.nStamp = pInfo->timestamp;
+		tDisplayInfo.nUser =(long) pPlayer->m_DisplayCalUser;
+		pPlayer->m_DisplayCallbackFun(&tDisplayInfo);
+	}
+}
+
+BOOL  CPlayerBlueSky::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
+{
+	return false;//因为回调函数的YUV数据不是回续，图像调节不准
+	dvxPlaySetDecCallback(m_hLocalPlay, &DecCallback, this);
+	m_DisplayCallbackFun = displayCallback;
+	m_DisplayCalUser = nUser;
+	return true;
+}
+
+BOOL  CPlayerBlueSky::GetSystemTime(unsigned long long *pstSystemTime)
+{
+	long long iSystemTime=0;
+	dvxLocalPlayGetCurrentTime(m_hLocalPlay, &iSystemTime); 
+	*pstSystemTime = iSystemTime/1000;
 	return true;
 }
 

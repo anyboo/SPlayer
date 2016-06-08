@@ -13,7 +13,7 @@ public:
 	~CDialogConfig();
 public:
 	static void ReadConfigXml();
-	static void WriteConfigXml();
+	static bool WriteConfigXml();
 	static void GetPicParam(QString &path, int &picType, int &picRepeatCount)
 	{
 		path = m_strPicPath;

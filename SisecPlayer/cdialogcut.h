@@ -15,6 +15,8 @@ public:
 	CDialogCut(QWidget *parent = 0);
 	~CDialogCut();
 	virtual bool eventFilter(QObject *obj, QEvent *e);
+public:
+	void UkeyDownStop();
 protected slots:
 	void OnBtnMinClick();
 	void OnBtnCloseClick();
@@ -46,10 +48,13 @@ private:
 
 	CWidgetPlayWnd *m_PlayWnd;
 	CFormPlayCtrl *m_PlayCtrl;
+	CWidgetPlayWnd *m_PlayWndTest;
+	CFormPlayCtrl *m_PlayCtrlTest;
 
 	QTimer *m_getProgressTimer;
 	long m_nPort;
-	QString m_strDstPath;
+	QString m_strDstPath;//路径名
+	QString m_strDstPathName;//路径文件名
 };
 
 #endif // CDIALOGCUT_H

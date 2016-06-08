@@ -69,6 +69,14 @@ void CDialogConverterPreview::OnBtnOKClick()
 	this->accept();
 }
 
+void CDialogConverterPreview::UkeyDownStop()
+{
+	if (m_PlayCtrl->IsPlaying())
+	{
+		m_PlayCtrl->Pause(1);
+	}
+}
+
 void CDialogConverterPreview::OnBtnCloseClick()
 {
 	m_PlayCtrl->Stop();

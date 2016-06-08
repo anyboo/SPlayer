@@ -210,6 +210,16 @@ BOOL  CPlayerDL::GetPictureSize(LONG *pWidth, LONG *pHeight)
 	return false;
 }
 
+BOOL  CPlayerDL::SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	return NET_DLDVR_SetColor(m_nPort, nRegionNum, nBrightness, nContrast, nSaturation, nHue);
+}
+
+BOOL  CPlayerDL::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	return NET_DLDVR_GetColor(m_nPort, nRegionNum, pBrightness, pContrast, pSaturation, pHue);
+}
+
 BOOL  CPlayerDL::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
 	return false;

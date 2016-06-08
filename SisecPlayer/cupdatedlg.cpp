@@ -99,9 +99,9 @@ void CUpdateDlg::downloadFile(QUrl url)
 
 	m_file = new QFile(fileName);
 	if (!m_file->open(QIODevice::WriteOnly)) {
-		QMessageBox::information(this, tr("HTTP"),
-			tr("Unable to save the file %1: %2.")
-			.arg(fileName).arg(m_file->errorString()));
+		//QMessageBox::information(this, tr("HTTP"),
+		//	tr("Unable to save the file %1: %2.")
+		//	.arg(fileName).arg(m_file->errorString()));
 		delete m_file;
 		m_file = 0;
 		return;
@@ -197,20 +197,52 @@ void  CUpdateDlg::CompareVesion()
 	QString strXmlUrl, strPacketUrl, strNewVersion;
 	if (ReadXml(m_strNewXmlName, strXmlUrl, strPacketUrl, strNewVersion))
 	{
-		QString strCurTemp = m_strCurVersion;
-		QString strNewTemp = strNewVersion;
-		
-		if (strCurTemp.length() <= 3)
+		bool bBig= false;//相对于当前
+		QStringList listCur = m_strCurVersion.split(".");
+		QStringList listNew = strNewVersion.split(".");
+		int nCurSize = listCur.size();
+		int nNewSize = listNew.size();	
+		int cmpSize = nCurSize > nNewSize ? nNewSize : nCurSize;
+		bool bFindResult = false;
+		for (int i = 0; i<cmpSize; i++)
 		{
-			strCurTemp.append('0');
+			int nCur = listCur[i].toInt();
+			int nNew = listNew[i].toInt();
+			if (nCur==nNew)
+			{
+				continue;
+			}
+			bFindResult = true;
+			bBig = nCur >nNew ? true : false;
+			break;
 		}
-		if (strNewTemp.length() <= 3)
+		if (!bFindResult&&nCurSize!=nNewSize)//没有找到对比结果
 		{
-			strNewTemp.append('0');
+			if (nCurSize > nNewSize)
+			{
+				for (int i = cmpSize; i < nCurSize; i++)
+				{
+					if (listCur[i].toInt() != 0)
+					{
+						bBig = true;
+						break;
+					}
+				}
+			}
+			else
+			{
+				for (int i = cmpSize; i < nNewSize; i++)
+				{
+					if (listNew[i].toInt() != 0)
+					{
+						bBig = false;
+						break;
+					}
+				}
+			}
 		}
-		int iCurVersion = strCurTemp.remove('.').toInt();
-		int iNewVersion = strNewTemp.remove('.').toInt();
-		if (iCurVersion >= iNewVersion)
+
+		if (bBig)
 		{
 			ui.label->setText(QStringLiteral("当前已经是最新版本!"));
 		}
@@ -232,6 +264,7 @@ void  CUpdateDlg::CompareVesion()
 				
 				CDialogMain *pMainW = (CDialogMain*)SingleApplication::instance()->mainWidget();
 				pMainW->OnBtnCloseClick();
+				exit(0);
 			}
 			
 		}

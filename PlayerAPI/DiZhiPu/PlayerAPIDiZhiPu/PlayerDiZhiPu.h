@@ -42,8 +42,11 @@ public:
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
+	BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
+	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL GetSystemTime(unsigned long long *pstSystemTime);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast);

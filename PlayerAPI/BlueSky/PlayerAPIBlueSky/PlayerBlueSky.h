@@ -46,15 +46,20 @@ public:
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
+	BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
+	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL SetDisplayCallback(LONG nID, DisplayCallback displayCallBack, void * nUser);
+	BOOL GetSystemTime(unsigned long long *pstSystemTime);
 
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast);
 	BOOL FileCutClose();
 	int FileCutProcess();
 private:
 	static int NotifyRoutineCallBack(unsigned int notifyId, LPVOID lpUserData);
+	static void CALLBACK DecCallback(dvxDecFrameInfo *pInfo, void* pUser);
 private:
 	HWND m_hwnd;
 	LocalPlayHandle m_hLocalPlay;

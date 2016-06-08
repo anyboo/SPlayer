@@ -11,12 +11,11 @@ struct T_ConverterFileInfo{
 	QString strSrcFileName;
 	QString strSrcPath;
 	unsigned __int64 iFileSize;
-	//unsigned __int64 iFileDuation;
 	DWORD iFileDuation;
 	int width;
 	int height;
 	int dstFormat;
-	//	QString dstPath;
+	QString dstPathFileName;
 	int state;
 	int progress;
 	bool bFileCut;
@@ -33,6 +32,7 @@ public:
 	~CDialogConverterPreview();
 public:
 	void SetConvertFileInfo(T_ConverterFileInfo*FileInfo);
+	void UkeyDownStop();
 protected slots:
 	void OnBtnCloseClick();
 	void OnBtnOKClick();

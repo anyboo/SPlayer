@@ -574,7 +574,7 @@ c->codec_tag = 0;
 	if (m_pSrcVideoCodecCtx)
 	{	
 		
-	/*	avcodec_copy_context(c, m_pSrcVideoCodecCtx);//不要拷贝，会导致转mp4不成功. 但没这句又会导致中维.mp4转avi失败
+	/*	avcodec_copy_context(c, m_pSrcVideoCodecCtx);//不要拷贝，会导致(巨峰科技.h264)转mp4不成功. 但没这句又会导致中维.mp4转avi失败
 		if (m_pSrcVideoCodecCtx->extradata!=NULL )//不要去拷贝，拷贝之后openCodec会导致avcodec_close(m_videoStream->codec)崩溃
 		{
 			c->extradata =(uint8_t*) new char[m_pSrcVideoCodecCtx->extradata_size];

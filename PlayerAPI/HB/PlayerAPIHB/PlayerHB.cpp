@@ -258,6 +258,41 @@ BOOL  CPlayerHB::GetPictureSize(LONG *pWidth, LONG *pHeight)
 	return HB_PLAY2_GetPictureSize(m_hPlay, (int*)pWidth, (int*)pHeight);
 }
 
+BOOL  CPlayerHB::SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	HBPLAY2_COLOR_SPACE color;
+	color.dwBrightness = nBrightness;
+	color.dwContrast = nContrast;
+	color.dwSaturation = nSaturation;
+	color.dwHue = nHue;
+	color.dwSize = sizeof(HBPLAY2_COLOR_SPACE);
+	HRESULT hRet = HB_PLAY2_SetVideoColor(m_hPlay, &color);
+
+	if (HBPLAY2_OK == hRet)
+	{
+		return true;
+	}
+	return false;
+}
+
+BOOL  CPlayerHB::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	HBPLAY2_COLOR_SPACE color;	
+	color.dwSize = sizeof(HBPLAY2_COLOR_SPACE);
+
+	HRESULT hRet = HB_PLAY2_GetVideoColor(m_hPlay, &color);
+	*pBrightness=color.dwBrightness;
+	*pContrast=color.dwContrast;
+	*pSaturation=color.dwSaturation;
+	*pHue=color.dwHue
+		;
+	if (HBPLAY2_OK == hRet)
+	{
+		return true;
+	}
+	return false;
+}
+
 BOOL  CPlayerHB::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
 	HB_PLAY2_RegisterFileEndedCallback(m_hPlay,(PHB_PLAY2_FILE_ENDED_PROC)callBack, pUser);

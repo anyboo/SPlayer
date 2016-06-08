@@ -114,7 +114,7 @@ void CDialogConfig::ReadConfigXml()
 	file.close();
 }
 
-void CDialogConfig::WriteConfigXml()
+bool CDialogConfig::WriteConfigXml()
 {
 	QDomDocument doc;
 
@@ -155,7 +155,7 @@ void CDialogConfig::WriteConfigXml()
 	QFile file(strPlayListXml);
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
 	{
-		return;
+		return false;
 	}
 
 	QTextStream out(&file);
@@ -163,6 +163,7 @@ void CDialogConfig::WriteConfigXml()
 	doc.save(out, 4, QDomNode::EncodingFromTextStream);
 
 	file.close();
+	return true;
 
 }
 

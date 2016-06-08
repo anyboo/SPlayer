@@ -1,6 +1,7 @@
 #include "GetMac.h"
 
 #pragma comment(lib,"Iphlpapi.lib")
+#include <QNetworkInterface>
 
 void byte2Hex(unsigned char bData, unsigned char hex[])
 {
@@ -11,6 +12,23 @@ void byte2Hex(unsigned char bData, unsigned char hex[])
 
 int getLocalMac(unsigned char *mac) //获取本机MAC址 
 {
+#ifdef LocalMac
+	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
+	QList<QNetworkInterface>::iterator it = list.begin();
+	for (it; it != list.end();it++)
+	{	
+		QString str = it->humanReadableName();
+		if (QStringLiteral("本地连接") == it->humanReadableName()){
+			QString addr = it->hardwareAddress();
+			addr.replace(":","");
+			strcpy((char*)mac, addr.toLatin1().data());
+			int len = addr.length();
+			return len;
+		
+		}
+	}
+	return -1;
+#else
 	ULONG ulSize = 0;
 	PIP_ADAPTER_INFO pInfo = NULL;
 	int temp = 0;
@@ -44,6 +62,8 @@ int getLocalMac(unsigned char *mac) //获取本机MAC址
 		return iCount;
 	}
 	else return -1;
+	
+#endif
 }
 
 bool ReadAuthorizationFile(string &filedat)

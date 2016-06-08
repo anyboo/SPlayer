@@ -453,6 +453,28 @@ BOOL Player_CapturePic(LONG nID, char *pSaveFile, int iType)
 	return false;
 }
 
+BOOL Player_SetColor(LONG nID, DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
+	Player_Info *pPlayerInfo = FindPlayer(nID);
+	if (pPlayerInfo)
+	{
+		return pPlayerInfo->pPlayer->SetColor(nRegionNum, nBrightness, nContrast, nSaturation, nHue);
+	}
+	return false;
+}
+
+BOOL Player_GetColor(LONG nID, DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
+	Player_Info *pPlayerInfo = FindPlayer(nID);
+	if (pPlayerInfo)
+	{
+		return pPlayerInfo->pPlayer->GetColor(nRegionNum, pBrightness, pContrast, pSaturation, pHue);
+	}
+	return false;
+}
+
 BOOL Player_SetFileEndCallback(LONG nID, void(CALLBACK*FileEndCallback)(LONG nID, void *pUser), void *pUser)
 {
 	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
@@ -464,20 +486,26 @@ BOOL Player_SetFileEndCallback(LONG nID, void(CALLBACK*FileEndCallback)(LONG nID
 	return false;
 }
 
-int FindStandardFactory()
+BOOL Player_SetDisPlayCallback(LONG nID, DisplayCallback displayCallback, void *pUser)
 {
-	std::list<Factory_Info *>::iterator iter = s_FactoryList.begin();
-	while (iter != s_FactoryList.end())
+	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
+	Player_Info *pPlayerInfo = FindPlayer(nID);
+	if (pPlayerInfo)
 	{
-		Factory_Info *pFactoryInfo = (Factory_Info*)*iter;
-
-		if (strstr(pFactoryInfo->pFactory->Name(), "StandardFile"))
-		{
-			return pFactoryInfo->fid;
-		}
-		iter++;
+		return pPlayerInfo->pPlayer->SetDisplayCallback(nID,displayCallback, pUser);
 	}
-	return  -1;
+	return false;
+}
+
+BOOL Player_GetSystemTime(LONG nID, unsigned long long *systemTime)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
+	Player_Info *pPlayerInfo = FindPlayer(nID);
+	if (pPlayerInfo)
+	{
+		return pPlayerInfo->pPlayer->GetSystemTime(systemTime);
+	}
+	return false;
 }
 
 BOOL  Player_FileCutStart(LONG nID, const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast)
@@ -534,11 +562,13 @@ BOOL IsSupportFastCut(char *pFileName)//判断文件类型是否支持快速剪辑
 
 BOOL Player_FileConvertStart(LONG nID, const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, bool bConvert, T_ConverterParameters *pConvertPara)
 {
-	int fID = FindStandardFactory();
+	int fID = FindFFmpegFactoryID();
 	if (fID==-1)
 	{
 		return false;
 	}
+/*	int fID;
+	AnalyzeFileType((char*)srcFileName, &fID);*/
 
 	std::lock_guard<std::recursive_mutex> lock(s_mutexFactorys);
 	Factory_Info *pFactoryInfo = FindFactory(fID);
@@ -582,6 +612,22 @@ BOOL Player_FileConvertPause(LONG nID, DWORD nPause)
 		return pPlayerInfo->pPlayer->FileConvertPause(nPause);
 	}
 	return 0;
+}
+
+int  FindFFmpegFactoryID()
+{
+	std::list<Factory_Info *>::iterator iter = s_FactoryList.begin();
+	while (iter != s_FactoryList.end())
+	{
+		Factory_Info *pFactoryInfo = (Factory_Info*)*iter;
+
+		if (strstr(pFactoryInfo->pFactory->Name(), "StandardFile"))
+		{
+			return pFactoryInfo->fid;
+		}
+		iter++;
+	}
+	return -1;
 }
 
 BOOL AnalyzeFileType(char *pFileName, int *pfileType)

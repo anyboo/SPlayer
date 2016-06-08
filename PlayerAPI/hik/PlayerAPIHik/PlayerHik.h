@@ -46,19 +46,29 @@ public:
 	DWORD  GetPlayedTime();
 	BOOL GetPictureSize(LONG *pWidth, LONG *pHeight);
 
-	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL  SetFileEndCallback(LONG nID, FileEndCallback callBack, void *pUser);
+	//BOOL  SetDecCallback(LONG nPort, void (CALLBACK* DecCBFun)(long nPort, char * pBuf, long nSize, FRAME_INFO * pFrameInfo, long nUser), long nUser);
+	BOOL  SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser);
+	BOOL GetSystemTime(unsigned long long *pstSystemTime);
+
+	BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
+	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast);
 	BOOL FileCutClose();
 	int FileCutProcess();
-
+private:
 	BOOL  SavePic(char * pBuf, long nSize, long nWidth, long nHeight, long nType);
+	void AddDisplayCallbackList(long nPort);
+	void RemoveDisplayCallback(long nPort);
 
 	static void  DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long nReserved);
 	static std::list<CPlayerHik*>  m_sPlayerHik;
 	char m_saveFile[256];
+	bool m_bPic;
 	int m_iType;
+
 private:
 	HWND m_hwnd;
 };

@@ -33,6 +33,21 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Generated Files\DiskSN Release">
+      <UniqueIdentifier>{a492d8bf-23be-4794-a217-b3e956db6e44}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Ukey Release">
+      <UniqueIdentifier>{9ca1dfdb-1611-45ce-8563-77d46f73fb98}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\LocalMacRelease">
+      <UniqueIdentifier>{2d59df2d-8100-4c67-a36a-6cc91f1f9213}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -41,68 +56,26 @@
     <ClCompile Include="sisecplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_sisecplayer.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_sisecplayer.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_sisecplayer.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
     <ClCompile Include="noflamedlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_noflamedlg.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_noflamedlg.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="cdialogmain.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogmain.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cdialogmain.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="cformplayctrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cformplayctrl.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cformplayctrl.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="cwidgetplaywnd.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cwidgetplaywnd.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cwidgetplaywnd.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="cmyslider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cmyslider.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cmyslider.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="singleapllication.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_singleapllication.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_singleapllication.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GetMac.cpp">
       <Filter>Source Files</Filter>
@@ -113,53 +86,137 @@
     <ClCompile Include="dialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_dialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_dialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="settings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cdialogdubbing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogdubbing.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cdialogdubbing.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="cdialoghelp.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cdialoghelp.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cdialoghelp.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="cdialogconfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogconfig.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cdialogconfig.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="cdialogmessagebox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogmessagebox.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_cdialogmessagebox.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="cupdatedlg.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GetdiskSN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogconverter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogconverterpreview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogcut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogcut.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogcut.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogcut.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogcut.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogconverterpreview.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogconverterpreview.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogconverterpreview.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogconverterpreview.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogconverter.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogconverter.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogconverter.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogconverter.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_sisecplayer.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_sisecplayer.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_sisecplayer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_sisecplayer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_singleapllication.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_singleapllication.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_singleapllication.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_singleapllication.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_noflamedlg.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_noflamedlg.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_noflamedlg.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_noflamedlg.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_dialog.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_dialog.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_dialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_dialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cwidgetplaywnd.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cwidgetplaywnd.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cwidgetplaywnd.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cwidgetplaywnd.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cupdatedlg.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cupdatedlg.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_cupdatedlg.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -167,8 +224,125 @@
     <ClCompile Include="GeneratedFiles\Release\moc_cupdatedlg.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GetdiskSN.cpp">
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cmyslider.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cmyslider.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cmyslider.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cmyslider.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cformplayctrl.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cformplayctrl.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cformplayctrl.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cformplayctrl.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogmessagebox.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogmessagebox.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogmessagebox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogmessagebox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogmain.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogmain.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogmain.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogmain.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialoghelp.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialoghelp.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialoghelp.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialoghelp.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogdubbing.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogdubbing.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogdubbing.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogdubbing.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogconfig.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogconfig.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogconfig.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogconfig.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogclock.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogclock.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cdialogclock.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogclock.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogclock.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogclock.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogcolorset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogcolorset.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cdialogcolorset.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogcolorset.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogcolorset.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogcolorset.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +418,42 @@
     <CustomBuild Include="cupdatedlg.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="cdialogconverter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogconverter.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogconverterpreview.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogconverterpreview.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogcut.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogcut.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Ukey Release\cdialogconverter.moc">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\DiskSN Release\cdialogconverter.moc">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogclock.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogclock.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogcolorset.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogcolorset.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_sisecplayer.h">
@@ -290,6 +500,24 @@
     </ClInclude>
     <ClInclude Include="GetdiskSN.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogconverter.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogconverterpreview.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="public_def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogcut.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogclock.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogcolorset.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

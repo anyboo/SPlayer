@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>865</width>
-    <height>70</height>
+    <width>860</width>
+    <height>80</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -439,7 +439,61 @@ QPushButton:disabled
           </item>
           <item row="0" column="6">
            <layout class="QFormLayout" name="formLayout_5">
-            <item row="0" column="1">
+            <property name="horizontalSpacing">
+             <number>0</number>
+            </property>
+            <property name="verticalSpacing">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>10</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="btnClock">
+              <property name="minimumSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>时间校准</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">
+QPushButton
+{
+	
+	border-image: url(:/Skin/clock.png)
+}
+
+QPushButton:hover
+{	
+	background-color: rgb(94, 94, 94);
+
+}
+QPushButton:pressed
+{	
+	
+	background-color: rgb(65, 65, 65);
+}
+QPushButton:disabled
+{	
+	
+}</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
              <spacer name="horizontalSpacer_6">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -447,7 +501,7 @@ QPushButton:disabled
               <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
-                <height>20</height>
+                <height>10</height>
                </size>
               </property>
              </spacer>
@@ -673,6 +727,9 @@ border-image:url(:/Skin/progress-bar.png);
               <width>16777215</width>
               <height>10</height>
              </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::WheelFocus</enum>
             </property>
             <property name="styleSheet">
              <string notr="true">QSlider::groove:horizontal {

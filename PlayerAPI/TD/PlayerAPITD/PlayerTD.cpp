@@ -302,6 +302,18 @@ BOOL  CPlayerTD::GetPictureSize(LONG *pWidth, LONG *pHeight)
 	 return true;
 }
 
+BOOL  CPlayerTD::SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue)
+{
+	//return PLAY_SetColor(m_nPort, nRegionNum, nBrightness, nContrast, nSaturation, nHue);
+	return false;
+}
+
+BOOL  CPlayerTD::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue)
+{
+	//return PLAY_GetColor(m_nPort, nRegionNum, pBrightness, pContrast, pSaturation, pHue);
+	return false;
+}
+
 void  CPlayerTD::EndCallback(long nID)
 {
 	std::list<CPlayerTD*>::iterator iter = m_sPlayerTDCallBack.begin();
@@ -330,10 +342,43 @@ BOOL  CPlayerTD::SetFileEndCallback(long nID, FileEndCallback callBack, void *pU
 	m_sPlayerTDCallBack.push_back(this);
 }
 
+void CPlayerTD::DecCallback(unsigned int _ulID, unsigned char *_cData, int _iLen, const FRAME_INFO *_pFrameInfo, int _iUser)
+{
+	CPlayerTD* pPlayer = (CPlayerTD*)_iUser;
+	if (pPlayer)
+	{
+		if (_pFrameInfo->nType == T_YUV420)
+		{
+			DISPLAYCALLBCK_INFO displayInfo;
+			displayInfo.pBuf = (char*)_cData;
+			displayInfo.nWidth = _pFrameInfo->nWidth;
+			displayInfo.nHeight = _pFrameInfo->nHeight;
+			displayInfo.nStamp = _pFrameInfo->nStamp;
+			displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+			pPlayer->m_DisplayCallbackFun(&displayInfo);
+		}
+	}
+}
+
+BOOL  CPlayerTD::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
+{
+	int iRet = TC_SetDecCallBack(m_nPort, (DECYUV_NOTIFY_V4)&DecCallback, (int)this);
+	if (0 == iRet)
+	{
+		m_DisplayCallbackFun = displayCallback;
+		m_DisplayCalUser = nUser;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 BOOL  CPlayerTD::CapturePic(char *pSaveFile, int iType)
 {
 	int iRet=TC_CaptureBmpPic(m_nPort, pSaveFile);
-	if (iRet>0)
+	if (iRet>0)//这个判断比较特殊
 	{
 		return true;
 	}

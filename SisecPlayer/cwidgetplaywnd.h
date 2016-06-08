@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "ui_cwidgetplaywnd.h"
 #include <qpainter.h>
+#include <time.h>
 
 enum COUSTOM_EVENT{
 	CUSTOM_AutoStop_EVENT= 5000 + 1,//文件播放完自动回调
@@ -45,6 +46,9 @@ class CWidgetPlayWnd : public QWidget
 public:
 	CWidgetPlayWnd(int index,QWidget *parent = 0);
 	~CWidgetPlayWnd();
+signals:
+	void ShowColorDlg();
+public:
 	virtual void paintEvent(QPaintEvent *event);
 	virtual void resizeEvent(QResizeEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
@@ -53,12 +57,35 @@ public:
 	virtual void mouseDoubleClickEvent(QMouseEvent * event);
 	virtual void wheelEvent(QWheelEvent * event);
 public:
+	void setCorrectTime(unsigned long long timeStamp)
+	{
+		if (timeStamp == 0)
+		{
+			ui.labelCorrectTime->setText("");
+			return;
+		}
+		struct tm tTime = { 0 };
+		localtime_s(&tTime, (const time_t*)&(timeStamp));
+		/*或下面也对
+		time_t tt = timeStamp;
+		struct tm *tTime2 = localtime(&tt);*/
+		char strTime[20] = { 0 };
+		sprintf(strTime, "%d-%02d-%02d %02d:%02d:%02d", tTime.tm_year + 1900, tTime.tm_mon + 1, tTime.tm_mday, tTime.tm_hour, tTime.tm_min, tTime.tm_sec);
+	//	sprintf(desFileName, "%d", timeStamp / 1000);
+		ui.labelCorrectTime->setText(QString(strTime));
+		ui.labelCorrectTime->setToolTip(QString(strTime));
+	}
 	void SetPreViewMode(){ 
 		m_previewMode = true; 
 		ui.BtnFix->hide(); 
 		ui.BtnPic->hide();
 		ui.BtnPicRepeat->hide();
 		ui.BtnFullScreen->hide();
+		ui.BtnColor->hide();
+	}
+	void Refresh(){
+		this->repaint();
+		ui.widgetRender->repaint();
 	}
 	int Index(){ return m_index; }
 	int GetPlayWndID(){ return ui.widgetRender->winId(); }
@@ -91,11 +118,13 @@ public:
 			}*/
 			ui.widgetToolBar->hide();
 			m_listScaleRC.clear();
+			ui.labelCorrectTime->setText("");
 		}
 	}
 
 protected slots:
-	void OnBtnFixClick();
+	void OnBtnFixClick();	
+	void OnBtnColorClick();
 	void OnBtnPicClick();
 	void OnBtnPicRepeatClick();
 	void OnBtnFullScreenClick();

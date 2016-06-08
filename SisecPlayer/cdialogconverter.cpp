@@ -63,7 +63,7 @@ void Thread::run()
 }
 
 CDialogConverter::CDialogConverter(QWidget *parent)
-: NoFlameDlg(parent), m_nPort(-1), m_curTask(-1)
+: NoFlameDlg(parent), m_nPort(-1), m_curTask(-1), m_pPreviewDlg(NULL), m_bAbort(true)
 {
 	ui.setupUi(this);
 
@@ -94,6 +94,7 @@ CDialogConverter::CDialogConverter(QWidget *parent)
 	connect(ui.BtnFileDel, SIGNAL(clicked()), this, SLOT(OnBtnFileDelClick()));
 	connect(ui.BtnEdit, SIGNAL(clicked()), this, SLOT(OnBtnEditClick()));
 	connect(ui.BtnFileDelAll, SIGNAL(clicked()), this, SLOT(OnBtnFileDelAllClick()));
+	connect(ui.BtnDstPathOpen, SIGNAL(clicked()), this, SLOT(OnBtnFilePathClick()));
 
 	connect(ui.BtnClose, SIGNAL(clicked()), this, SLOT(OnBtnCloseClick()));
 	connect(ui.BtnMin, SIGNAL(clicked()), this, SLOT(OnBtnMinClick()));
@@ -166,7 +167,7 @@ void CDialogConverter::OnBtnFileAddClick()
 			bool bRet = m_PlayCtrl->OpenAndPlayFile(strPathName, (HWND)m_PlayWnd->GetPlayWndID());
 			if (bRet)
 			{
-				m_PlayCtrl->SetRenderMode();
+			//	m_PlayCtrl->SetRenderMode();
 				m_PlayCtrl->StopAudio();
 				
 			//	m_getSrcFileDurationTimer->start(10);//用定时器会卡住页面m_msgDlg对话框,用线程
@@ -336,10 +337,21 @@ void  CDialogConverter::OnItemDoubleClicked(QTableWidgetItem*item)
 	EditConvertInfo(row);
 }
 
+void CDialogConverter::OnBtnFilePathClick()
+{
+	QString pathName = QFileDialog::getExistingDirectory(this,
+		QStringLiteral("请选择文件夹"));
+	if (pathName != "")
+	{
+		ui.lineEditDstPath->setText(pathName);
+	}
+}
+
 void  CDialogConverter::EditConvertInfo(int row)
 {
 	CDialogConverterPreview dlg(this);
 	dlg.SetConvertFileInfo(&m_convertFileInfoList[row]);
+	m_pPreviewDlg = &dlg;
 
 	int iScreenWidth = QApplication::desktop()->width();
 	int iScreenHeigth = QApplication::desktop()->height();
@@ -389,6 +401,7 @@ void  CDialogConverter::EditConvertInfo(int row)
 
 		}
 	}
+	m_pPreviewDlg = NULL;
 }
 
 void CDialogConverter::OnBtnStartClick()
@@ -416,8 +429,21 @@ void CDialogConverter::OnBtnStartClick()
 	}
 
 	int row = ui.tableWidget->rowCount();
-	for (int i = 0; i < row; i++)
+	m_bAbort = true;
+	if (row > 0&&m_convertFileInfoList.at(0).state != NOTSTART)
 	{
+		if (QMessageBox::No == QMessageBox::question(this, QStringLiteral("提示"),
+			QStringLiteral("是否跳过已转换过的？"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
+		{
+			m_bAbort = false;
+		}
+	}
+	for (int i = 0; i < row; i++)
+	{	
+		if (m_bAbort&&(m_convertFileInfoList.at(i).state != NOTSTART && m_convertFileInfoList.at(i).state != STOP))
+		{
+			continue;
+		}
 		QTableWidgetItem *pItem = ui.tableWidget->item(i, State);
 		if (pItem)
 		{
@@ -441,6 +467,11 @@ void CDialogConverter::GoNextConvert()
 		SetCtrlEnabled(true);
 		m_nPort = -1;
 		m_curTask = -1;
+		return;
+	}
+	if (m_bAbort&&(m_convertFileInfoList.at(m_curTask).state != NOTSTART&&m_convertFileInfoList.at(m_curTask).state != STOP))
+	{
+		GoNextConvert();
 		return;
 	}
 	SetCtrlEnabled(false);
@@ -485,6 +516,7 @@ void CDialogConverter::GoNextConvert()
 
 	char szDstFileName[1024];
 	strcpy(szDstFileName, textcode->fromUnicode(dstFile).data());
+	m_convertFileInfoList[m_curTask].dstPathFileName = dstFile;
 
 	bool ret = GetPlayerInterface(&m_nPort);
 	if (ret)
@@ -497,13 +529,13 @@ void CDialogConverter::GoNextConvert()
 			{
 				pItem->setText(QStringLiteral("进行中"));
 			}
-			//SetCtrlEnabled(false);
 		}
 		else{
 			QTableWidgetItem *pItem = ui.tableWidget->item(m_curTask, State);
 			if (pItem)
 			{
-				pItem->setText(QStringLiteral("失败"));
+				//pItem->setText(QStringLiteral("失败！无法读取源文件有效数据"));
+				pItem->setText(QStringLiteral("失败(此文件不支持)"));
 			}
 			StopCurTask();
 			GoNextConvert();
@@ -532,9 +564,23 @@ void CDialogConverter::StopCurTask()
 	FreePlayerInterface(m_nPort);
 }
 
+void CDialogConverter::UkeyDownStop()
+{
+	if (m_pPreviewDlg)
+	{
+		((CDialogConverterPreview*)m_pPreviewDlg)->UkeyDownStop();
+	}
+	if (!ui.BtnStart->isEnabled())
+	{
+		OnBtnStopClick();
+	}
+}
+
+
 void CDialogConverter::OnBtnStopClick()
 {
 	StopCurTask();
+	m_convertFileInfoList[m_curTask].state = STOP;
 	QTableWidgetItem *pItem = ui.tableWidget->item(m_curTask, State);
 	if (pItem)
 	{
@@ -563,19 +609,33 @@ void  CDialogConverter::TimeGetProgress()
 			pItem->setText(QString("%1\%").arg(progress));
 		}
 		if (progress == 100)
-		{
-			m_convertFileInfoList[m_curTask].state = FINISH;
-			QTableWidgetItem *pItem = ui.tableWidget->item(m_curTask, State);
-			if (pItem)
-			{
-				pItem->setText(QStringLiteral("完成"));
-			}
+		{		
 			StopCurTask();
+
+			QTableWidgetItem *pItem = ui.tableWidget->item(m_curTask, State);
+			bool bRet = m_PlayCtrl->OpenAndPlayFile(m_convertFileInfoList.at(m_curTask).dstPathFileName,NULL);
+			if (bRet)
+			{
+				m_PlayCtrl->StopAudio();
+				pItem->setText(QStringLiteral("成功"));
+			}
+			else
+			{
+	
+				pItem->setText(QStringLiteral("失败(此文件不支持)"));
+				pItem = ui.tableWidget->item(m_curTask, Progress);
+				pItem->setText(QString("%1\%").arg(0));
+				
+			}
+			m_PlayCtrl->Stop();
+
+			m_convertFileInfoList[m_curTask].state = FINISH;	
+
 			GoNextConvert();
 		}
-		else if (progress == -1)//出错
+		/*else if (progress == -1)//出错
 		{
-			m_convertFileInfoList[m_curTask].state = ERROR;
+			m_convertFileInfoList[m_curTask].state = CONVERTERROR;
 			QTableWidgetItem *pItem = ui.tableWidget->item(m_curTask, State);
 			if (pItem)
 			{
@@ -583,7 +643,7 @@ void  CDialogConverter::TimeGetProgress()
 			}
 			StopCurTask();
 			GoNextConvert();
-		}
+		}*/
 	
 	}
 }

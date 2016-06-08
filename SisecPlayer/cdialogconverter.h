@@ -28,7 +28,7 @@ enum Convert_State{
 	PAUSE,
 	STOP,
 	FINISH,
-	ERROR,
+	CONVERTERROR,
 };
 
 class CDialogConverter;
@@ -58,6 +58,7 @@ public:
 public:
 	int GetRowProgress(int row);
 	void StartReadSrcFileInfo();
+	void UkeyDownStop();
 private:
 	void GoNextConvert();
 	void StopCurTask();
@@ -72,6 +73,7 @@ protected slots:
 	void OnBtnFileDelClick();
 	void OnBtnEditClick();
 	void OnBtnFileDelAllClick();
+	void OnBtnFilePathClick();
 	void OnBtnStartClick();
 	void OnBtnStopClick();
 	void OnItemDoubleClicked(QTableWidgetItem*item);
@@ -89,10 +91,12 @@ private:
 
 	QTimer *m_getProgressTimer;
 	int m_curTask;
+	bool m_bAbort;
 	
 	QMessageBox m_msgDlg;
 
 	Thread m_threadReadSrcFile;
+	QDialog *m_pPreviewDlg;
 
 };
 
