@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--VCAsys XML configuration schema-->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ChannelSettings" type="channel_set" />
+        <xs:element name="ZoneSettings" type="zone_set" />
+        <xs:element name="EventSettings" type="event_set" />
+        <xs:element name="CounterSettings" type="counter_set" />
+        <xs:element name="CalibrationSettings" type="calib_set" />
+        <xs:element name="ClassificationSettings" type="cls_set" />
+        <xs:element name="BIASettings" type="bia_set" />
+        <xs:element name="TamperDetectionSettings" type="tamper_set" />
+        <xs:element name="LicenseSettings" type="lic_set" />
+        <xs:element name="PTZTrackingSettings" type="ptz_set" />
+        <xs:element name="SceneChangeDetectionSettings" type="scd_set" />
+      </xs:sequence>
+      <xs:attribute name="schema_version" type="xs:string" fixed="1.4" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="channel_set">
+    <xs:sequence>
+      <xs:element name="License" type="lic" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="EnableStb" type="xs:unsignedInt" />
+    <xs:attribute name="EnableAbObj" type="xs:unsignedInt" />
+    <xs:attribute name="EnableMovObj" type="xs:unsignedInt" />
+    <xs:attribute name="EnableCntLine" type="xs:unsignedInt" />
+    <xs:attribute name="EnableSmokeFire" type="xs:unsignedInt" />
+    <xs:attribute name="TrackMode" type="xs:string" />
+    <xs:attribute name="MetadataFormat" type="xs:unsignedInt" />
+    <xs:attribute name="RetrigTime" type="xs:unsignedInt" />
+    <xs:attribute name="MeasurementUnits" type="xs:unsignedInt" />
+    <xs:attribute name="StatHoldonTime" type="xs:unsignedInt" />
+    <xs:attribute name="MinObjectArea" type="xs:unsignedInt" />
+    <xs:attribute name="AlarmDwell" type="xs:unsignedInt" />
+    <xs:attribute name="FadeoutDwell" type="xs:unsignedInt" />
+    <xs:attribute name="TotalLicenses" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="lic">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="zone_set">
+    <xs:sequence>
+      <xs:element name="Zone" type="zone_s" />
+    </xs:sequence>
+    <xs:attribute name="TotalZones" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="zone_s">
+    <xs:sequence>
+      <xs:element name="Point" type="point_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Type" type="xs:unsignedInt" />
+    <xs:attribute name="Style" type="xs:unsignedInt" />
+    <xs:attribute name="Color" type="xs:unsignedInt" />
+    <xs:attribute name="Display" type="xs:unsignedInt" />
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="TotalPoints" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="point_s">
+    <xs:sequence />
+    <xs:attribute name="X" type="xs:unsignedShort" />
+    <xs:attribute name="Y" type="xs:unsignedShort" />
+  </xs:complexType>
+  <xs:complexType name="event_set">
+    <xs:sequence>
+      <xs:element name="Event" type="event_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="TotalEvents" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="event_s">
+    <xs:sequence>
+      <xs:element name="Rule" type="rule_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Type" type="xs:unsignedInt" />
+    <xs:attribute name="NumRules" type="xs:unsignedInt" />
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="rule_s">
+    <xs:sequence>
+      <xs:element name="TrackingObject" type="trk_obj" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Logic" type="xs:unsignedInt" />
+    <xs:attribute name="RuleType" type="xs:unsignedInt" />
+    <xs:attribute name="iTotalTrkObjs" type="xs:unsignedInt" />
+    <xs:attribute name="RuleDataSize" type="xs:unsignedInt" />
+    <xs:attribute name="RuleData" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="trk_obj">
+    <xs:sequence />
+    <xs:attribute name="Id" type="xs:unsignedByte" />
+  </xs:complexType>
+  <xs:complexType name="counter_set">
+    <xs:sequence>
+      <xs:element name="Counter" type="counter_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="TotalCounters" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="counter_s">
+    <xs:sequence>
+      <xs:element name="Point" type="point_s" maxOccurs="unbounded" minOccurs="0" />
+      <xs:element name="SubCounter" type="subcounter_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Color" type="xs:unsignedInt" />
+    <xs:attribute name="Display" type="xs:unsignedInt" />
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="NumSubCounters" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="subcounter_s">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+    <xs:attribute name="Type" type="xs:unsignedInt" />
+    <xs:attribute name="TrigId" type="xs:unsignedInt" />
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="calib_set">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Mode" type="xs:unsignedInt" />
+    <xs:attribute name="TiltAngle" type="xs:float" />
+    <xs:attribute name="RollAngle" type="xs:float" />
+    <xs:attribute name="PanAngle" type="xs:float" />
+    <xs:attribute name="CamHeight" type="xs:float" />
+    <xs:attribute name="FOV" type="xs:float" />
+  </xs:complexType>
+  <xs:complexType name="cls_set">
+    <xs:sequence>
+      <xs:element name="Classification" type="cls_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="TotalClassifications" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="cls_s">
+    <xs:sequence>
+      <xs:element name="Area" type="area_s" maxOccurs="unbounded" minOccurs="0" />
+      <xs:element name="Speed" type="speed_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="Position" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="area_s">
+    <xs:sequence />
+    <xs:attribute name="LowerThreshold" type="xs:float" />
+    <xs:attribute name="UpperThreshold" type="xs:float" />
+  </xs:complexType>
+  <xs:complexType name="speed_s">
+    <xs:sequence />
+    <xs:attribute name="LowerThreshold" type="xs:float" />
+    <xs:attribute name="UpperThreshold" type="xs:float" />
+  </xs:complexType>
+  <xs:complexType name="bia_set">
+    <xs:sequence>
+      <xs:element name="BIAStream" type="bia_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="TotalBIASteams" type="xs:unsignedInt" />
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="bia_s">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="DrawingFlags" type="xs:unsignedInt" />
+    <xs:attribute name="AlarmObjectColor" type="xs:unsignedInt" />
+    <xs:attribute name="NonAlarmObjectColor" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="tamper_set">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="AlarmTimeout" type="xs:unsignedInt" />
+    <xs:attribute name="FiredAreaThreshold" type="xs:unsignedInt" />
+    <xs:attribute name="LowLightEnable" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="lic_set">
+    <xs:sequence>
+      <xs:element name="License" type="lic_s" />
+    </xs:sequence>
+    <xs:attribute name="TotalLicenses" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="lic_s">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Id" type="xs:unsignedInt" />
+    <xs:attribute name="Features" type="xs:string" />
+    <xs:attribute name="Desc" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ptz_set">
+    <xs:sequence>
+      <xs:element name="AutoTracking" type="at_s" />
+    </xs:sequence>
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="HomePreset" type="xs:unsignedInt" />
+    <xs:attribute name="HomeTrackingOnly" type="xs:unsignedInt" />
+    <xs:attribute name="Return2Home" type="xs:unsignedInt" />
+    <xs:attribute name="Return2HomeTimeout" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="at_s">
+    <xs:sequence>
+      <xs:element name="Rule" type="atrule_s" maxOccurs="unbounded" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="Enable" type="xs:unsignedInt" />
+    <xs:attribute name="Profile" type="xs:string" />
+    <xs:attribute name="MaxTrackingTime" type="xs:unsignedInt" />
+    <xs:attribute name="HoldonTime" type="xs:unsignedInt" />
+    <xs:attribute name="ManualOverride" type="xs:unsignedInt" />
+    <xs:attribute name="ManualOverrideTimeout" type="xs:unsignedInt" />
+    <xs:attribute name="TriggerbyRule" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="atrule_s">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:unsignedInt" />
+  </xs:complexType>
+  <xs:complexType name="scd_set">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="Mode" type="xs:unsignedInt" />
+    <xs:attribute name="AlarmTimeout" type="xs:unsignedInt" />
+    <xs:attribute name="FiredAreaThreshold" type="xs:unsignedInt" />
+  </xs:complexType>
+</xs:schema>

@@ -1,6 +1,10 @@
 #ifndef _GET_MAC_H_
 #define _GET_MAC_H_
 
+#ifndef POINTER_64
+#define	POINTER_64	__ptr64
+#endif
+
 #include <winsock.h>
 #include <Iphlpapi.h>
 #include <iostream>

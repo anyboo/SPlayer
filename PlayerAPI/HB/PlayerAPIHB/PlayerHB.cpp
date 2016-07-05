@@ -253,6 +253,19 @@ DWORD CPlayerHB::GetPlayedTime()
 	return dTime/1000;
 }
 
+BOOL CPlayerHB::SetPlayedTimeEx(DWORD nTime)
+{
+	HRESULT hRet = HB_PLAY2_SeekByTime(m_hPlay, nTime);
+	if (HBPLAY2_OK == hRet)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 BOOL  CPlayerHB::GetPictureSize(LONG *pWidth, LONG *pHeight)
 {
 	return HB_PLAY2_GetPictureSize(m_hPlay, (int*)pWidth, (int*)pHeight);
@@ -297,6 +310,39 @@ BOOL  CPlayerHB::SetFileEndCallback(long nID, FileEndCallback callBack, void *pU
 {
 	HB_PLAY2_RegisterFileEndedCallback(m_hPlay,(PHB_PLAY2_FILE_ENDED_PROC)callBack, pUser);
 	return true;
+}
+
+
+BOOL CPlayerHB::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
+{
+	return false;
+	bool bRet = HB_PLAY2_RegisterDecodeCallback(m_hPlay, 0, (PHB_PLAY2_DECODE_PROC)&DecCBFun, (PVOID)this);
+	if (bRet)
+	{
+		m_DisplayCallbackFun = displayCallback;
+		m_DisplayCalUser = nUser;
+	}
+	return bRet;
+}
+
+void  CPlayerHB::DecCBFun(IN HHBPLAY2 hPlay, IN const HBPLAY2_FRAME* pFrame, IN PVOID pContext)
+{
+	CPlayerHB *pPlayer = (CPlayerHB*)pContext;
+
+	if (pPlayer&&pPlayer->m_DisplayCallbackFun&&
+		pFrame->FrameType == HBPLAY2_FRAME_VIDEO_I || pFrame->FrameType == HBPLAY2_FRAME_VIDEO_P || pFrame->FrameType == HBPLAY2_FRAME_VIDEO_B || pFrame->FrameType == HBPLAY2_FRAME_VIDEO_E )
+	{
+		DISPLAYCALLBCK_INFO displayInfo;
+		displayInfo.pBuf = (char*)pFrame->u.Video.pBuffer;
+		displayInfo.nBufLen = pFrame->u.Video.dwBufferLength;
+		displayInfo.nWidth = pFrame->u.Video.nWidth;
+		displayInfo.nHeight = pFrame->u.Video.nHeight;
+		displayInfo.nStamp = pPlayer->GetPlayedTime();
+		displayInfo.nStamp = pFrame->u.Video.TimeStamp.wSecond;
+		displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+		pPlayer->m_DisplayCallbackFun(&displayInfo);
+
+	}
 }
 
 BOOL  CPlayerHB::CapturePic(char *pSaveFile, int iType)

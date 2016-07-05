@@ -13,6 +13,7 @@ public:
 	virtual ~CPlayerFactoryViss(){}
 public:
 	virtual BOOL IsBelongThis(char *pFile);
+	virtual BOOL IsSupport22Renader(){ return false; }
 	virtual char* Name();
 
 	virtual BOOL Init();
@@ -46,6 +47,7 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL SetPlayedTimeEx(DWORD nTime);
 	BOOL GetPictureSize(LONG *pWidth, LONG *pHeight);
 
 	BOOL  SetFileEndCallback(LONG nID, FileEndCallback callBack, void *pUser);

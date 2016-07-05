@@ -2,9 +2,9 @@
 #define CWIDGETPLAYWND_H
 
 #include <QWidget>
+#include <time.h>
 #include "ui_cwidgetplaywnd.h"
 #include <qpainter.h>
-#include <time.h>
 
 enum COUSTOM_EVENT{
 	CUSTOM_AutoStop_EVENT= 5000 + 1,//文件播放完自动回调
@@ -38,7 +38,7 @@ public:
 
 	QString strFileName;
 };
-
+class CZoneSettingCtl;
 class CWidgetPlayWnd : public QWidget
 {
 	Q_OBJECT
@@ -46,17 +46,21 @@ class CWidgetPlayWnd : public QWidget
 public:
 	CWidgetPlayWnd(int index,QWidget *parent = 0);
 	~CWidgetPlayWnd();
+
+public:
 signals:
 	void ShowColorDlg();
 public:
 	virtual void paintEvent(QPaintEvent *event);
 	virtual void resizeEvent(QResizeEvent * event);
 	virtual void mousePressEvent(QMouseEvent * event);
+	virtual void mouseReleaseEvent(QMouseEvent * event);
 	virtual void mouseMoveEvent(QMouseEvent * event);
 	virtual void leaveEvent(QEvent * event);
 	virtual void mouseDoubleClickEvent(QMouseEvent * event);
 	virtual void wheelEvent(QWheelEvent * event);
 public:
+	void SetZoneCtrl(CZoneSettingCtl* pZoneCtrl){ m_pZoneCtrl = pZoneCtrl; }
 	void setCorrectTime(unsigned long long timeStamp)
 	{
 		if (timeStamp == 0)
@@ -83,12 +87,19 @@ public:
 		ui.BtnFullScreen->hide();
 		ui.BtnColor->hide();
 	}
+	void HideToolBar()//禁止鼠标移动时toolbar显示会影响画图
+	{		
+		m_bHideToolBar = true;
+	}
 	void Refresh(){
 		this->repaint();
 		ui.widgetRender->repaint();
 	}
 	int Index(){ return m_index; }
 	int GetPlayWndID(){ return ui.widgetRender->winId(); }
+	QRect GetRenderClientRect(){
+		return ui.widgetRender->geometry();
+	}
 	void SetSpeedString(QString strSpeed){ ui.labelSpeed->setText(strSpeed); }
 	void SetPauseString(QString strPause){ ui.labelPause->setText(strPause); }
 	void SetTitleFileName(QString strFile){ 
@@ -135,6 +146,9 @@ private:
 	bool m_bFix;//固定工具条
 	QList<QRect> m_listScaleRC;
 	bool m_previewMode;//预览模式
+	bool m_bHideToolBar;//隐藏工具栏，影响VCA画图
+
+	CZoneSettingCtl *m_pZoneCtrl;
 };
 
 #endif // CWIDGETPLAYWND_H

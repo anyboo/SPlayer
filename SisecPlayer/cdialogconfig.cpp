@@ -44,7 +44,7 @@ QString  CDialogConfig::m_strConvertPath = "";
 QString  CDialogConfig::m_strPicPath="";
 int  CDialogConfig::m_picType=1;//jpg
 int  CDialogConfig::m_picRepeatCount=5;
-
+bool  CDialogConfig::s_VCARenderVisible = true;
 void CDialogConfig::ReadConfigXml()
 {
 	QString strPlayListXml = QApplication::applicationDirPath() + "/config.xml";
@@ -57,6 +57,7 @@ void CDialogConfig::ReadConfigXml()
 		m_strPicPath = QStringLiteral("D:/PictureCut");
 		m_picType = 1;
 		m_picRepeatCount = 5;
+		s_VCARenderVisible = true;
 		return;
 	}
 
@@ -98,7 +99,10 @@ void CDialogConfig::ReadConfigXml()
 		{
 			m_picRepeatCount = text.toInt();
 		}
-
+		else if (nodeName == "VCARenderVisible")
+		{
+			s_VCARenderVisible = text.toInt();
+		}
 		note = note.nextSiblingElement();
 	}
 
@@ -150,6 +154,11 @@ bool CDialogConfig::WriteConfigXml()
 	QDomText notePicCountText = doc.createTextNode(QString("%1").arg(m_picRepeatCount));
 	notePicCount.appendChild(notePicCountText);
 	root.appendChild(notePicCount);
+
+	QDomElement noteVCARnderVisible= doc.createElement("VCARenderVisible");
+	QDomText noteVisbleText = doc.createTextNode(QString("%1").arg(s_VCARenderVisible));
+	noteVCARnderVisible.appendChild(noteVisbleText);
+	root.appendChild(noteVCARnderVisible);
 
 	QString strPlayListXml = QApplication::applicationDirPath() + "/config.xml";
 	QFile file(strPlayListXml);

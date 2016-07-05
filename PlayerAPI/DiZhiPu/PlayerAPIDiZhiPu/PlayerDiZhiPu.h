@@ -41,11 +41,13 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL SetPlayedTimeEx(DWORD nTime);
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
 	BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
 	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL  SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser);
 	BOOL GetSystemTime(unsigned long long *pstSystemTime);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
@@ -59,6 +61,7 @@ public:
 	BOOL FileConvertPause(DWORD nPause);
 
 	static void CALLBACK CoverFileCallBackFun(DWORD CurrentPos, DWORD TotoalPos, long dwUser);//×ª»»½ø¶È
+	static void CALLBACK DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long lUser);
 public:
 	int m_process;
 private:

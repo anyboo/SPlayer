@@ -140,6 +140,17 @@ BOOL FFPlayer_Fast(LONG nID)
 	return false;
 }
 
+BOOL FFPlayer_FastNoDelay(LONG nID)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexffplayers);
+	FFPlayer_Info *pPlayerInfo = FindPlayer(nID);;
+	if (pPlayerInfo)
+	{
+		return pPlayerInfo->pPlayer->FastNoDelay();
+	}
+	return false;
+}
+
 BOOL FFPlayer_Slow(LONG nID)
 {
 	std::lock_guard<std::recursive_mutex> lock(s_mutexffplayers);
@@ -256,6 +267,17 @@ DWORD  FFPlayer_GetPlayedTime(LONG nID)
 	if (pPlayerInfo)
 	{
 		return pPlayerInfo->pPlayer->GetPlayedTime();
+	}
+	return 0;
+}
+
+BOOL  FFPlayer_SetPlayedTime(LONG nID, DWORD nTime)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexffplayers);
+	FFPlayer_Info *pPlayerInfo = FindPlayer(nID);;
+	if (pPlayerInfo)
+	{
+		return pPlayerInfo->pPlayer->SetPlayedTime(nTime);
 	}
 	return 0;
 }

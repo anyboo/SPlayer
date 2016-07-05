@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../PlayerFactory/IPlayer.h"
-
+#include "../inc/TLPlay.h"
 class CPlayerFactoryJunMingShi :public IPlayerFactory
 {
 public:
@@ -46,8 +46,11 @@ public:
 	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL  SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
+
+	static void CALLBACK DecCBFun(long nPort, unsigned char* pBuf, long nSize, DECFRAME_INFO* pFrameInfo, unsigned int dwContext);
 private:
 	HWND m_hwnd;
 };

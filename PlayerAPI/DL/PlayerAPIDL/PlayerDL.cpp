@@ -225,6 +225,36 @@ BOOL  CPlayerDL::SetFileEndCallback(long nID, FileEndCallback callBack, void *pU
 	return false;
 }
 
+BOOL  CPlayerDL::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
+{
+	bool bRet = NET_DLDVR_SetYUVDataCallBack(m_nPort, DisplayCBFunBack, (LONG)this);
+	if (bRet)
+	{
+		m_DisplayCallbackFun = displayCallback;
+		m_DisplayCalUser = nUser;
+	}
+	return bRet;
+}
+
+void CPlayerDL::DisplayCBFunBack(LONG lHandle, DWORD /*dwDataType*/dwFrameRate, BYTE *pBuffer,
+	DWORD nWidth, DWORD nHeight, int err, DWORD dwUser)
+{
+	CPlayerDL *pPlayer = (CPlayerDL*)dwUser;
+
+	if (pPlayer&&pPlayer->m_DisplayCallbackFun)
+	{
+		DISPLAYCALLBCK_INFO displayInfo;
+		displayInfo.pBuf = (char*)pBuffer;
+		displayInfo.nBufLen = nWidth*nHeight*3/2;
+		displayInfo.nWidth = nWidth;
+		displayInfo.nHeight = nHeight;
+		displayInfo.nStamp = pPlayer->GetPlayedTime();
+		displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+		pPlayer->m_DisplayCallbackFun(&displayInfo);
+
+	}
+}
+
 BOOL  CPlayerDL::CapturePic(char *pSaveFile, int iType)
 {
 	return NET_DLDVR_CapturePicture(m_nPort, pSaveFile);

@@ -234,6 +234,11 @@ DWORD CPlayerZNV::GetPlayedTime()
 	return Play_GetPlayedTime(m_nPort);
 }
 
+BOOL CPlayerZNV::SetPlayedTimeEx(DWORD nTime)
+{
+	return Play_SetPlayedTime(m_nPort, nTime);
+}
+
 BOOL  CPlayerZNV::GetPictureSize(LONG *pWidth, LONG *pHeight)
 {
 	return Play_GetVideoInfo(m_nPort, (int*)pWidth, (int*)pHeight);
@@ -267,9 +272,10 @@ BOOL  CPlayerZNV::SetFileEndCallback(LONG nID, FileEndCallback callBack, void *p
 
 BOOL  CPlayerZNV::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
 {
+	return false;
 	m_DisplayCallbackFun = displayCallback;
 	m_DisplayCalUser = nUser;
-	int nRet = Play_SetYUVCallBack(m_nPort, (Play_VideoYUVCallBack)&DisplayCBFunBack, (long)this);
+	int nRet = Play_SetYUVCallBack(m_nPort, (Play_VideoYUVCallBack)&DisplayCBFunBack, (long)this);//无效，无数据回调
 	if (nRet == 0)
 	{
 		return true;
@@ -283,13 +289,16 @@ BOOL  CPlayerZNV::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, 
 void CPlayerZNV::DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, unsigned __int64 nStamp, long nType, long nReserved)
 {
 	CPlayerZNV* pPlayer = (CPlayerZNV*)nReserved;
-	DISPLAYCALLBCK_INFO displayInfo;
-	displayInfo.pBuf = (char*)pBuf;
-	displayInfo.nWidth = nWidth;
-	displayInfo.nHeight = nHeight;
-	displayInfo.nStamp = nStamp;
-	displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
-	pPlayer->m_DisplayCallbackFun(&displayInfo);
+	if (pPlayer)
+	{
+		DISPLAYCALLBCK_INFO displayInfo;
+		displayInfo.pBuf = (char*)pBuf;
+		displayInfo.nWidth = nWidth;
+		displayInfo.nHeight = nHeight;
+		displayInfo.nStamp = nStamp;
+		displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+		pPlayer->m_DisplayCallbackFun(&displayInfo);
+	}
 }
 
 BOOL  CPlayerZNV::GetSystemTime(unsigned long long *systemTime)

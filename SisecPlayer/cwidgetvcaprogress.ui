@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CWidgetVCAProgress</class>
+ <widget class="QWidget" name="CWidgetVCAProgress">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>930</width>
+    <height>611</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CWidgetVCAProgress</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+
+font-size:15px;   
+	font-family:Microsoft Yahei;
+		}</string>
+  </property>
+  <widget class="QTableWidget" name="tableWidgetFileVCA">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>30</y>
+     <width>931</width>
+     <height>571</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QTableView {
+  background: rgb(229,227,231);;
+/*border-image:url(:/VisitorSystem/png/tableimage.png);*/
+border:1px solid;
+border-color: rgb(160,160,160);
+selection-background-color:rgb(99, 99, 99);
+	alternate-background-color: rgb(216, 216, 216);
+selection-color:rgb(255, 255, 255);
+font-size:14px;
+	font-family:Microsoft Yahei;
+
+}
+QTableView::item{
+    height:35px;
+	
+	color: rgb(0, 0, 0);
+}
+
+QHeaderView::section {
+	font-size:16px;
+	font-family:Microsoft Yahei;	
+
+background-color: rgb(120,120,120);
+padding:1px;
+border:0px;
+	color: rgb(255, 255, 255);
+padding:2px,0px,2px,0px;
+border-right:1px solid #6c6c6c;
+border-bottom:1px solid #6c6c6c;
+}</string>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::NoEditTriggers</set>
+   </property>
+   <property name="alternatingRowColors">
+    <bool>true</bool>
+   </property>
+   <property name="selectionBehavior">
+    <enum>QAbstractItemView::SelectRows</enum>
+   </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="horizontalHeaderHighlightSections">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <column>
+    <property name="text">
+     <string>序号</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>文件名</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>文件大小</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>屏幕大小</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>文件时间</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>检索进度</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>状态</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>检索事件总数</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>检索消耗时间</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QPushButton" name="BtnStart">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>1</y>
+     <width>71</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+QPushButton{
+color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:15px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string>暂停</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="BtnStop">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>1</y>
+     <width>121</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+QPushButton{
+color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:15px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string>停止并清空列表</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxRenderShow">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>3</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>显示视频</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelInform">
+   <property name="geometry">
+    <rect>
+     <x>573</x>
+     <y>280</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>注: 显示视频会降低检索速度</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

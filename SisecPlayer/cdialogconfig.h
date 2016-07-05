@@ -20,6 +20,7 @@ public:
 		picType = m_picType;
 		picRepeatCount = m_picRepeatCount;
 	}
+	static bool GetVCARenderVisible(){ return s_VCARenderVisible; }
 protected slots:
 	void OnBtnOpenClick();
 	void OnBtnConfigClick();
@@ -32,6 +33,7 @@ public:
 	static QString m_strPicPath;
 	static int m_picType;
 	static int m_picRepeatCount;
+	static bool s_VCARenderVisible;
 };
 
 #endif // CDIALOGCONFIG_H

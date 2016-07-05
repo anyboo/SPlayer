@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CWidgetVCAResult</class>
+ <widget class="QWidget" name="CWidgetVCAResult">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>932</width>
+    <height>631</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CWidgetVCAResult</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+
+font-size:15px;   
+	font-family:Microsoft Yahei;
+		}</string>
+  </property>
+  <widget class="QTreeWidget" name="treeWidgetVCA">
+   <property name="geometry">
+    <rect>
+     <x>1</x>
+     <y>33</y>
+     <width>161</width>
+     <height>561</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(106, 106, 106);</string>
+   </property>
+   <attribute name="headerVisible">
+    <bool>false</bool>
+   </attribute>
+   <column>
+    <property name="text">
+     <string notr="true">1</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QPushButton" name="BtnDelAll">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>112</x>
+     <y>1</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>清空列表</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+background-image: url(:/Skin/Delete.png)0 0 repeat;
+
+color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:17px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="BtnDel">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>1</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:17px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="sisecplayer.qrc">
+     <normaloff>:/Skin/deleteRule.png</normaloff>:/Skin/deleteRule.png</iconset>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="listWidgetImage">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>227</y>
+     <width>191</width>
+     <height>341</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(121, 121, 121);
+color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="dragDropMode">
+    <enum>QAbstractItemView::DragDrop</enum>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>80</width>
+     <height>80</height>
+    </size>
+   </property>
+   <property name="viewMode">
+    <enum>QListView::IconMode</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxObject">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>10</y>
+     <width>111</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>显示跟踪框</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxRule">
+   <property name="geometry">
+    <rect>
+     <x>630</x>
+     <y>10</y>
+     <width>101</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>显示规则</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelTotal">
+   <property name="geometry">
+    <rect>
+     <x>741</x>
+     <y>10</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>共0条结果</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="BtnPre">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>860</x>
+     <y>6</y>
+     <width>71</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+QPushButton{
+color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:14px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string>显示上页</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="BtnNext">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>850</x>
+     <y>571</y>
+     <width>81</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+QPushButton{
+color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:14px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+   </property>
+   <property name="text">
+    <string>显示下页</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelRemain">
+   <property name="geometry">
+    <rect>
+     <x>739</x>
+     <y>577</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>剩0条结果</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelRule">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>120</y>
+     <width>71</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>检索条件:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>120</y>
+     <width>281</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frameColor">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>4</y>
+     <width>271</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="labelRule_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>2</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>目标颜色:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelColor">
+    <property name="geometry">
+     <rect>
+      <x>93</x>
+      <y>2</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelColorPrecen">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>2</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>10%</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="CWidgetImageView" name="widgetImage" native="true">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>40</y>
+     <width>181</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(80, 80, 80);</string>
+   </property>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CWidgetImageView</class>
+   <extends>QWidget</extends>
+   <header>cwidgetimageview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="sisecplayer.qrc"/>
+ </resources>
+ <connections/>
+</ui>

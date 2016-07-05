@@ -12,21 +12,17 @@
 #include <QMimeData>
 #include <qthread.h>
 #include "cdialogdubbing.h"
+//#include "cdialogvca.h"
 #include <qmessagebox.h>
 
+class CDialogVCAMain;
 enum PLAYLIST_MODE{
 	SINGLE = 0,
 	LIST,
 	SINGLE_REPEAT,
 	LIST_REPEAT,
 };
-enum RENDER_MODE
-{
-	RenderIni=0,
-	RenderStrech,
-	Render4_3,
-	Render16_9,
-};
+
 
 enum WND_MODE
 {
@@ -40,6 +36,11 @@ enum CapturePicType
 	BMP=0,
 	JPG,
 };
+
+typedef  bool (*GetImageProcessInterfaceFun)(int *port);
+typedef  bool( *FreeImageProcessInterfaceFun)(int port);
+typedef bool(*InitProcessFun)(int port, char *filter_descr, int width, int height, int format);
+typedef bool(* ImageProcessFun)(int port, char *pBuffer, int width, int height, int format);
 
 class UkeyThread :public QThread
 {
@@ -94,13 +95,13 @@ protected:
 	void SetCurPlayListIndex(QString strPathName);
 	void SetFullScreen(QWidget *pWnd);
 	void PlayIndex(CFormPlayCtrl *pPlayCtrl,bool bNext, bool bListRepeat = false);
-	void SetRenderMode(int index);
 	void IniSysMenu();
 	void IniWndMenu();
 	void IniPlayListMenu();
 	void PaintWndRect(QPainter &painter, int num);
 	void SetWndGrid(int &top, int &left, int &twidth, int &theight, int num,int grid);
 	bool CheckPicPath(QString picPath);
+	static bool GetImageProcessFun();
 public slots:
 	void OnBtnCloseClick();
 protected slots:
@@ -115,10 +116,13 @@ protected slots:
 	void OnBtnFileDelAllClick();
 	void OnActivated(int index);
 	void OnBtnHideListClick();
+	void OnBtnVCAClick();
 	void OnListWidgetItemDbClick(QListWidgetItem * item);
+	void OnTreeWidgetItemDbClick(QTreeWidgetItem* pItem, int column);
 	void OnPlayModeTriggered(QAction*act);
 	void OnRenderModeTriggered(QAction*act);
 	void OnWndModeTriggered(QAction*act);
+	void OnVCATriggered();
 	void OnConfigTriggered(); 
 	void OnConvertTriggered(); 
 	void OnCutTriggered();
@@ -168,6 +172,7 @@ private:
 
 
 	QAction *m_configAct;
+	QAction *m_vcaAct;
 	QAction *m_converterAct;
 	QAction *m_cutAct;
 	QAction *m_updateAct;
@@ -191,6 +196,15 @@ private:
 	QMessageBox m_ukeyDownMsgdlg;
 	QDialog *m_pConvertDlg;//指向转码对话框，如果ukey断开后要立即停止转码
 	QDialog *m_pCutDlg;//指向剪切对话框，如果ukey断开后要立即停止转码
+
+//	CDialogVCA *m_pVCAdlg;
+
+	CDialogVCAMain *m_pVCAMaindlg;
+public:
+	static GetImageProcessInterfaceFun s_GetImgProInterfaceFun;
+	static FreeImageProcessInterfaceFun s_FreeImgProInterfaceFun;
+	static ImageProcessFun s_ImgProcessFun;
+	static InitProcessFun s_InitImgProcessFun;
 };
 
 #endif // CDIALOGMAIN_H

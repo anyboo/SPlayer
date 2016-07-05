@@ -2,6 +2,8 @@
 #include "ffplayer.h"
 #include <atlconv.h>
 #include "untils.h"
+#define FF_API_AVFILTER_OPEN 1
+#include "FileConverter.h"
 
 std::recursive_mutex g_mutexFFmpeg;
 std::recursive_mutex g_mutexSDL;
@@ -177,6 +179,9 @@ ffplayer::ffplayer()
 	m_bStepEnd = false;
 
 	m_pFileConverter = NULL;
+
+	m_bFastNoDelay = false;
+	m_seekTime = 0;
 }
 
 
@@ -553,6 +558,12 @@ BOOL ffplayer::Fast()
 	return true;
 }
 
+BOOL ffplayer::FastNoDelay()
+{
+	m_bFastNoDelay = true;
+	return true;
+}
+
 BOOL ffplayer::Slow()
 {
 	if (m_iSpeed < 0)
@@ -615,6 +626,21 @@ BOOL  ffplayer::SetPlayPos(float fRelativePos)
 	m_fSeekRelativePos = fRelativePos;
 	
 //	SDL_CondSignal
+	return true;
+}
+
+BOOL  ffplayer::SetPlayedTime(DWORD nTime)
+{	
+	DWORD FileTime = GetFileTime();
+	if (FileTime == 0)
+	{
+		m_seekTime = 0;
+		return false;
+	}
+
+	float fPos = (float) nTime / (float)FileTime;
+	SetPlayPos(fPos);
+	m_seekTime = nTime;
 	return true;
 }
 
@@ -1398,10 +1424,12 @@ int  ffplayer::Async(__int64 &pts)//同步
 		{
 			double delay = compute_target_delay(duation);
 			dif = delay*1000.0;
-		/*	sprintf_s(buf, "dif2:%d\n", dif);
-			::OutputDebugString(A2T(buf));*/
-		}else
-			dif = duation* 1000;
+			/*	sprintf_s(buf, "dif2:%d\n", dif);
+				::OutputDebugString(A2T(buf));*/
+		}
+		else{
+			dif = duation * 1000;
+		}
 				
 	}else
 	{
@@ -1501,7 +1529,10 @@ void ffplayer::UpdateVideoPts(PInfo pYuvInfo)
 
 void ffplayer::RenderThreadRun()
 {
-	CreateRender();
+	if (m_hwnd)
+	{
+		CreateRender();
+	}
 
 	int iWidth = 0;
 	int iHeight = 0;
@@ -1535,7 +1566,8 @@ void ffplayer::RenderThreadRun()
 			RefreshRender();
 			if (m_bFileEnd&&m_fileEndBak){
 				m_fileEndBak(m_nID, m_pUser);
-				break;
+				Sleep(1000);
+				continue;//
 			}
 			Sleep(10);
 			continue;
@@ -1547,8 +1579,29 @@ void ffplayer::RenderThreadRun()
 				if (pYuvInfo->frameInfo.serial == m_serial/*&&!m_bSeekState&&m_serial == m_audclk.serial*/)//暂停后再seek后，声音暂停了m_audclk.serial还是原来的，不等于m_serial
 				{
 					if (pYuvInfo->frameInfo.serial == m_lastserial){
+
+				/*		if (m_seekTime != 0)
+						{
+							//秒
+							double duation = pYuvInfo->frameInfo.iTimestampObsolute* av_q2d(m_pFormatCtx->streams[m_videoStream]->time_base);
+							if (m_seekTime < duation)
+							{
+								UpdateVideoPts(pYuvInfo);
+								m_freeRenderBuf.insertList(pYuvInfo);//
+								continue;
+							}
+							else
+							{
+								m_seekTime = 0;
+							}
+
+						}*/
 					//	if (m_serial == m_audclk.serial)//有这句会导致无音频的视频不会Async
-						int dif = Async(pYuvInfo->frameInfo.iTimestampObsolute);
+						if (!m_bFastNoDelay)
+						{
+							int dif = Async(pYuvInfo->frameInfo.iTimestampObsolute);
+						}
+						
 					/*	if (dif < 0)
 						{
 							UpdateVideoPts(pYuvInfo);
@@ -1568,7 +1621,8 @@ void ffplayer::RenderThreadRun()
 					m_freeRenderBuf.insertList(pYuvInfo);//另一个系列不用显示，忽略
 					continue;		
 				}
-			}
+			}		
+
 			if (m_displayBak)
 			{
 				DISPLAYCALLBCK_INFO pDisplayInfo;
@@ -1577,33 +1631,35 @@ void ffplayer::RenderThreadRun()
 				pDisplayInfo.nWidth = pYuvInfo->width;
 				pDisplayInfo.nHeight = pYuvInfo->height;
 				pDisplayInfo.nUser = (long)m_pDisplayUser;
+				pDisplayInfo.nStamp = GetPlayedTime();
 				m_displayBak(&pDisplayInfo);
 			}
-			/*
-			int w, h;
-			RECT rc;
-			GetWindowRect(m_hwnd, &rc);
-			w = rc.right - rc.left;
-			h = rc.bottom - rc.top;
-			if (iWidth != w || iHeight != h){
-				iWidth = w;
-				iHeight = h;
-				SDL_SetWindowSize(m_sdlWindow, w, h);
+			if (m_hwnd)
+			{
+				int w, h;
+				RECT rc;
+				GetWindowRect(m_hwnd, &rc);
+				w = rc.right - rc.left;
+				h = rc.bottom - rc.top;
+				if (iWidth != w || iHeight != h){
+					iWidth = w;
+					iHeight = h;
+					SDL_SetWindowSize(m_sdlWindow, w, h);
+				}
+
+				if (m_pTexture == NULL)
+					m_pTexture = SDL_CreateTexture(m_pRender, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING, pYuvInfo->width, pYuvInfo->height);
+
+
+				//计算yuv一行数据占的字节数
+				int iPitch = pYuvInfo->width*SDL_BYTESPERPIXEL(SDL_PIXELFORMAT_IYUV);
+
+				int i = SDL_UpdateTexture(m_pTexture, NULL, pYuvInfo->Data, iPitch);
+
+				SDL_RenderClear(m_pRender);
+				SDL_RenderCopy(m_pRender, m_pTexture, NULL, NULL);
+				SDL_RenderPresent(m_pRender);
 			}
-			
-			if (m_pTexture == NULL)
-				m_pTexture = SDL_CreateTexture(m_pRender, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STREAMING, pYuvInfo->width, pYuvInfo->height);
-
-
-			//计算yuv一行数据占的字节数
-			int iPitch = pYuvInfo->width*SDL_BYTESPERPIXEL(SDL_PIXELFORMAT_IYUV);
-
-			int i = SDL_UpdateTexture(m_pTexture, NULL, pYuvInfo->Data, iPitch);
-
-			SDL_RenderClear(m_pRender);
-			SDL_RenderCopy(m_pRender, m_pTexture, NULL, NULL);
-			SDL_RenderPresent(m_pRender);
-			*/
 			if (m_bReadFrameFinish)
 				m_curFrameCount++;
 			else

@@ -1,5 +1,5 @@
 #include "cmyslider.h"
-
+#include <QPainter>
 CMySlider::CMySlider(QWidget *parent)
 	: QSlider(parent)
 {
@@ -39,4 +39,17 @@ void CMySlider::mouseMoveEvent(QMouseEvent *ev)
 			this->setValue(pos);
 		}
 	}*/
+}
+
+void CMySlider::paintEvent(QPaintEvent *ev)
+{	
+	QSlider::paintEvent(ev);
+/*	QPainter painter(this);
+	QRect rcSlider = this->geometry();
+	QRect rc = rcSlider;
+	rc.setTop(0);
+	rc.setBottom(rc.bottom()-2);
+	rc.setLeft(100);
+	rc.setRight(200);
+	painter.fillRect(rc,QColor(255,0,0));*/
 }

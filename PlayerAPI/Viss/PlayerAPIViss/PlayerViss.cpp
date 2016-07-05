@@ -216,6 +216,11 @@ DWORD CPlayerViss::GetPlayedTime()
 	return nPosTime;
 }
 
+BOOL CPlayerViss::SetPlayedTimeEx(DWORD nTime)
+{
+	return Viss_SetPlayTimePos(m_nPort, nTime);
+}
+
 BOOL  CPlayerViss::GetPictureSize(LONG *pWidth, LONG *pHeight)
 {
 	//return Play_GetVideoInfo(m_nPort, (int*)pWidth, (int*)pHeight);
@@ -264,7 +269,8 @@ BOOL  CPlayerViss::SetDisplayCallback(LONG nID, DisplayCallback displayCallback,
 {
 	m_DisplayCallbackFun = displayCallback;
 	m_DisplayCalUser = nUser;
-	/*int nRet = Viss_SetDecodeCallback(m_nPort, &VissDecCallback,this );//这句话会导致有问题，显示不了
+	int nRet = Viss_SetDecodeCallback(m_nPort, &VissDecCallback,this );//Viss_SetDecodeCallbackEx
+	//int nRet = Viss_SetDecodeCallbackEx(m_nPort, &VissDecCallback, NULL,this);//
 	if (nRet >= 0)
 	{
 		return true;
@@ -272,13 +278,13 @@ BOOL  CPlayerViss::SetDisplayCallback(LONG nID, DisplayCallback displayCallback,
 	else
 	{
 		return false;
-	}*/
+	}
 	return false;
 }
 
 void CPlayerViss::VissDecCallback(long hHandle, FrameInfo* pFrame, void* pUser)
 {
-/*	if (YUV420 == pFrame->Type)
+	if (YUV420 == pFrame->Type)
 	{
 		CPlayerViss* pPlayer = (CPlayerViss*)pUser;
 
@@ -289,7 +295,7 @@ void CPlayerViss::VissDecCallback(long hHandle, FrameInfo* pFrame, void* pUser)
 		displayInfo.nStamp = pFrame->Timestamp;
 		displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
 		pPlayer->m_DisplayCallbackFun(&displayInfo);
-	}*/
+	}
 }
 
 BOOL  CPlayerViss::GetSystemTime(unsigned long long *systemTime)

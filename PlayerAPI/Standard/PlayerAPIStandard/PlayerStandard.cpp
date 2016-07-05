@@ -73,6 +73,11 @@ BOOL CPlayerStandard::Fast()
 	return FFPlayer_Fast(m_nPort);
 }
 
+BOOL CPlayerStandard::FastNoDelay()
+{
+	return FFPlayer_FastNoDelay(m_nPort);
+}
+
 BOOL CPlayerStandard::Slow()
 {
 	return FFPlayer_Slow(m_nPort);
@@ -127,6 +132,11 @@ DWORD CPlayerStandard::GetFileTime()
 DWORD CPlayerStandard::GetPlayedTime()
 {
 	return FFPlayer_GetPlayedTime(m_nPort);
+}
+
+BOOL CPlayerStandard::SetPlayedTimeEx(DWORD nTime)
+{
+	return FFPlayer_SetPlayedTime(m_nPort, nTime);
 }
 
 BOOL  CPlayerStandard::GetPictureSize(LONG *pWidth, LONG *pHeight)

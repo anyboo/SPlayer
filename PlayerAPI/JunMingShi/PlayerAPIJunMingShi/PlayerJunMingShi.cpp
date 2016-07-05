@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PlayerJunMingShi.h"
 
-#include "../inc/TLPlay.h"
+
 #pragma comment(lib,"../lib/TLPlay.lib")
 
 
@@ -163,6 +163,36 @@ BOOL  CPlayerJunMingShi::GetColor(DWORD nRegionNum, int *pBrightness, int *pCont
 BOOL CPlayerJunMingShi::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
 	return false;
+}
+
+BOOL CPlayerJunMingShi::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
+{
+	return false;
+	bool bRet = TLPlay_SetDecCallBack(m_nPort, DecCBFun, (LONG)this);
+	if (bRet)
+	{
+		m_DisplayCallbackFun = displayCallback;
+		m_DisplayCalUser = nUser;
+	}
+	return bRet;
+}
+
+void CPlayerJunMingShi::DecCBFun(long nPort, unsigned char* pBuf, long nSize, DECFRAME_INFO* pFrameInfo, unsigned int dwContext)
+{
+	CPlayerJunMingShi *pPlayer = (CPlayerJunMingShi*)dwContext;
+
+	if (pPlayer&&pPlayer->m_DisplayCallbackFun&&pFrameInfo->nType == T_VIDEO_YV12)
+	{
+		DISPLAYCALLBCK_INFO displayInfo;
+		displayInfo.pBuf = (char*)pBuf;
+		displayInfo.nBufLen = nSize;
+		displayInfo.nWidth = pFrameInfo->nWidth;
+		displayInfo.nHeight = pFrameInfo->nHeight;
+		displayInfo.nStamp = pFrameInfo->nStamp;
+		displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+		pPlayer->m_DisplayCallbackFun(&displayInfo);
+
+	}
 }
 
 BOOL  CPlayerJunMingShi::CapturePic(char *pSaveFile, int iType)

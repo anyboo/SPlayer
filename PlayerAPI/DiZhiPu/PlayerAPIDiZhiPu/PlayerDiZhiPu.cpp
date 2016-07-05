@@ -176,9 +176,43 @@ DWORD CPlayerDiZhiPu::GetPlayedTime()
 	return H264_PLAY_GetPlayedTime(m_nPort);
 }
 
+BOOL CPlayerDiZhiPu::SetPlayedTimeEx(DWORD nTime)
+{
+	return H264_PLAY_SetPlayedTimeEx(m_nPort, nTime);
+}
+
 BOOL  CPlayerDiZhiPu::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
 	return H264_PLAY_SetFileEndCallBack(m_nPort, (FileCallBack)callBack, (long)pUser);
+}
+
+BOOL  CPlayerDiZhiPu::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
+{
+	bool bRet =  H264_PLAY_SetDisplayCallBack(m_nPort, (DisplayCallBack)&DisplayCBFunBack, (LONG)this);
+	if (bRet)
+	{
+		m_DisplayCallbackFun = displayCallback;
+		m_DisplayCalUser = nUser;
+	}
+	return bRet;
+}
+
+void CPlayerDiZhiPu::DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long lUser)
+{
+	CPlayerDiZhiPu *pPlayer = (CPlayerDiZhiPu*)lUser;
+
+	if (pPlayer&&pPlayer->m_DisplayCallbackFun)
+	{
+		DISPLAYCALLBCK_INFO displayInfo;
+		displayInfo.pBuf = pBuf;
+		displayInfo.nBufLen = nSize;
+		displayInfo.nWidth = nWidth;
+		displayInfo.nHeight = nHeight;
+		displayInfo.nStamp = pPlayer->GetPlayedTime();
+		displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+		pPlayer->m_DisplayCallbackFun(&displayInfo);
+
+	}
 }
 
 BOOL  CPlayerDiZhiPu::CapturePic(char *pSaveFile, int iType)

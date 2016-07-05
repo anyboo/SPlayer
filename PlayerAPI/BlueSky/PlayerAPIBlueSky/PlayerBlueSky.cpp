@@ -273,6 +273,16 @@ DWORD CPlayerBlueSky::GetPlayedTime()
 	return (ltime - lBeginTime )/ 1000;
 }
 
+BOOL CPlayerBlueSky::SetPlayedTimeEx(DWORD nTime)
+{
+	int iRet = dvxLocalPlaySeek(m_hLocalPlay, nTime * 1000);
+	if (iRet == DVX_OK)
+	{
+		return true;
+	}
+	return false;
+}
+
 BOOL  CPlayerBlueSky::GetPictureSize(LONG *pWidth, LONG *pHeight)
 {
 	dvxPlayGetResolution(m_hLocalPlay, (int*)pWidth, (int*)pHeight);

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>715</width>
-    <height>340</height>
+    <width>538</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,8 +25,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>700</width>
-     <height>261</height>
+     <width>521</width>
+     <height>391</height>
     </rect>
    </property>
    <property name="tabPosition">
@@ -39,7 +39,7 @@
     <attribute name="title">
      <string>截图</string>
     </attribute>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -72,12 +72,12 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>681</width>
+       <width>501</width>
        <height>35</height>
       </rect>
      </property>
@@ -101,7 +101,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -131,12 +131,367 @@
      </layout>
     </widget>
    </widget>
+   <widget class="QWidget" name="widget">
+    <attribute name="title">
+     <string>文件关联</string>
+    </attribute>
+    <widget class="QTreeWidget" name="treeWidget">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>10</y>
+       <width>451</width>
+       <height>341</height>
+      </rect>
+     </property>
+     <column>
+      <property name="text">
+       <string notr="true">文件类型</string>
+      </property>
+     </column>
+     <item>
+      <property name="text">
+       <string>非常规文件</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+      <item>
+       <property name="text">
+        <string>.dav</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.sdv</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.h264</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.jav</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.bsr</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.ifv</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>zv</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.ps</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.dvr</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+     </item>
+     <item>
+      <property name="text">
+       <string>常规文件</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+      <item>
+       <property name="text">
+        <string>.avi</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.mp4</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.rmvb</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.mov</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>mkv</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.3gp</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.wmv</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.vob</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.flv</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.mpg</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.mpeg</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>.swf</string>
+       </property>
+       <property name="checkState">
+        <enum>Checked</enum>
+       </property>
+      </item>
+     </item>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>快捷键</string>
+    </attribute>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>501</width>
+       <height>341</height>
+      </rect>
+     </property>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>245</number>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>新建行</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>功能命令</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>快捷键</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>播放/暂停</string>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>Space</string>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string>进度条前进</string>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>Right</string>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="text">
+       <string>进度条后退</string>
+      </property>
+     </item>
+     <item row="2" column="1">
+      <property name="text">
+       <string>Left</string>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="text">
+       <string>声音调大</string>
+      </property>
+     </item>
+     <item row="3" column="1">
+      <property name="text">
+       <string>Up</string>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="text">
+       <string>声音调小</string>
+      </property>
+     </item>
+     <item row="4" column="1">
+      <property name="text">
+       <string>Down</string>
+      </property>
+     </item>
+     <item row="5" column="0">
+      <property name="text">
+       <string>退出全屏</string>
+      </property>
+     </item>
+     <item row="5" column="1">
+      <property name="text">
+       <string>Esc</string>
+      </property>
+     </item>
+     <item row="6" column="0">
+      <property name="text">
+       <string>图像放大</string>
+      </property>
+     </item>
+     <item row="6" column="1">
+      <property name="text">
+       <string>鼠标上滚</string>
+      </property>
+     </item>
+     <item row="7" column="0">
+      <property name="text">
+       <string>图像缩小</string>
+      </property>
+     </item>
+     <item row="7" column="1">
+      <property name="text">
+       <string>鼠标下滚</string>
+      </property>
+     </item>
+    </widget>
+   </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>510</x>
-     <y>290</y>
+     <x>330</x>
+     <y>410</y>
      <width>195</width>
      <height>35</height>
     </rect>

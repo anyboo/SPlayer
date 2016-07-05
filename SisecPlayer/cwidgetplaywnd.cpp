@@ -1,11 +1,15 @@
+#ifndef POINTER_64
+#define	POINTER_64	__ptr64
+#endif
 #include "cwidgetplaywnd.h"
 #include <QMouseEvent>
 #include "cdialogmain.h"
+#include "./VCA/Render/ZoneSettingCtl.h"
 
 #define MAXSCALE 5 //
 
 CWidgetPlayWnd::CWidgetPlayWnd(int index,QWidget *parent)
-: QWidget(parent), m_index(index), m_previewMode(false)
+: QWidget(parent), m_index(index), m_previewMode(false), m_bHideToolBar(false), m_pZoneCtrl(NULL)
 {
 	ui.setupUi(this);
 
@@ -21,7 +25,7 @@ CWidgetPlayWnd::CWidgetPlayWnd(int index,QWidget *parent)
 
 	this->setMouseTracking(true);
 	ui.widgetToolBar->setMouseTracking(true);
-	ui.widgetRender->setMouseTracking(true);
+	ui.widgetRender->setMouseTracking(true);//没有这句会不响应mouseMoveEvent，要至少有个键按下才响应
 
 	connect(ui.BtnFix, SIGNAL(clicked()), this, SLOT(OnBtnFixClick()));
 	connect(ui.BtnColor, SIGNAL(clicked()), this, SLOT(OnBtnColorClick()));
@@ -60,8 +64,32 @@ void CWidgetPlayWnd::paintEvent(QPaintEvent *event)
 void CWidgetPlayWnd::mousePressEvent(QMouseEvent * event)
 {
 	QApplication::postEvent(this->parentWidget(), new CMyEvent(CUSTOM_PLAYWNDPRESSED_EVENT,this));
-	QWidget::mousePressEvent(event);
+	
+	if (event->button() == Qt::LeftButton&&m_pZoneCtrl)
+	{
+		POINT pt;
+		pt.x = event->x();
+		pt.y = event->y();
+		//ui.widgetRender->geometry();
+		m_pZoneCtrl->OnLButtonDown(0,pt);
+		return;
+	}
+	//QWidget::mousePressEvent(event);
 }
+
+void CWidgetPlayWnd::mouseReleaseEvent(QMouseEvent * event)
+{
+	if (event->button() == Qt::LeftButton&&m_pZoneCtrl)
+	{
+		POINT pt;
+		pt.x = event->x();
+		pt.y = event->y();
+		//ui.widgetRender->geometry();
+		m_pZoneCtrl->OnLButtonUp(0, pt);
+	}
+	QWidget::mouseReleaseEvent(event);
+}
+
 //为辅助mouseMoveEvent离开后隐藏工具栏
 void CWidgetPlayWnd::leaveEvent(QEvent * event)
 {
@@ -76,6 +104,8 @@ void CWidgetPlayWnd::mouseMoveEvent(QMouseEvent * event)
 {
 	if (m_bEnabled)
 	{
+		if (!m_bHideToolBar)
+		{
 		CDialogMain *pMainWindow = NULL;
 		if (!m_previewMode)
 			pMainWindow = (CDialogMain*)this->parentWidget();
@@ -93,11 +123,11 @@ void CWidgetPlayWnd::mouseMoveEvent(QMouseEvent * event)
 		}
 		else
 		{
-			
+
 			bool bVisible = false;
 			if (pMainWindow)
-				bVisible=pMainWindow->IsPlayCtrlVisible(event->x(), event->y());
-		
+				bVisible = pMainWindow->IsPlayCtrlVisible(event->x(), event->y());
+
 			if (bVisible)
 			{
 				ui.widgetToolBar->show();
@@ -107,6 +137,15 @@ void CWidgetPlayWnd::mouseMoveEvent(QMouseEvent * event)
 					ui.widgetToolBar->hide();
 				}
 			}
+		}
+	}
+		if (m_pZoneCtrl)
+		{
+			POINT pt;
+			pt.x = event->x();
+			pt.y = event->y();
+			m_pZoneCtrl->OnMouseMove(0, pt);
+			return;
 		}
 	}
 

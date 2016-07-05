@@ -188,6 +188,11 @@ DWORD CPlayerHik::GetPlayedTime()
 	return PlayM4_GetPlayedTime(m_nPort);
 }
 
+BOOL CPlayerHik::SetPlayedTimeEx(DWORD nTime)
+{
+	return PlayM4_SetPlayedTimeEx(m_nPort, nTime*1000);
+}
+
 BOOL  CPlayerHik::GetPictureSize(LONG *pWidth, LONG *pHeight)
 {
 	return PlayM4_GetPictureSize(m_nPort,pWidth,pHeight);

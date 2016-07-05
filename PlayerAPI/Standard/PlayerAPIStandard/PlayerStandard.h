@@ -30,6 +30,7 @@ public:
 	BOOL Pause(DWORD nPause);
 	BOOL Stop();
 	BOOL Fast();
+	BOOL FastNoDelay();
 	BOOL Slow();
 	BOOL OneByOne();
 	BOOL OneByOneBack();
@@ -42,6 +43,7 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL  SetPlayedTimeEx(DWORD nTime);
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);

@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--VCAsys XML metadata schema-->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="vca">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="vca_hdr" type="vca_header" />
+        <xs:element name="vca_cfg" type="vca_config" minOccurs="0" maxOccurs="1" />
+        <xs:element name="tampermap" type="tampermap" minOccurs="0" maxOccurs="1" />
+        <xs:element name="scnchgmap" type="scnchgmap" minOccurs="0" maxOccurs="1" />
+        <xs:element name="objects" type="objects" minOccurs="0" maxOccurs="1" />
+        <xs:element name="events" type="events" minOccurs="0" maxOccurs="1" />
+        <xs:element name="counts" type="counts" minOccurs="0" maxOccurs="1" />
+        <xs:element name="blobmap" type="blobmap" minOccurs="0" maxOccurs="1" />
+        <xs:element name="cntlninfo" type="cntlninfo" minOccurs="0" maxOccurs="1" />
+        <xs:element name="stats" type="stats" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="schema_version" type="xs:string" fixed="2.0" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="point">
+    <xs:sequence>
+      <xs:element name="x" type="xs:unsignedShort" />
+      <xs:element name="y" type="xs:unsignedShort" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="trail">
+    <xs:sequence>
+      <xs:element name="pt" type="point" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="bbox">
+    <xs:sequence>
+      <xs:element name="x" type="xs:unsignedShort" />
+      <xs:element name="y" type="xs:unsignedShort" />
+      <xs:element name="w" type="xs:unsignedShort" />
+      <xs:element name="h" type="xs:unsignedShort" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="vcaTime">
+    <xs:sequence>
+      <xs:element name="s" type="xs:unsignedInt" />
+      <xs:element name="ms" type="xs:unsignedInt" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="object">
+    <xs:sequence>
+      <xs:element name="id" type="xs:unsignedInt" />
+      <xs:element name="ch" type="xs:int" minOccurs="0" maxOccurs="1" />
+      <xs:element name="cs" type="xs:int" minOccurs="0" maxOccurs="1" />
+      <xs:element name="ca" type="xs:int" minOccurs="0" maxOccurs="1" />
+      <xs:element name="colsig" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="cls" type="xs:int" minOccurs="0" maxOccurs="1" />
+      <xs:element name="cls_name" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="bb" type="bbox" />
+      <xs:element name="trail" type="trail" />
+      <xs:element name="flags" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="event">
+    <xs:sequence>
+      <xs:element name="id" type="xs:unsignedInt" />
+      <xs:element name="type" type="xs:string" />
+      <xs:element name="rule_id" type="xs:unsignedInt" minOccurs="0" maxOccurs="1" />
+      <xs:element name="rule_name" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="rule_type" type="ruleType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="zone_id" type="xs:unsignedInt" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="zone_name" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="obj_id" type="xs:unsignedInt" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="obj_cls_name" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="status" type="xs:unsignedInt" minOccurs="0" maxOccurs="1" />
+      <xs:element name="start_time" type="vcaTime" minOccurs="0" maxOccurs="1" />
+      <xs:element name="end_time" type="vcaTime" minOccurs="0" maxOccurs="1" />
+      <xs:element name="bb" type="bbox" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="count">
+    <xs:sequence>
+      <xs:element name="id" type="xs:unsignedInt" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="val" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="blobmap">
+    <xs:sequence>
+      <xs:element name="w" type="xs:unsignedInt" />
+      <xs:element name="h" type="xs:unsignedInt" />
+      <xs:element name="data" type="xs:base64Binary" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="tampermap">
+    <xs:sequence>
+      <xs:element name="w" type="xs:unsignedInt" />
+      <xs:element name="h" type="xs:unsignedInt" />
+      <xs:element name="data" type="xs:base64Binary" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="scnchgmap">
+    <xs:sequence>
+      <xs:element name="w" type="xs:unsignedInt" />
+      <xs:element name="h" type="xs:unsignedInt" />
+      <xs:element name="data" type="xs:base64Binary" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="vca_header">
+    <xs:sequence>
+      <xs:element name="frame_id" type="xs:unsignedInt" />
+      <xs:element name="vca_status" type="xs:unsignedInt" />
+      <xs:element name="trk_mode" type="xs:unsignedInt" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="vca_config">
+    <xs:sequence>
+      <xs:element name="meaunits" type="xs:string" />
+      <xs:element name="cfg_update" type="cfg_update" minOccurs="0" maxOccurs="1" />
+      <xs:element name="detection_point" type="xs:string" />
+      <xs:element name="time_zone" type="time_zone" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="objects">
+    <xs:sequence>
+      <xs:element name="object" type="object" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="events">
+    <xs:sequence>
+      <xs:element name="event" type="event" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="counts">
+    <xs:sequence>
+      <xs:element name="count" type="count" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cntlninfo">
+    <xs:sequence>
+      <xs:element name="ce" type="ce" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ce">
+    <xs:sequence>
+      <xs:element name="id" type="xs:unsignedInt" minOccurs="1" maxOccurs="1" />
+      <xs:element name="p" type="xs:unsignedInt" minOccurs="1" maxOccurs="1" />
+      <xs:element name="w" type="xs:unsignedInt" minOccurs="1" maxOccurs="1" />
+      <xs:element name="n" type="xs:unsignedInt" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="stats">
+    <xs:sequence>
+      <xs:element name="waiting" type="waiting" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="waiting">
+    <xs:sequence>
+      <xs:element name="wait" type="wait" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="wait">
+    <xs:sequence>
+      <xs:element name="obj_id" type="xs:unsignedInt" minOccurs="0" maxOccurs="1" />
+      <xs:element name="zn_id" type="xs:unsignedInt" minOccurs="0" maxOccurs="1" />
+      <xs:element name="time" type="xs:unsignedInt" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cfg_update">
+    <xs:sequence>
+      <xs:element name="general" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="zone" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="rule" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="counter" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="classification" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="calibration" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="tamper" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="bia" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+      <xs:element name="ptz" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="time_zone">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="gmtoff" type="xs:int" />
+      <xs:element name="isdst" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="ruleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="presence"/>
+      <xs:enumeration value="enter"/>
+      <xs:enumeration value="exit"/>
+      <xs:enumeration value="appear"/>
+      <xs:enumeration value="disappear"/>
+      <xs:enumeration value="stop"/>
+      <xs:enumeration value="dwell"/>
+      <xs:enumeration value="direction"/>
+      <xs:enumeration value="speed"/>
+      <xs:enumeration value="tailgating"/>
+      <xs:enumeration value="linecountera"/>
+      <xs:enumeration value="linecounterb"/>
+      <xs:enumeration value="colsig"/>
+      <xs:enumeration value="smoke"/>
+      <xs:enumeration value="fire"/>
+      <xs:enumeration value="abrmobj"/>
+      <xs:enumeration value="unknown"/>
+    </xs:restriction>
+  </xs:simpleType> 
+</xs:schema>

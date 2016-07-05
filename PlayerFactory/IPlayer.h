@@ -17,6 +17,7 @@ public:
 	virtual ~IPlayerFactory(){}
 public:
 	virtual BOOL IsSupportFastCut(){ return false; }
+	virtual BOOL IsSupport22Renader(){ return true; }
 	virtual BOOL IsBelongThis(char *pFile) = 0;
 	virtual char* Name() = 0;
 
@@ -39,6 +40,7 @@ public:
 	virtual BOOL Play() = 0;
 	virtual BOOL Pause(DWORD nPause) = 0;
 	virtual BOOL Fast() = 0;
+	virtual BOOL FastNoDelay() { return false; }
 	virtual BOOL Slow() = 0;
 	virtual BOOL Stop() = 0;
 	virtual BOOL OneByOne(){ return false; }
@@ -52,6 +54,7 @@ public:
 	virtual  float GetPlayPos()=0;
 	virtual  DWORD  GetFileTime()=0;
 	virtual  DWORD  GetPlayedTime()=0;
+	virtual  BOOL   SetPlayedTimeEx(DWORD nTime){ return false; }
 	virtual  BOOL   GetPictureSize(LONG *pWidth, LONG *pHeight) = 0;
 
 	virtual BOOL CapturePic(char *pSaveFile,int iType) = 0;

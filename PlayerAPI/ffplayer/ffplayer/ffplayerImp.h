@@ -30,6 +30,7 @@ FFPLAYER_API BOOL FFPlayer_Play(LONG nID,HWND hwnd);
 FFPLAYER_API BOOL FFPlayer_Pause(LONG nID, DWORD nPause);
 FFPLAYER_API BOOL FFPlayer_Stop(LONG nID);
 FFPLAYER_API BOOL FFPlayer_Fast(LONG nID);
+FFPLAYER_API BOOL FFPlayer_FastNoDelay(LONG nID);
 FFPLAYER_API BOOL FFPlayer_Slow(LONG nID);
 FFPLAYER_API BOOL FFPlayer_OneByOne(LONG nID);
 FFPLAYER_API BOOL FFPlayer_OneByOneBack(LONG nID);
@@ -42,6 +43,7 @@ FFPLAYER_API BOOL   FFPlayer_SetPlayPos(LONG nID, float fRelativePos);
 FFPLAYER_API float  FFPlayer_GetPlayPos(LONG nID);
 FFPLAYER_API DWORD FFPlayer_GetFileTime(LONG nID);
 FFPLAYER_API DWORD  FFPlayer_GetPlayedTime(LONG nID);
+FFPLAYER_API BOOL  FFPlayer_SetPlayedTime(LONG nID,DWORD nTime);
 FFPLAYER_API BOOL  FFPlayer_GetPictureSize(LONG nID, LONG *pWidth, LONG *pHeight);
 
 FFPLAYER_API BOOL FFPlayer_CapturePic(LONG nID, char *pSaveFile, int iType);

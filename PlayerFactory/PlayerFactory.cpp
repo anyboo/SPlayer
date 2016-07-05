@@ -311,6 +311,17 @@ BOOL Player_Fast(LONG nID)
 	return false;
 }
 
+BOOL Player_FastNoDelay(LONG nID)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
+	Player_Info *pPlayerInfo = FindPlayer(nID);
+	if (pPlayerInfo)
+	{
+		return pPlayerInfo->pPlayer->FastNoDelay();
+	}
+	return false;
+}
+
 BOOL Player_OneByOne(LONG nID)
 {
 	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
@@ -431,6 +442,17 @@ DWORD  Player_GetPlayedTime(LONG nID)
 	return 0;
 }
 
+BOOL  Player_SetPlayedTimeEx(LONG nID, DWORD nTime)
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
+	Player_Info *pPlayerInfo = FindPlayer(nID);
+	if (pPlayerInfo)
+	{
+		return pPlayerInfo->pPlayer->SetPlayedTimeEx(nTime);
+	}
+	return 0;
+}
+
 BOOL  Player_GetPictureSize(LONG nID, LONG *pWidth, LONG *pHeight)
 {
 	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
@@ -545,7 +567,7 @@ int  Player_FileCutProcess(LONG nID)
 	}
 	return 0;
 }
-
+/*
 BOOL IsSupportFastCut(char *pFileName)//判断文件类型是否支持快速剪辑
 {
 	int iFileType;
@@ -555,6 +577,18 @@ BOOL IsSupportFastCut(char *pFileName)//判断文件类型是否支持快速剪辑
 	if (pFactoryInfo)
 	{
 		return pFactoryInfo->pFactory->IsSupportFastCut();
+	}
+
+	return false;
+}
+*/
+BOOL IsSupport22Renader(int iFileType)//判断文件类型是否支持快速剪辑
+{
+	std::lock_guard<std::recursive_mutex> lock(s_mutexPlayers);
+	Factory_Info *pFactoryInfo = FindFactory(iFileType);
+	if (pFactoryInfo)
+	{
+		return pFactoryInfo->pFactory->IsSupport22Renader();
 	}
 
 	return false;

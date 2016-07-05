@@ -350,7 +350,7 @@ void CPlayerTD::DecCallback(unsigned int _ulID, unsigned char *_cData, int _iLen
 		if (_pFrameInfo->nType == T_YUV420)
 		{
 			DISPLAYCALLBCK_INFO displayInfo;
-			displayInfo.pBuf = (char*)_cData;
+			displayInfo.pBuf = (char*)_cData;//这里回调的数据不对
 			displayInfo.nWidth = _pFrameInfo->nWidth;
 			displayInfo.nHeight = _pFrameInfo->nHeight;
 			displayInfo.nStamp = _pFrameInfo->nStamp;
@@ -362,6 +362,8 @@ void CPlayerTD::DecCallback(unsigned int _ulID, unsigned char *_cData, int _iLen
 
 BOOL  CPlayerTD::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
 {
+	//回调的数据不对
+	return false;
 	int iRet = TC_SetDecCallBack(m_nPort, (DECYUV_NOTIFY_V4)&DecCallback, (int)this);
 	if (0 == iRet)
 	{

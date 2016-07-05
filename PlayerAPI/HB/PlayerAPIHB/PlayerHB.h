@@ -44,16 +44,20 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL SetPlayedTimeEx(DWORD nTime);
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
 	BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
 	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL  SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast);
 	BOOL FileCutClose();
 	int FileCutProcess();
+
+	static void  DecCBFun(IN HHBPLAY2 hPlay, IN const HBPLAY2_FRAME* pFrame, IN PVOID pContext);
 private:
 	HWND m_hwnd;
 	HHBPLAY2 m_hPlay;

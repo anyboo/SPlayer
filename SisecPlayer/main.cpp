@@ -1,3 +1,6 @@
+#ifndef POINTER_64
+#define	POINTER_64	__ptr64
+#endif
 #include "sisecplayer.h"
 #include <QtWidgets/QApplication>
 #include "cdialogmain.h"
@@ -5,6 +8,7 @@
 #include "cupdatedlg.h"
 
 #include <Windows.h>
+
 #include <DbgHelp.h>
 #pragma comment(lib, "DbgHelp.lib")
 
@@ -173,7 +177,7 @@ int main(int argc, char *argv[])
 	showMainDlgNoExcept(a, strFile);
 	return 0;
 #else
-	/*AuthorFile=QApplication::applicationDirPath() + "/AuthorFile";
+	AuthorFile=QApplication::applicationDirPath() + "/AuthorFile";
 	initDb();
 	MD5 md5_toApply;//用于生成申请码
 
@@ -199,7 +203,7 @@ int main(int argc, char *argv[])
 		w.show();
 		a.exec();
 		exit(0);
-	}*/
+	}
 	showMainDlgNoExcept(a, strFile);
 #endif
 #endif 

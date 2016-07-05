@@ -64,6 +64,7 @@ public:
 	BOOL Pause(DWORD nPause);
 	BOOL Stop();
 	BOOL Fast();
+	BOOL FastNoDelay();
 	BOOL Slow();
 	BOOL OneByOne();
 	BOOL OneByOneBack();
@@ -76,6 +77,7 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL SetPlayedTime(DWORD nTime);
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	bool SetFileEndCallback(long nID,FileEndCallback fileCallBack, void *pUser);
@@ -221,5 +223,8 @@ private:
 	Clock m_extclk;
 
 	CFileConverter *m_pFileConverter;
+
+	bool m_bFastNoDelay;
+	DWORD m_seekTime;
 };
 

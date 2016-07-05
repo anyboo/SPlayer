@@ -45,6 +45,7 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL SetPlayedTimeEx(DWORD nTime);
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
 	BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
 	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);

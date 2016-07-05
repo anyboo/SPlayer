@@ -1,3 +1,7 @@
+#ifndef POINTER_64
+#define	POINTER_64	__ptr64
+#endif
+
 #include "cdialogconverter.h"
 #include <QtGui>
 #include <qfiledialog.h>

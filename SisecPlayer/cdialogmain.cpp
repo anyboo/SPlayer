@@ -1,3 +1,4 @@
+
 #include "cdialogmain.h"
 #include "qfiledialog.h"
 #include "qmessagebox.h"
@@ -17,13 +18,18 @@
 #include "cdialoghelp.h"
 #include "cupdatedlg.h"
 #include "cdialogmessagebox.h"
+#include "cdialogvcamain.h"
 
 #include "public_def.h"
 
+#ifndef POINTER_64
+#define	POINTER_64	__ptr64
+#endif
 //#include "ukey/Sage_USB_API.h"
 //#pragma comment(lib,"ukey/Sage_USB_API.lib")
 #include "ukey/Verifier.h"
 #pragma comment(lib,"ukey/Verifier.lib")
+
 
 #define FILEPLAYLISTXML "playlist.xml"
 #define ROOTTEXT  "playFileList"
@@ -69,12 +75,39 @@ void UkeyThread::Stop()
 
 UkeyThread CDialogMain::s_ukeyThread;
 
+GetImageProcessInterfaceFun CDialogMain::s_GetImgProInterfaceFun = NULL;
+FreeImageProcessInterfaceFun CDialogMain::s_FreeImgProInterfaceFun = NULL;
+ImageProcessFun CDialogMain::s_ImgProcessFun = NULL;
+InitProcessFun CDialogMain::s_InitImgProcessFun = NULL;
+
+bool CDialogMain::GetImageProcessFun()
+{
+	QString strImageProcessPath = QApplication::applicationDirPath() + "/factorys/Standard/Imageprocess.dll";
+	QFile file(strImageProcessPath);
+	if (file.exists())
+	{
+		HMODULE hDllLib = ::LoadLibrary(strImageProcessPath.toStdWString().c_str());
+		if (hDllLib)
+		{
+			//获取动态连接库里的函数地址。
+			s_GetImgProInterfaceFun = (GetImageProcessInterfaceFun)GetProcAddress(hDllLib, "GetImageProcessInterface");
+			s_FreeImgProInterfaceFun = (FreeImageProcessInterfaceFun)GetProcAddress(hDllLib, "FreeImageProcessInterface");
+			s_ImgProcessFun = (ImageProcessFun)GetProcAddress(hDllLib, "ImageProcess");
+			s_InitImgProcessFun = (InitProcessFun)GetProcAddress(hDllLib, "InitProcess");
+			return true;
+		}
+	
+	}
+	return false;
+}
+
 CDialogMain::CDialogMain(QWidget *parent)
 : NoFlameDlg(parent), m_pConvertDlg(NULL), m_pCutDlg(NULL)
 {
 	ui.setupUi(this);
 
 	InitPlayerFactory();
+	GetImageProcessFun();//获取图像处理接口
 
 	for (int i = 0; i< NUM; i++)
 	{
@@ -98,6 +131,9 @@ CDialogMain::CDialogMain(QWidget *parent)
 	ReadPlayFileList();//读取播放列表
 	CDialogConfig::ReadConfigXml();//读设置信息，包括截图路径等
 
+	m_pVCAMaindlg = new CDialogVCAMain(this);
+	m_pVCAMaindlg->hide();
+
 	IniSysMenu();//初始所有菜单
 	IniWndMenu();
 	IniPlayListMenu();
@@ -112,6 +148,7 @@ CDialogMain::CDialogMain(QWidget *parent)
 	connect(&s_ukeyThread, SIGNAL(ukeyDown()), this, SLOT(OnUkeyDown()));
 	connect(&s_ukeyThread, SIGNAL(ukeyUp()), this, SLOT(OnUkeyUp()));
 	connect(&m_ukeyDownMsgdlg, SIGNAL(accepted()), this, SLOT(OnTerminated()));
+	connect(m_vcaAct, SIGNAL(triggered()), this, SLOT(OnVCATriggered()));
 	connect(m_configAct, SIGNAL(triggered()), this, SLOT(OnConfigTriggered()));
 	connect(m_converterAct, SIGNAL(triggered()), this, SLOT(OnConvertTriggered()));
 	connect(m_cutAct, SIGNAL(triggered()), this, SLOT(OnCutTriggered()));
@@ -135,6 +172,10 @@ CDialogMain::CDialogMain(QWidget *parent)
 	connect(ui.BtnHideList, SIGNAL(clicked()), this, SLOT(OnBtnHideListClick()));
 	connect(ui.listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(OnListWidgetItemDbClick(QListWidgetItem*)));
 	//connect(ui.listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(OnListWidgetItemDbClick(QListWidgetItem*)));
+//	connect(ui.treeWidgetFileList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(OnTreeWidgetItemDbClick(QTreeWidgetItem*, int)));
+//	connect(ui.BtnVCA, SIGNAL(clicked()), this, SLOT(OnBtnVCAClick()));
+//	ui.treeWidgetFileList->hide();
+//	ui.BtnVCA->hide();
 	
 	installEventFilter(this);
 
@@ -163,6 +204,7 @@ CDialogMain::~CDialogMain()
 		delete m_PlayWnd[i];
 	}
 
+	delete m_pVCAMaindlg;
 }
 
 //启动时检测
@@ -248,6 +290,7 @@ void  CDialogMain::IniSysMenu()
 	m_configAct = new QAction(QIcon(":/Skin/configure.png"), QStringLiteral("设置"), this);
 	m_converterAct = new QAction( QStringLiteral("转码"), this);
 	m_cutAct = new QAction( QStringLiteral("剪切"), this);
+	m_vcaAct = new QAction(QIcon(""), QStringLiteral("视频分析"), this);
 	m_updateAct = new QAction(QIcon(":/Skin/Update.png"), QStringLiteral("升级"), this);
 	m_helpAct = new QAction(QIcon(":/Skin/Help.png"), QStringLiteral("帮助"), this);
 	
@@ -273,6 +316,7 @@ void  CDialogMain::IniSysMenu()
 	pConvertMenu->addAction(m_converterAct);
 	pConvertMenu->addAction(m_cutAct);
 
+	pMenu->addAction(m_vcaAct);
 	pMenu->addAction(m_configAct);
 	pMenu->addAction(m_updateAct);
 	pMenu->addAction(m_helpAct);
@@ -450,7 +494,7 @@ void  CDialogMain::OnRenderModeTriggered(QAction*act)
 
 	for (int i = 0; i < NUM; i++)
 	{
-		SetRenderMode(i);
+		m_PlayCtrl[i]->SetRenderMode(m_renderMode);
 	}
 }
 
@@ -566,6 +610,17 @@ void  CDialogMain::ReadPlayFileList()
 		item->setToolTip(strPathName);
 		ui.listWidget->addItem(item);
 
+	/*	QTreeWidgetItem *group = new QTreeWidgetItem(ui.treeWidgetFileList);
+		group->setText(0, strName);
+		group->setToolTip(0,strPathName);
+		group->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		group->setCheckState(0, Qt::Unchecked);
+		group = new QTreeWidgetItem(group);
+		group->setText(0, strName);
+		group->setToolTip(0, strPathName);
+		group->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		group->setCheckState(0, Qt::Unchecked);*/
+
 		m_strPlayFileList.append(strPathName);
 
 		note = note.nextSiblingElement();
@@ -663,7 +718,7 @@ void  CDialogMain::SetPlayMode(PLAY_MODE eMode)
 		{
 			m_PlayWnd[0]->setGeometry(left, top, twidth, theight);
 			m_PlayWnd[0]->show();
-			SetRenderMode(0);
+			m_PlayCtrl[0]->SetRenderMode(m_renderMode);
 			ui.frameComboBox->move(left + twidth / 2 - 65, top + theight / 2 + 80);
 			ui.frameBackGround->move(left + (twidth - 500) / 2, top + (theight - 500) / 2);
 			if (!m_PlayCtrl[0]->IsPlaying())
@@ -713,7 +768,7 @@ void  CDialogMain::SetWndGrid(int &top, int &left, int &twidth, int &theight, in
 
 		m_PlayWnd[i]->setGeometry(left + width*col + wndDivLine*col, top + height*row + wndDivLine*row, width, height);
 		m_PlayWnd[i]->show();
-		SetRenderMode(i);
+		m_PlayCtrl[i]->SetRenderMode(m_renderMode);
 	}
 	m_curWndNum = num;
 	ui.frameComboBox->hide();
@@ -782,7 +837,7 @@ bool  CDialogMain::OpenAndPlayFile(CFormPlayCtrl *pPlayCtrl, QString strFileName
 		}
 
 		m_PlayWnd[index]->SetTitleFileName(strFileName);
-		SetRenderMode(index);
+		m_PlayCtrl[index]->SetRenderMode(m_renderMode);
 	}
 	else if (m_PlayMode == TIME_MODE)
 	{
@@ -791,7 +846,7 @@ bool  CDialogMain::OpenAndPlayFile(CFormPlayCtrl *pPlayCtrl, QString strFileName
 		m_PlayCtrl[0]->SetPlayMode(m_PlayMode);
 		bRet = m_PlayCtrl[0]->OpenAndPlayFile(strFileName, (HWND)m_PlayWnd[0]->GetPlayWndID());
 		m_PlayWnd[0]->SetTitleFileName(strFileName);
-		SetRenderMode(0);
+		m_PlayCtrl[0]->SetRenderMode(m_renderMode);
 	}
 	if (!bRet)
 	{
@@ -808,6 +863,7 @@ bool  CDialogMain::OpenAndPlayFile(CFormPlayCtrl *pPlayCtrl, QString strFileName
 		}
 		dlg.SetText2(strFileName);
 		dlg.exec();
+		
 		if (m_playListMode == LIST || m_playListMode == SINGLE_REPEAT || m_playListMode == LIST_REPEAT)
 		{
 			if (m_PlayMode == SINGLE_MODE)
@@ -822,74 +878,6 @@ bool  CDialogMain::OpenAndPlayFile(CFormPlayCtrl *pPlayCtrl, QString strFileName
 		
 	}
 	return bRet;
-}
-
-void  CDialogMain::SetRenderMode(int index)
-{
-	int width = 0;
-	int height = 0;
-	bool bRet = false;
-//	QThread::msleep(10);
-	bRet=m_PlayCtrl[index]->GetPicSize((long*)&width,(long*) &height);
-/*	if (width == 0 || height == 0)
-	{
-		QThread::usleep(1000);//大华的长宽来不及获取成功再获取一次 也不行?
-		bRet = m_PlayCtrl[index]->GetPicSize((long*)&width, (long*)&height);
-	}*/
-	if (bRet&&width != 0 && height != 0)
-	{
-		QRect rc = m_PlayWnd[index]->geometry();
-		float fVideo = (float)width / (float)height;
-		float fWnd = (float)rc.width() / (float)rc.height();
-		QRect rcVideo = rc;
-		if (m_renderMode == Render4_3)
-		{
-			fWnd = (float)4 / (float)3;
-		}
-		if (m_renderMode == Render4_3)
-		{
-			fWnd = (float)16 / (float)9;
-		}
-
-		if ((fVideo - fWnd) >= 0.000001)//以Wnd长为准
-		{
-			int videoWidth = rc.width();
-			int videoHeight = (float)videoWidth / (float)fVideo;
-			rcVideo.setRect(0, (rc.height() - videoHeight) / 2, videoWidth, videoHeight);
-		}
-		else//以Wnd高为准
-		{
-			int videoHeight = rc.height();
-			int videoWidth = videoHeight * fVideo;
-			rcVideo.setRect((rc.width() - videoWidth) / 2, 0, videoWidth, videoHeight);
-		}
-		
-	
-		if (m_renderMode == RenderIni)
-		{
-			m_PlayWnd[index]->SetPlayWndPos(rcVideo);
-		}
-		else if (m_renderMode == RenderStrech)
-		{
-			rcVideo.setRect(0, 0, rc.width(), rc.height());
-			m_PlayWnd[index]->SetPlayWndPos(rcVideo);
-		}
-		else if (m_renderMode == Render4_3)
-		{
-			m_PlayWnd[index]->SetPlayWndPos(rcVideo);
-		}
-		else if (m_renderMode == Render16_9)
-		{
-			m_PlayWnd[index]->SetPlayWndPos(rcVideo);
-		}
-	}
-	else
-	{
-		QRect rc = m_PlayWnd[index]->geometry();
-		QRect rcVideo = rc;
-		rcVideo.setRect(0, 0, rc.width(), rc.height());
-		m_PlayWnd[index]->SetPlayWndPos(rcVideo);
-	}
 }
 
 void CDialogMain::ShellExe2()
@@ -972,7 +960,12 @@ void  CDialogMain::StopAll()//分段播放切换到分屏播放，或分屏播放切换到分段播放
 }
 
 void CDialogMain::OnBtnCloseClick()
-{
+{	
+	if (!m_pVCAMaindlg->Close())
+	{
+		return;
+	}
+
 	s_ukeyThread.Stop();
 	s_ukeyThread.wait();
 
@@ -980,7 +973,7 @@ void CDialogMain::OnBtnCloseClick()
 	ReleasePlayerFactory();
 	WritePlayFileList();//写播放列表
 
-	
+	CDialogConfig::WriteConfigXml();
 	this->close();
 }
 
@@ -1197,7 +1190,16 @@ void CDialogMain::OnListWidgetItemDbClick(QListWidgetItem * item)
 	//int index = ui.listWidget->row(item);
 	//OpenAndPlayFile(m_PlayCtrl[m_iCurFocus],m_strPlayFileList.at(index));
 	QApplication::postEvent(this, new CMyEvent(CUSTOM_ListItemDbClick_EVENT, (QObject*)item));
+		
 }
+
+void CDialogMain::OnTreeWidgetItemDbClick(QTreeWidgetItem* pItem, int column)
+{
+//	pItem->
+	//int index = ui.listWidget->row(pItem);
+	//OpenAndPlayFile(m_PlayCtrl[m_iCurFocus], m_strPlayFileList.at(index));
+}
+
 /*
 void CDialogMain::keyPressEvent(QKeyEvent * keyEvent)
 {
@@ -1307,7 +1309,6 @@ bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 	else if (e->type() == QEvent::MouseButtonDblClick)
 	{
 		QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(e);
-		
 		QRect rc = ui.frameSysBar->geometry();
 		QPoint mousePos = ui.frameSysBar->mapFromGlobal(QCursor::pos());
 
@@ -1533,8 +1534,7 @@ bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 
 			strDivFile = strFileName;
 			m_PlayWnd[i]->SetTitleFileName(strDivFile.append(QStringLiteral("_分段%1")).arg(i+1));
-			SetRenderMode(i);
-			QThread::usleep(10);
+			m_PlayCtrl[i]->SetRenderMode(m_renderMode);
 		}
 		return true;
 	}
@@ -1708,7 +1708,7 @@ void CDialogMain::SetFullScreen(QWidget *pPlayWnd)
 
 	}
 
-	SetRenderMode(index);
+	m_PlayCtrl[index]->SetRenderMode(m_renderMode);
 }
 
 void CDialogMain::OnBtnFullScreenClick()
@@ -1750,4 +1750,25 @@ void CDialogMain::PaintWndRect(QPainter &painter, int num)
 		painter.setPen(QColor(255, 255, 0));
 		painter.drawRect(rc);
 	}
+}
+
+void CDialogMain::OnBtnVCAClick()
+{
+	/*
+	
+	*/
+//	m_pVCAdlg->SetUpFileListVCA(&m_strFileListVCA);
+
+	m_pVCAMaindlg->StartShow();
+	
+}
+
+void  CDialogMain::OnVCATriggered()
+{
+	m_pVCAMaindlg->StartShow();
+	
+	QRect rc = m_pVCAMaindlg->geometry();
+	int iScreenWidth = QApplication::desktop()->width();
+	int iScreenHeigth = QApplication::desktop()->height();
+	m_pVCAMaindlg->move((iScreenWidth - rc.width()) / 2, (iScreenHeigth - rc.height()) / 2);
 }

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CDialogClock</class>
+ <widget class="QDialog" name="CDialogClock">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>142</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>播放时间校准</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog{background-color: rgb(100, 100, 100);}
+
+
+QWidget
+{
+color:rgb(255,255,255);
+	font-size:15px;
+	font-family:Microsoft Yahei;	
+}
+</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>34</y>
+     <width>101</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>视频起始时间:</string>
+   </property>
+  </widget>
+  <widget class="QDateTimeEdit" name="dateTimeEdit">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>40</y>
+     <width>230</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:rgb(0,0,0);</string>
+   </property>
+   <property name="currentSection">
+    <enum>QDateTimeEdit::MinuteSection</enum>
+   </property>
+   <property name="displayFormat">
+    <string>yyyy-MM-dd HH:mm:ss</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>100</y>
+     <width>195</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="BtnOK">
+      <property name="styleSheet">
+       <string notr="true">
+QPushButton{
+color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+font-size:17px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+      </property>
+      <property name="text">
+       <string>确定</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="BtnCancel">
+      <property name="styleSheet">
+       <string notr="true">
+QPushButton{
+	color:rgb(255,255,255);
+        background-color:rgb(6, 83, 131);
+        border-width: 2px;
+        border-color: rgb(150,150,150);
+        border-style: solid;
+        border-radius: 3;   
+	font-size:17px;   
+	font-family:Microsoft Yahei;
+		}
+QPushButton:hover{  border-color: rgb(160,160,160);background-color:rgb(10, 89, 150);;}
+QPushButton:pressed{padding: 3px;}
+QPushButton:disabled{ background-color:rgb(110, 110, 110);;}</string>
+      </property>
+      <property name="text">
+       <string>取消</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

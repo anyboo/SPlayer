@@ -57,5 +57,5 @@ public:
 //	Event m_eventValid;
 private:
 	std::list<PInfo> m_List;
-	std::recursive_mutex s_mutexList;
+	std::recursive_mutex m_mutexList;
 };

@@ -46,6 +46,7 @@ public:
 	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL  SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast);
@@ -58,6 +59,8 @@ public:
 	BOOL FileConvertPause(DWORD nPause);
 
 	static INT CALLBACK ConvertWMVCallBackFun(INT pos, void* cbpara);//×ª»»½ø¶È
+	static void CALLBACK DisplayCBFunBack(LONG lHandle, DWORD /*dwDataType*/dwFrameRate, BYTE *pBuffer,
+		DWORD nWidth, DWORD nHeight, int err, DWORD dwUser);
 public:
 	int m_process;
 private:

@@ -41,11 +41,13 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL SetPlayedTimeEx(DWORD nTime);
 	BOOL  GetPictureSize(LONG *pWidth, LONG *pHeight);
 	BOOL SetColor(DWORD nRegionNum, int nBrightness, int nContrast, int nSaturation, int nHue);
 	BOOL GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, int *pSaturation, int *pHue);
 
 	BOOL  SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser);
+	BOOL  SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser);
 
 	BOOL  CapturePic(char *pSaveFile, int iType);
 	BOOL FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast);
@@ -56,6 +58,8 @@ public:
 	BOOL FileConvertClose();
 	int FileConvertProcess();
 	BOOL FileConvertPause(DWORD nPause);
+
+	static void CALLBACK DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long lUser);
 private:
 	HWND m_hwnd;
 };

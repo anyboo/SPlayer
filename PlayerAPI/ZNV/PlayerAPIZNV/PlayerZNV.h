@@ -42,6 +42,7 @@ public:
 	float GetPlayPos();
 	DWORD  GetFileTime();
 	DWORD  GetPlayedTime();
+	BOOL SetPlayedTimeEx(DWORD nTime);
 	BOOL GetPictureSize(LONG *pWidth, LONG *pHeight);
 
 	BOOL  SetFileEndCallback(LONG nID, FileEndCallback callBack, void *pUser);

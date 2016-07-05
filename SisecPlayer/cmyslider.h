@@ -14,6 +14,7 @@ public:
 protected:
 	void mousePressEvent(QMouseEvent *ev);
 	void mouseMoveEvent(QMouseEvent *ev);
+	void paintEvent(QPaintEvent *ev);
 private:
 	
 };

@@ -63,20 +63,20 @@ void CBuffer::destoryBuffer()
 }
 void CBuffer::insertList(PInfo pInfo)
 {
-	std::lock_guard<std::recursive_mutex> lock(s_mutexList);
+	std::lock_guard<std::recursive_mutex> lock(m_mutexList);
 	m_List.push_back(pInfo);
 
 }
 
 int CBuffer::getCurCount()
 {
-	std::lock_guard<std::recursive_mutex> lock(s_mutexList);
+	std::lock_guard<std::recursive_mutex> lock(m_mutexList);
 	return m_List.size();
 }
 
 PInfo CBuffer::getInfoFromList()
 {
-	std::lock_guard<std::recursive_mutex> lock(s_mutexList);
+	std::lock_guard<std::recursive_mutex> lock(m_mutexList);
 	PInfo pInfo = NULL;
 	if (m_List.size() != 0)
 	{
@@ -89,7 +89,7 @@ PInfo CBuffer::getInfoFromList()
 
 PInfo CBuffer::getFreeInfoFromList(int len)
 {
-	std::lock_guard<std::recursive_mutex> lock(s_mutexList);
+	std::lock_guard<std::recursive_mutex> lock(m_mutexList);
 	PInfo pInfo = NULL;
 	if (m_List.size() != 0)
 	{

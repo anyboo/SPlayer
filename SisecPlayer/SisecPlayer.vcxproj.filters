@@ -43,8 +43,23 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="VCA">
+      <UniqueIdentifier>{0a3897a8-6a8a-47fc-aa56-10770341389d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VCA\VCAMeta">
+      <UniqueIdentifier>{7bf842c2-529a-4872-9598-119f8288340d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VCA\VCAMeta\ixml">
+      <UniqueIdentifier>{29deaf88-21b7-46a8-bb8e-a774fa46a834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VCA\VCAConfigure">
+      <UniqueIdentifier>{a02d0e44-8531-4911-b141-d0c2252b6ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VCA\Render">
+      <UniqueIdentifier>{443c0112-c0eb-4565-a58c-7aebceb52c75}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Generated Files\LocalMacRelease">
-      <UniqueIdentifier>{2d59df2d-8100-4c67-a36a-6cc91f1f9213}</UniqueIdentifier>
+      <UniqueIdentifier>{bbd8045a-2687-461f-b81d-082fbec4f668}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
@@ -344,6 +359,213 @@
     <ClCompile Include="GeneratedFiles\Release\moc_cdialogcolorset.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="VCA\ixml\src\attr.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\document.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\element.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\ixml.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\ixmlmembuf.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\ixmlparser.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\namedNodeMap.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\node.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\ixml\src\nodeList.c">
+      <Filter>VCA\VCAMeta\ixml</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\VCAMetaLib.cpp">
+      <Filter>VCA\VCAMeta</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\VCAMetaParserIXML.cpp">
+      <Filter>VCA\VCAMeta</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\VCAMetaParserMSXML.cpp">
+      <Filter>VCA\VCAMeta</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\SimpleVCA.cpp">
+      <Filter>VCA</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\GDIViewer.cpp">
+      <Filter>VCA</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\CD3d.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\D3DAdapterInfo.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\D3DCalibrationRender.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\D3DMisc.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\D3DVCARender.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\EasyArrowD3D.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\Triangulation.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\EasyArrow.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\ZoneSettingCtl.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogvca.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogvca.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cdialogvca.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogvca.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogvca.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogvca.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\Render\VCADataMgr.cpp">
+      <Filter>VCA\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\VCAConfigure.cpp">
+      <Filter>VCA</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\stdafx.cpp">
+      <Filter>VCA</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogvcamain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogvcamain.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cdialogvcamain.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogvcamain.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogvcamain.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogvcamain.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="cwidgetvcaresult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cwidgetvcaresult.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cwidgetvcaresult.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cwidgetvcaresult.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cwidgetvcaresult.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cwidgetvcaresult.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="cwidgetvcaprogress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cwidgetvcaprogress.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cwidgetvcaprogress.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cwidgetvcaprogress.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cwidgetvcaprogress.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cwidgetvcaprogress.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="cdialogcaseadd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cdialogcaseadd.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cdialogcaseadd.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cdialogcaseadd.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cdialogcaseadd.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cdialogcaseadd.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="VCA\JpegCodec.cpp">
+      <Filter>VCA</Filter>
+    </ClCompile>
+    <ClCompile Include="colorlisteditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_colorlisteditor.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_colorlisteditor.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_colorlisteditor.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_colorlisteditor.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_colorlisteditor.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="cwidgetimageview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Ukey Release\moc_cwidgetimageview.cpp">
+      <Filter>Generated Files\Ukey Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\LocalMacRelease\moc_cwidgetimageview.cpp">
+      <Filter>Generated Files\LocalMacRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\DiskSN Release\moc_cwidgetimageview.cpp">
+      <Filter>Generated Files\DiskSN Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cwidgetimageview.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cwidgetimageview.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="sisecplayer.h">
@@ -454,6 +676,45 @@
     <CustomBuild Include="cdialogcolorset.ui">
       <Filter>Form Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="cdialogvca.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogvca.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogvcamain.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogvcamain.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cwidgetvcaresult.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cwidgetvcaresult.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cwidgetvcaprogress.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cwidgetvcaprogress.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogcaseadd.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cdialogcaseadd.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="colorlisteditor.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cwidgetimageview.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="cwidgetimageview.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_sisecplayer.h">
@@ -519,8 +780,109 @@
     <ClInclude Include="GeneratedFiles\ui_cdialogcolorset.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="VCA\VCAMetaLib.h">
+      <Filter>VCA\VCAMeta</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\VCAMetaParserIXML.h">
+      <Filter>VCA\VCAMeta</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\VCAMetaParserMSXML.h">
+      <Filter>VCA\VCAMeta</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\XMLUtils.h">
+      <Filter>VCA\VCAConfigure</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\SimpleVCA.h">
+      <Filter>VCA</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\GDIViewer.h">
+      <Filter>VCA</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\CD3d.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\D3DAdapterInfo.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\D3DCalibrationRender.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\D3DMisc.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\D3DVCARender.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\EasyArrowD3D.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\Triangulation.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\VCAMetaRenderAPI.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\VCARender.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\EasyArrow.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\ObjectModel.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\colorconversion.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\ZoneSettingCtl.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogvca.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IVCAObject.h">
+      <Filter>VCA</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\Render\VCADataMgr.h">
+      <Filter>VCA\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\VCAConfigure.h">
+      <Filter>VCA</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\stdafx.h">
+      <Filter>VCA</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogvcamain.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cwidgetvcaresult.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cwidgetvcaprogress.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cdialogcaseadd.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\JpegCodec.h">
+      <Filter>VCA</Filter>
+    </ClInclude>
+    <ClInclude Include="VCA\ijl.h">
+      <Filter>VCA</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cwidgetimageview.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sisecplayer.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="VCA\Render\VCAMetaRender.lib">
+      <Filter>VCA\Render</Filter>
+    </Library>
+    <Library Include="VCA\Render\colorconversion.lib">
+      <Filter>VCA\Render</Filter>
+    </Library>
   </ItemGroup>
 </Project>

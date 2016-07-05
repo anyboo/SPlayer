@@ -148,6 +148,11 @@ DWORD CPlayerDH::GetPlayedTime()
 	return PLAY_GetPlayedTime(m_nPort);
 }
 
+BOOL CPlayerDH::SetPlayedTimeEx(DWORD nTime)
+{
+	return PLAY_SetPlayedTimeEx(m_nPort, nTime * 1000);
+}
+
 BOOL  CPlayerDH::GetPictureSize(LONG *pWidth, LONG *pHeight)
 {
 	return PLAY_GetPictureSize(m_nPort, pWidth, pHeight);
@@ -168,6 +173,35 @@ typedef void (CALLBACK *pFileEnd)(DWORD nPort, DWORD nUser);
 BOOL  CPlayerDH::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
 	return PLAY_SetFileEndCallBack(m_nPort, (pFileEnd)callBack, (DWORD)pUser);
+}
+
+BOOL  CPlayerDH::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
+{
+	bool bRet = PLAY_SetDisplayCallBack(m_nPort, DisplayCBFunBack, (LONG)this);
+	if (bRet)
+	{
+		m_DisplayCallbackFun = displayCallback;
+		m_DisplayCalUser = nUser;
+	}
+	return bRet;
+}
+
+void CPlayerDH::DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long lUser)
+{
+	CPlayerDH *pPlayer = (CPlayerDH*)lUser;
+
+	if (pPlayer&&pPlayer->m_DisplayCallbackFun)
+	{
+		DISPLAYCALLBCK_INFO displayInfo;
+		displayInfo.pBuf = pBuf;
+		displayInfo.nBufLen = nSize;
+		displayInfo.nWidth = nWidth;
+		displayInfo.nHeight = nHeight;
+		displayInfo.nStamp = pPlayer->GetPlayedTime();
+		displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+		pPlayer->m_DisplayCallbackFun(&displayInfo);
+
+	}
 }
 
 BOOL  CPlayerDH::CapturePic(char *pSaveFile, int iType)
