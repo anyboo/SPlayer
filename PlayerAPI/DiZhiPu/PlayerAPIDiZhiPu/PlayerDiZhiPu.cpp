@@ -14,7 +14,7 @@ char* CPlayerFactoryDiZhiPu::Name()
 
 BOOL CPlayerFactoryDiZhiPu::IsBelongThis(char *pFile)
 {
-	if (strstr(pFile, ".h264") || strstr(pFile, ".H264"))//判断h264文件
+	if (strstr(pFile, ".h264") || strstr(pFile, ".H264") || strstr(pFile, ".264"))//判断h264文件
 	{
 		return true;
 	}

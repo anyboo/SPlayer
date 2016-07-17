@@ -13,6 +13,10 @@ char* CPlayerFactoryDH::Name()
 
 BOOL CPlayerFactoryDH::IsBelongThis(char *pFile)
 {
+	if (strstr(pFile, ".mbf"))//判断文件
+	{
+		return true;
+	}
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
 	if (pfd)//打开文件成功
@@ -21,7 +25,7 @@ BOOL CPlayerFactoryDH::IsBelongThis(char *pFile)
 		memset(buf, 0, 8);
 		fread(buf, 8, 1, pfd);
 
-		if (strncmp(buf, "DHAV", 4) == 0)
+		if (strncmp(buf, "DHAV", 4) == 0 || strncmp(buf, "MBF0", 4) == 0 || strncmp(buf, "JUFEN", 5) == 0)
 		{
 			return true;
 		}
