@@ -18,8 +18,9 @@
 #include "cdialoghelp.h"
 #include "cupdatedlg.h"
 #include "cdialogmessagebox.h"
+#include <windows.h>
+#include <windowsx.h>
 #include "cdialogvcamain.h"
-
 #include "public_def.h"
 
 #ifndef POINTER_64
@@ -144,6 +145,10 @@ CDialogMain::CDialogMain(QWidget *parent)
 	ui.frameComboBox->raise();
 	ui.BtnHideList->raise();
 
+	m_rcFrameSysBar = ui.frameSysBar->geometry();
+	m_rcFrameFileList = ui.frame_fileList->geometry();
+	m_rcFileList = ui.listWidget->geometry();
+	m_rcFrameToolBar = ui.frame_toolBar->geometry();
 	
 	connect(&s_ukeyThread, SIGNAL(ukeyDown()), this, SLOT(OnUkeyDown()));
 	connect(&s_ukeyThread, SIGNAL(ukeyUp()), this, SLOT(OnUkeyUp()));
@@ -556,6 +561,7 @@ void CDialogMain::OnBtnMaxClick()
 		ui.frame_fileList->setGeometry(m_rcFrameFileList);
 		ui.listWidget->setGeometry(m_rcFileList);
 		ui.frame_toolBar->setGeometry(m_rcFrameToolBar);
+		ui.frame_toolBar->raise();
 		ui.BtnMax->setStyleSheet("QPushButton{border-image: url(:/Skin/max.png)0 0 0 0 repeat}QPushButton:hover{border-image: url(:/Skin/max.png)30 0 0 0 repeat}QPushButton:pressed{border-image: url(:/Skin/max.png)60 0 0 0 repeat}QPushButton:disabled{border-image: url(:/Skin/max.png)90 0 0 0 repeat}");
 		ui.BtnMax->repaint();
 		
@@ -609,17 +615,6 @@ void  CDialogMain::ReadPlayFileList()
 		QListWidgetItem *item = new QListWidgetItem(strName);
 		item->setToolTip(strPathName);
 		ui.listWidget->addItem(item);
-
-	/*	QTreeWidgetItem *group = new QTreeWidgetItem(ui.treeWidgetFileList);
-		group->setText(0, strName);
-		group->setToolTip(0,strPathName);
-		group->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		group->setCheckState(0, Qt::Unchecked);
-		group = new QTreeWidgetItem(group);
-		group->setText(0, strName);
-		group->setToolTip(0, strPathName);
-		group->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		group->setCheckState(0, Qt::Unchecked);*/
 
 		m_strPlayFileList.append(strPathName);
 
@@ -692,14 +687,14 @@ void  CDialogMain::SetPlayMode(PLAY_MODE eMode)
 	int left = 4;
 	int top = 38;
 	
-	int iScreenWidth = QApplication::desktop()->width();
-	int iScreenHeigth = QApplication::desktop()->height();		
+	//int iScreenWidth = QApplication::desktop()->width();
+	//int iScreenHeigth = QApplication::desktop()->height();		
 	for (int i = 0; i < NUM; i++)
 	{
 		m_PlayWnd[i]->hide();
 		m_PlayCtrl[i]->hide();
 	}
-
+/*
 	int twidth = 725;
 	int theight = 552;
 	if (m_bMax)
@@ -707,6 +702,11 @@ void  CDialogMain::SetPlayMode(PLAY_MODE eMode)
 		twidth = iScreenWidth - 210;
 		theight = iScreenHeigth - 110;
 	}
+	*/
+	QRect rc = this->geometry();
+	int twidth = rc.width() - 210;
+	int theight = rc.height() - 110;
+
 	if (m_bHide)
 	{
 		twidth += 200;
@@ -779,15 +779,20 @@ void  CDialogMain::SetWndGrid(int &top, int &left, int &twidth, int &theight, in
 void  CDialogMain::SetPlayCtrlPos()
 {
 	int ctrlleft = 0;
-	int ctrltop =595;
-	int ctrlwidth = 730;
+	//int ctrltop =595;
+	//int ctrlwidth = 730;
+
+
 	int ctrlheight = 70;
+	QRect rc = this->geometry();
+	int ctrltop = rc.height() - 72;
+	int ctrlwidth = rc.width() - 200;
 	if (m_bMax)
 	{
 		ctrltop = m_iScreenHeigth - 67;
 		ctrlwidth = m_iScreenWidth - 200;
-
 	}
+	
 	if (m_bHide)
 	{
 		ctrlwidth += 200;
@@ -801,14 +806,16 @@ void  CDialogMain::SetPlayCtrlPos()
 
 void  CDialogMain::SetBtnHideListPos()
 {
-	int left1 = 700;
-	int top1 = 630;
-	if (m_bMax)
-	{
-		left1 = m_iScreenWidth - 230;
-		top1 = m_iScreenHeigth - 40;
+//	int left1 = 700;
+//	int top1 = 630;
+	//if (m_bMax)
+	QRect rc=this->geometry();
+	
+//	{
+	int	left1 = rc.width() - 230;
+	int	top1 = rc.height() - 40;
 		
-	}
+//	}
 	if (m_bHide)
 	{
 		left1 += 200;
@@ -1190,16 +1197,7 @@ void CDialogMain::OnListWidgetItemDbClick(QListWidgetItem * item)
 	//int index = ui.listWidget->row(item);
 	//OpenAndPlayFile(m_PlayCtrl[m_iCurFocus],m_strPlayFileList.at(index));
 	QApplication::postEvent(this, new CMyEvent(CUSTOM_ListItemDbClick_EVENT, (QObject*)item));
-		
 }
-
-void CDialogMain::OnTreeWidgetItemDbClick(QTreeWidgetItem* pItem, int column)
-{
-//	pItem->
-	//int index = ui.listWidget->row(pItem);
-	//OpenAndPlayFile(m_PlayCtrl[m_iCurFocus], m_strPlayFileList.at(index));
-}
-
 /*
 void CDialogMain::keyPressEvent(QKeyEvent * keyEvent)
 {
@@ -1231,6 +1229,232 @@ void CDialogMain::keyReleaseEvent(QKeyEvent * keyEvent)
 	}
 }
 */
+
+void  CDialogMain::customEvent(QEvent * e)
+{
+	if(e->type() == CUSTOM_ListItemDbClick_EVENT)
+	{
+		CMyEvent *myEvent = (CMyEvent *)e;
+		QListWidgetItem *pItem = (QListWidgetItem*)myEvent->obj;
+		int index = ui.listWidget->row(pItem);
+		OpenAndPlayFile(m_PlayCtrl[m_iCurFocus], m_strPlayFileList.at(index));
+		return;
+	}
+	else if (e->type() == CUSTOM_PLAYWNDPRESSED_EVENT)
+	{
+		CMyEvent *myEvent = (CMyEvent *)e;
+		CWidgetPlayWnd *pPlayWnd = (CWidgetPlayWnd*)myEvent->obj;
+		if (pPlayWnd)
+		{
+			m_iCurFocus = pPlayWnd->Index();
+			if (m_PlayCtrl[m_iCurFocus]->IsPlaying())
+			{
+				QString strFile = m_PlayCtrl[m_iCurFocus]->GetCurPlayFileName();
+				SetCurPlayListIndex(strFile);
+			}
+
+			for (int i = 0; i<m_curWndNum; i++)
+			{
+				m_PlayCtrl[i]->hide();
+				if (i == m_iCurFocus){
+					m_PlayCtrl[i]->show();
+					this->repaint();
+
+				}
+			}
+		}
+		return;
+	}
+	else if (e->type() == CUSTOM_PIC_EVENT)
+	{
+		CDialogConfig::GetPicParam(m_picPath, m_picType, m_picRepeatCount);
+		//判断路径是否存在，不存在则创建，创建不成功返回
+
+		if (!CheckPicPath(m_picPath))
+		{
+			return ;
+		}
+		CMyEvent *myEvent = (CMyEvent *)e;
+		CWidgetPlayWnd *pPlayWnd = (CWidgetPlayWnd*)myEvent->obj;
+		int index = pPlayWnd->Index();
+		QString strName = m_PlayCtrl[index]->GetCurPlayFileName();
+		int pos1 = strName.lastIndexOf('/');
+		int pos2 = strName.lastIndexOf('.');
+		strName = strName.mid(pos1 + 1, pos2 - pos1 - 1);
+		QDateTime dateTime = QDateTime::currentDateTime();// m_CapPicRepeatCount
+		QString strFilePathName = "";
+		CDialogConfig::GetPicParam(m_picPath, m_picType, m_picRepeatCount);
+		QString strPicType = ".jpg";
+		if (m_picType == 0)
+		{
+			strPicType = ".bmp";
+		}
+		strFilePathName = strFilePathName.append(m_picPath).append("/").append(strName).append(dateTime.toString("_yyyyMMddhhmmss").append(strPicType));
+		bool bRet = m_PlayCtrl[index]->CapturePic(strFilePathName, m_picType);
+		if (bRet)
+		{
+			CDialogMessageBox dlg(this);
+			dlg.SetText1(QStringLiteral("保存成功！"));
+			dlg.SetText2(strFilePathName);
+			dlg.exec();
+		}
+		return ;
+	}
+	else if (e->type() == CUSTOM_PICREPEAT_EVENT)
+	{
+
+		CDialogConfig::GetPicParam(m_picPath, m_picType, m_picRepeatCount);
+		//判断路径是否存在，不存在则创建，创建不成功返回
+
+		if (!CheckPicPath(m_picPath))
+		{
+			return ;
+		}
+
+		CMyEvent *myEvent = (CMyEvent *)e;
+		CWidgetPlayWnd *pPlayWnd = (CWidgetPlayWnd*)myEvent->obj;
+
+		int index = pPlayWnd->Index();
+		QString strName = m_PlayCtrl[index]->GetCurPlayFileName();
+		int pos1 = strName.lastIndexOf('/');
+		int pos2 = strName.lastIndexOf('.');
+		strName = strName.mid(pos1 + 1, pos2 - pos1 - 1);
+		QDateTime dateTime = QDateTime::currentDateTime();// 
+		QString strTime = dateTime.toString("_yyyyMMddhhmmss");
+		QString strPicType = ".jpg";
+		if (m_picType == 0)
+		{
+			strPicType = ".bmp";
+		}
+		bool bRet = false;
+		QString strFileList;
+		for (int i = 0; i < m_picRepeatCount; i++)
+		{
+			QString strFilePathName = "";
+			strFilePathName = strFilePathName.append(m_picPath).append("/").append(strName).append(strTime).append("_(%1_%2)").append(strPicType).arg(m_picRepeatCount).arg(i + 1);
+			bRet = m_PlayCtrl[index]->CapturePic(strFilePathName, m_picType);
+			strFileList.append(strFilePathName);
+			strFileList.append("\n");
+		}
+
+		if (bRet)
+		{
+			CDialogMessageBox dlg(this);
+			dlg.SetText1(QStringLiteral("保存成功！"));
+			dlg.SetText2(strFileList);
+			dlg.exec();
+		}
+		return ;
+	}
+	else if (e->type() == CUSTOM_PLAYWNDDBCLICK_EVENT)
+	{
+		CMyEvent *myEvent = (CMyEvent *)e;
+		CWidgetPlayWnd *pPlayWnd = (CWidgetPlayWnd*)myEvent->obj;
+
+		SetFullScreen(pPlayWnd);
+		return ;
+	}
+	else if (e->type() == CUSTOM_AutoStop_EVENT || e->type() == CUSTOM_ManualStop_EVENT)
+	{
+		CMyEvent *myEvent = (CMyEvent *)e;
+		CFormPlayCtrl *pPlayerCtrl = (CFormPlayCtrl*)myEvent->obj;
+		int index = pPlayerCtrl->Index();
+		if (m_bFullScreen&&index == m_iCurFocus)
+		{
+			SetFullScreen(m_PlayWnd[index]);
+		}
+		if (pPlayerCtrl->IsPlaying())
+		{
+			pPlayerCtrl->Stop();
+		}
+
+		if (m_PlayMode == SINGLE_MODE)
+		{
+			if (m_WndMode == WND1)
+			{
+				ui.frameBackGround->show();
+				ui.frameBackGround->raise();
+				ui.frameComboBox->show();
+				ui.frameComboBox->raise();
+			}
+
+		}
+		else if (m_PlayMode == TIME_MODE)
+		{
+			bool bPlaying = false;
+			for (int i = 0; i<4; i++){
+				if (m_PlayCtrl[i]->IsPlaying()){
+					bPlaying = true;//分段播放其它还在播放，返回；否则继续下一个播放
+					return ;
+				}
+			}
+		}
+
+		if (e->type() == CUSTOM_ManualStop_EVENT)//手动停止不进行下一个播放
+		{
+			return ;
+		}
+
+
+		/*	if (m_playListMode == SINGLE)//单个播放
+		{
+
+		}*/
+		if (m_playListMode == LIST)
+		{
+			PlayIndex(pPlayerCtrl, true);
+		}
+		else if (m_playListMode == SINGLE_REPEAT)
+		{
+			QString strFileName = pPlayerCtrl->GetCurPlayFileName();
+			OpenAndPlayFile(pPlayerCtrl, strFileName);
+		}
+		else if (m_playListMode == LIST_REPEAT)
+		{
+			PlayIndex(pPlayerCtrl, true, true);
+		}
+
+		return ;
+	}
+	else if (e->type() == CUSTOM_PREVIOUS_EVENT)
+	{
+		CMyEvent *myEvent = (CMyEvent *)e;
+		CFormPlayCtrl *pPlayerCtrl = (CFormPlayCtrl*)myEvent->obj;
+		PlayIndex(pPlayerCtrl, false, false);
+		return ;
+	}
+	else if (e->type() == CUSTOM_NEXT_EVENT)
+	{
+		CMyEvent *myEvent = (CMyEvent *)e;
+		CFormPlayCtrl *pPlayerCtrl = (CFormPlayCtrl*)myEvent->obj;
+		PlayIndex(pPlayerCtrl, true);
+		return ;
+	}
+	else if (e->type() == CUSTOM_NOTDIV_EVENT)
+	{
+		QMessageBox::information(this, QStringLiteral("提示"), QStringLiteral("文件过短，不支持分段播放！"));
+		return ;
+	}
+	else if (e->type() == CUSTOM_DIV_EVENT)
+	{
+		CDivEvent *divEvent = (CDivEvent *)e;
+		QString strFileName = divEvent->strFileName;
+		QString strDivFile = strFileName;
+		m_PlayWnd[0]->SetTitleFileName(strDivFile.append(QStringLiteral("_分段%1")).arg(1));
+		for (int i = 1; i < 4; i++)//NUM
+		{
+			m_PlayCtrl[i]->SetPlayMode(m_PlayMode);
+			bool ret = m_PlayCtrl[i]->OpenAndPlayFile(strFileName, (HWND)m_PlayWnd[i]->GetPlayWndID());
+
+			strDivFile = strFileName;
+			m_PlayWnd[i]->SetTitleFileName(strDivFile.append(QStringLiteral("_分段%1")).arg(i + 1));
+			m_PlayCtrl[i]->SetRenderMode(m_renderMode);
+		}
+		return ;
+	}
+	QDialog::customEvent(e);
+}
+
 bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 {
 	//qDebug("e->type()；%d", e->type());
@@ -1317,7 +1541,7 @@ bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 			return true;
 		}
 	}
-	else if (e->type() == CUSTOM_ListItemDbClick_EVENT)
+/*	else if (e->type() == CUSTOM_ListItemDbClick_EVENT)
 	{	
 		CMyEvent *myEvent = (CMyEvent *)e;
 		QListWidgetItem *pItem= (QListWidgetItem*)myEvent->obj;
@@ -1481,11 +1705,7 @@ bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 			return true;
 		}
 		
-		
-	/*	if (m_playListMode == SINGLE)//单个播放
-		{
-
-		}*/
+	
 		if (m_playListMode == LIST)
 		{
 			PlayIndex(pPlayerCtrl,true);
@@ -1537,7 +1757,7 @@ bool CDialogMain::eventFilter(QObject *obj, QEvent *e)
 			m_PlayCtrl[i]->SetRenderMode(m_renderMode);
 		}
 		return true;
-	}
+	}*/
 	return QWidget::eventFilter(obj, e);
 }
 
@@ -1711,6 +1931,26 @@ void CDialogMain::SetFullScreen(QWidget *pPlayWnd)
 	m_PlayCtrl[index]->SetRenderMode(m_renderMode);
 }
 
+void CDialogMain::resizeEvent(QResizeEvent  *event)
+{
+	QWidget::resizeEvent(event);
+	
+	SetPlayMode(m_PlayMode);
+	SetPlayCtrlPos();
+	SetBtnHideListPos();
+
+
+	QRect rc = this->geometry();
+	int windowWidth = rc.width();
+	int windowHeight = rc.height();
+	ui.frameSysBar->setGeometry(m_rcFrameSysBar.left(), m_rcFrameSysBar.top()+2, windowWidth, m_rcFrameSysBar.height()-2);
+	ui.frame_toolBar->move(m_rcFrameToolBar.left(), windowHeight - 50);
+
+	ui.frame_fileList->setGeometry(windowWidth - 205, m_rcFrameFileList.top(), m_rcFrameFileList.width(), windowHeight - 35);
+	//相对于frame_fileList位置
+	ui.listWidget->setGeometry(m_rcFileList.left(), m_rcFileList.top(), m_rcFileList.width(), windowHeight - 70);
+}
+
 void CDialogMain::OnBtnFullScreenClick()
 {
 	SetFullScreen(m_PlayWnd[m_iCurFocus]);
@@ -1752,21 +1992,72 @@ void CDialogMain::PaintWndRect(QPainter &painter, int num)
 	}
 }
 
-void CDialogMain::OnBtnVCAClick()
+bool CDialogMain::nativeEvent(const QByteArray &eventType, void *message, long *result)
 {
-	/*
-	
-	*/
-//	m_pVCAdlg->SetUpFileListVCA(&m_strFileListVCA);
+	if (m_bMax)
+	{
+		return false;
+	}
+	MSG* msg = (MSG*)message;
+	switch (msg->message) {
+		
+	case WM_NCHITTEST:
+	{
+		int xPos = GET_X_LPARAM(msg->lParam) - this->frameGeometry().x();
+		int yPos = GET_Y_LPARAM(msg->lParam) - this->frameGeometry().y();
+		if (this->childAt(xPos, yPos) == 0)
+		{
+			*result = HTCAPTION;
+		}
+	//	else{
+	//		return false;
+	//	}
+		*result = HTCLIENT;
+		int border = 0;
+		int borderWidth = 4;
+		if (xPos > 0 && xPos < borderWidth)
+			*result = HTLEFT;
+		if (xPos >(this->width() - borderWidth) && xPos < (this->width() - border))
+			*result = HTRIGHT;
+		if (yPos > border && yPos < borderWidth)
+			*result = HTTOP;
+		if (yPos >(this->height() - borderWidth) && yPos < (this->height() - border))
+			*result = HTBOTTOM;
+		if (xPos > border && xPos < borderWidth && yPos > border && yPos < borderWidth)
+			*result = HTTOPLEFT;
+		if (xPos >(this->width() - borderWidth) && xPos < (this->width() - border) && yPos > border && yPos < borderWidth)
+			*result = HTTOPRIGHT;
+		if (xPos > border && xPos < borderWidth && yPos >(this->height() - borderWidth) && yPos < (this->height() - border))
+			*result = HTBOTTOMLEFT;
+		if (xPos >(this->width() - borderWidth) && xPos < (this->width() - border) && yPos >(this->height() - borderWidth) && yPos < (this->height() - border))
+			*result = HTBOTTOMRIGHT;
 
-	m_pVCAMaindlg->StartShow();
-	
+	//	
+		return true;
+	}
+	break;
+/*	case WM_NCCALCSIZE:
+		if (msg->wParam)
+		{
+			NCCALCSIZE_PARAMS *lpncsp = (NCCALCSIZE_PARAMS*)msg->lParam;
+		lpncsp->rgrc[0].left = lpncsp->rgrc[0].left +4;
+		lpncsp->rgrc[0].right = lpncsp->rgrc[0].right - 4;
+		lpncsp->rgrc[0].top = lpncsp->rgrc[0].top +4;
+		lpncsp->rgrc[0].bottom = lpncsp->rgrc[0].bottom - 4;
+		lpncsp->rgrc[1] = lpncsp->rgrc[0];
+		return true;
+	}
+
+	*/
+	}
+	return false;
 }
+
 
 void  CDialogMain::OnVCATriggered()
 {
 	m_pVCAMaindlg->StartShow();
-	
+
 	QRect rc = m_pVCAMaindlg->geometry();
 	int iScreenWidth = QApplication::desktop()->width();
 	int iScreenHeigth = QApplication::desktop()->height();

@@ -151,187 +151,171 @@
      </column>
      <item>
       <property name="text">
-       <string>非常规文件</string>
+       <string>.dav</string>
       </property>
       <property name="checkState">
        <enum>Checked</enum>
       </property>
-      <item>
-       <property name="text">
-        <string>.dav</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.sdv</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.h264</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.jav</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.bsr</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.ifv</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>zv</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.ps</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.dvr</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
      </item>
      <item>
       <property name="text">
-       <string>常规文件</string>
+       <string>.sdv</string>
       </property>
       <property name="checkState">
        <enum>Checked</enum>
       </property>
-      <item>
-       <property name="text">
-        <string>.avi</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.mp4</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.rmvb</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.mov</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>mkv</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.3gp</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.wmv</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.vob</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.flv</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.mpg</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.mpeg</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>.swf</string>
-       </property>
-       <property name="checkState">
-        <enum>Checked</enum>
-       </property>
-      </item>
+     </item>
+     <item>
+      <property name="text">
+       <string>.h264</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.dvr</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.ps</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>zv</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.bsr</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.jav</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.ifv</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.swf</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.3gp</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.wmv</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.vob</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>mkv</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.mov</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.rmvb</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.mp4</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.flv</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.mpg</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.mpeg</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>.avi</string>
+      </property>
+      <property name="checkState">
+       <enum>Checked</enum>
+      </property>
      </item>
     </widget>
    </widget>

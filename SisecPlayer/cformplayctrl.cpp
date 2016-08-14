@@ -303,7 +303,7 @@ bool  CFormPlayCtrl::OpenAndPlayFile(QString strFileName, HWND hwnd,bool bSpecif
 			Stop();
 			if (!bSpecify)
 			{
-				int iFFmpegFactoryID = FindFFmpegFactoryID();
+				int iFFmpegFactoryID = FindStandardFactoryID();
 				if (iFileType != iFFmpegFactoryID)
 				{
 					return OpenAndPlayFile(strFileName, hwnd,true, iFFmpegFactoryID);

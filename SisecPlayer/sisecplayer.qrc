@@ -1,6 +1,5 @@
 <RCC>
   <qresource prefix="/">
-    <file>Skin/check.png</file>
     <file>Skin/constrast.png</file>
     <file>Skin/color.png</file>
     <file>Skin/color1.png</file>
@@ -8,7 +7,6 @@
     <file>Skin/saturation.png</file>
     <file>Skin/bright.png</file>
     <file>Skin/clock.png</file>
-    <file>Skin/deleteRule.png</file>
     <file>Skin/edit.png</file>
     <file>Skin/listdown.png</file>
     <file>Skin/listup.png</file>

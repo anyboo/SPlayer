@@ -290,9 +290,11 @@ void CUpdateDlg::updateDataReadProgress(qint64 bytesRead, qint64 totalBytes)
 {
 	if (m_httpRequestAborted)
 		return;
-
-	m_progressDialog->setMaximum(totalBytes);
-	m_progressDialog->setValue(bytesRead);
+	if (totalBytes != 0)
+	{
+		m_progressDialog->setMaximum(totalBytes);
+		m_progressDialog->setValue(bytesRead);
+	}
 }
 
 

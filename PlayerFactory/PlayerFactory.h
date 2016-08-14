@@ -26,9 +26,9 @@ PLAYERFATORY_API BOOL InitPlayerFactory();
 PLAYERFATORY_API BOOL ReleasePlayerFactory();
 
 PLAYERFATORY_API BOOL  AnalyzeFileType(char *pFile, int *pfileType);//分析文件类型，pfileType为0表示通用，则调用通用的开源播放器，否则调用私有的
-PLAYERFATORY_API BOOL IsSupportFastCut(int iFileType);//判断文件类型是否支持快速剪辑
-PLAYERFATORY_API BOOL IsSupport22Renader(int iFileType);//判断文件类型是否支持设置YUV回调后，hwnd依然显示
-PLAYERFATORY_API int  FindFFmpegFactoryID();//获取FFMPEG公开播放器ID
+PLAYERFATORY_API BOOL IsSupportFastCut(int iFileType);//判断文件类型是否支持剪辑
+PLAYERFATORY_API BOOL IsSupport22Renader(int iFileType);//判断文件类型是否支持设置YUV回调后hwnd窗口依然显示
+PLAYERFATORY_API int  FindStandardFactoryID();//获取播放通用文件格式的播放器ID
 
 PLAYERFATORY_API BOOL GetPlayerInterface(LONG *nID);
 PLAYERFATORY_API BOOL FreePlayerInterface(LONG nID);

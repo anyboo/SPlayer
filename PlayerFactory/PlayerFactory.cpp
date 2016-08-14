@@ -596,7 +596,7 @@ BOOL IsSupport22Renader(int iFileType)//判断文件类型是否支持快速剪辑
 
 BOOL Player_FileConvertStart(LONG nID, const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, bool bConvert, T_ConverterParameters *pConvertPara)
 {
-	int fID = FindFFmpegFactoryID();
+	int fID = FindStandardFactoryID();
 	if (fID==-1)
 	{
 		return false;
@@ -648,7 +648,7 @@ BOOL Player_FileConvertPause(LONG nID, DWORD nPause)
 	return 0;
 }
 
-int  FindFFmpegFactoryID()
+int  FindStandardFactoryID()
 {
 	std::list<Factory_Info *>::iterator iter = s_FactoryList.begin();
 	while (iter != s_FactoryList.end())

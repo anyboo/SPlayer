@@ -17,7 +17,7 @@ CDialogConfig::CDialogConfig(QWidget *parent)
 
 	QValidator *validator = new QIntValidator(1, 25, this);
 	ui.edtPicCount->setValidator(validator);
-
+	ui.tabWidget->setCurrentIndex(0);
 
 	connect(ui.btnOpen, SIGNAL(clicked()), this, SLOT(OnBtnOpenClick()));
 	connect(ui.btnConfig, SIGNAL(clicked()), this, SLOT(OnBtnConfigClick()));

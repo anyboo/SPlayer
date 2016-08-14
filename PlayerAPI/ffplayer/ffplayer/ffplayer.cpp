@@ -2,8 +2,6 @@
 #include "ffplayer.h"
 #include <atlconv.h>
 #include "untils.h"
-#define FF_API_AVFILTER_OPEN 1
-#include "FileConverter.h"
 
 std::recursive_mutex g_mutexFFmpeg;
 std::recursive_mutex g_mutexSDL;
@@ -683,7 +681,7 @@ float ffplayer::GetPlayPos()
 
 	if (m_bCanSeek)
 	{
-		fPos = GetPlayedTime() / ((float)m_pFormatCtx->duration / AV_TIME_BASE);
+		fPos = (float)GetPlayedTime() / ((float)m_pFormatCtx->duration / (float)AV_TIME_BASE);
 	}
 	else
 	{
@@ -1554,10 +1552,12 @@ void ffplayer::RenderThreadRun()
 		}*/
 		if (m_bStepNext&&m_bStepEnd){
 			RefreshRender();
+			Sleep(10);
 			continue;
 		}
 		if (m_bPause &&!m_bPausedSeek){		
 			RefreshRender();
+			Sleep(10);
 			continue;
 		}
 	

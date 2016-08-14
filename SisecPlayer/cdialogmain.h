@@ -71,12 +71,15 @@ public:
 	CDialogMain(QWidget *parent = 0);
 	~CDialogMain();
 	virtual void paintEvent(QPaintEvent *event);
-	bool eventFilter(QObject *obj, QEvent *e);
+	virtual bool eventFilter(QObject *obj, QEvent *e);
+	virtual void customEvent(QEvent * event);
 /*	virtual void keyPressEvent(QKeyEvent * event);
-	void keyReleaseEvent(QKeyEvent * keyEvent);*/
-	void dropEvent(QDropEvent * event);
-	void dragEnterEvent(QDragEnterEvent *event);
-/*	void dragMoveEvent(QDragMoveEvent *event);*/
+	virtual void keyReleaseEvent(QKeyEvent * keyEvent);*/
+	virtual void dropEvent(QDropEvent * event);
+	virtual void dragEnterEvent(QDragEnterEvent *event);
+	virtual void resizeEvent(QResizeEvent  *event);
+/*	virtual void dragMoveEvent(QDragMoveEvent *event);*/
+	virtual bool nativeEvent(const QByteArray &eventType, void *message, long *result);
 public:
 	static bool VerifyUkey();
 	void ShellExe(QString &strFile);
@@ -116,9 +119,7 @@ protected slots:
 	void OnBtnFileDelAllClick();
 	void OnActivated(int index);
 	void OnBtnHideListClick();
-	void OnBtnVCAClick();
 	void OnListWidgetItemDbClick(QListWidgetItem * item);
-	void OnTreeWidgetItemDbClick(QTreeWidgetItem* pItem, int column);
 	void OnPlayModeTriggered(QAction*act);
 	void OnRenderModeTriggered(QAction*act);
 	void OnWndModeTriggered(QAction*act);
