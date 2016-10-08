@@ -340,6 +340,7 @@ BOOL  CPlayerTD::SetFileEndCallback(long nID, FileEndCallback callBack, void *pU
 	m_pUser = pUser;
 	TC_RegisterNotifyPlayToEnd(pfCBPlayEnd(EndCallback));
 	m_sPlayerTDCallBack.push_back(this);
+	return true;
 }
 
 void CPlayerTD::DecCallback(unsigned int _ulID, unsigned char *_cData, int _iLen, const FRAME_INFO *_pFrameInfo, int _iUser)

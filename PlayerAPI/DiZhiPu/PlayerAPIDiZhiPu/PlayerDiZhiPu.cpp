@@ -12,13 +12,8 @@ char* CPlayerFactoryDiZhiPu::Name()
 	return "迪智浦";
 }
 
-BOOL CPlayerFactoryDiZhiPu::IsBelongThis(char *pFile)
+BOOL CPlayerFactoryDiZhiPu::IsBelongThisHead(char *pFile)
 {
-	if (strstr(pFile, ".h264") || strstr(pFile, ".H264") || strstr(pFile, ".264"))//判断h264文件
-	{
-		return true;
-	}
-
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
 	if (pfd)//打开文件成功
@@ -26,14 +21,39 @@ BOOL CPlayerFactoryDiZhiPu::IsBelongThis(char *pFile)
 		char buf[8];
 		memset(buf, 0, 8);
 		fread(buf, 8, 1, pfd);
+		fclose(pfd);
 
 		if (strncmp(buf, "264DV", 4) == 0)
 		{
 			return true;
-		}
-		fclose(pfd);
+		}		
 	}
 
+	return false;
+}
+
+
+BOOL CPlayerFactoryDiZhiPu::IsBelongThis(char *pFile)
+{
+	FILE *pfd = NULL;
+	int ret = fopen_s(&pfd, pFile, "rb");
+	if (pfd)//打开文件成功
+	{
+		char buf[8];
+		memset(buf, 0, 8);
+		fread(buf, 8, 1, pfd);
+		fclose(pfd);
+
+		if (strncmp(buf, "HISI", 4) == 0)//“泰康伟业.h264”，字节头"HISI",不在此播放，返回false,让标准库播放
+		{
+			return false;
+		}
+	}
+
+	if (strstr(pFile, ".h264") || strstr(pFile, ".H264"))//判断h264文件，有些播不了“泰康伟业.h264”，字节头"HISI"
+	{
+		return true;
+	}
 
 	return false;
 }

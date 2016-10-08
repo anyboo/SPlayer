@@ -8,6 +8,7 @@ public:
 	virtual ~CPlayerFactoryDiZhiPu(){}
 public:
 	virtual BOOL IsBelongThis(char *pFile);
+	virtual BOOL IsBelongThisHead(char *pFile);
 	virtual char* Name();
 
 	virtual BOOL Init();
@@ -23,7 +24,6 @@ public:
 	CPlayerDiZhiPu();
 	virtual ~CPlayerDiZhiPu();
 	BOOL OpenFile(char *PFile, HWND hwnd);
-	//BOOL CloseFile() ;
 
 	BOOL Play();
 	BOOL Pause(DWORD nPause);

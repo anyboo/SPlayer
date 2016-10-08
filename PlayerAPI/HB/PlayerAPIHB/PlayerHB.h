@@ -10,7 +10,7 @@ public:
 	CPlayerFactoryHB(){}
 	virtual ~CPlayerFactoryHB(){}
 public:
-	virtual BOOL IsBelongThis(char *pFile);
+	virtual BOOL IsBelongThisHead(char *pFile);
 	virtual char* Name();
 
 	virtual BOOL Init();

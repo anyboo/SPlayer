@@ -1,25 +1,77 @@
-// ***************************************************************
-//  dhplay   version:  3.32.0   ? date: 04/14/2011
-//  -------------------------------------------------------------
-//  
-//  -------------------------------------------------------------
-//  Copyright (C) 2011 - All Rights Reserved
-// ***************************************************************
-// 
-// ***************************************************************
+/************************************************************************/
+/* dhplay   版本:  3.34			                                    */
+/************************************************************************/
 
 #ifndef _DHPLAY_H
 #define _DHPLAY_H
 
+#if (defined(WIN32) || defined(WIN64))
+	#ifdef dhplay_EXPORTS
+		#define PLAYSDK_API __declspec(dllexport)
+	#else
+		#define PLAYSDK_API __declspec(dllimport)
+	#endif
+	#define CALLMETHOD __stdcall
+	#define CALLBACK   __stdcall
+#else
+	#define CALLMETHOD
+	#define CALLBACK
+	#define PLAYSDK_API //extern "C"
+#endif
+
+#if defined(WIN32) || defined(WIN64)
+#include <windows.h>
+#else
+#ifdef __OBJC__
+#include "objc/objc.h"
+#else
+#define BOOL        int
+#endif
+#define BYTE		unsigned char
+#define PBYTE		BYTE*
+#define LPBYTE		BYTE*
+#ifndef LONG
+#define LONG		int
+#endif
+#ifndef DWORD
+#define DWORD		unsigned int
+#endif
+#define WORD		unsigned short
+#define COLORREF	DWORD
+#define HDC			void*
+#define HWND		void*
+#define LPSTR		char*
+#define UINT		unsigned int
+#define TRUE		1
+#define FALSE		0
+#define ULONGLONG	unsigned long long
+#define LONGLONG	long long
+
+typedef struct _SYSTEMTIME
+{
+    WORD wYear;
+    WORD wMonth;
+    WORD wDayOfWeek;
+    WORD wDay;
+    WORD wHour;
+    WORD wMinute;
+    WORD wSecond;
+    WORD wMilliseconds;
+} SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
+
+#endif
+
+typedef struct _tagRECT
+{
+	LONG left;
+	LONG top;
+	LONG right;
+	LONG bottom;
+}DISPLAYRECT;
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
-//#define PLAYSDK_API  __declspec(dllexport)
-#define PLAYSDK_API  __declspec(dllimport)
-#define CALLMETHOD __stdcall
-#define CALLBACK __stdcall
-
-
 
 /************************************************************************/
 /* 宏定义			                                                    */
@@ -75,6 +127,9 @@ extern "C" {
 #define PLAY_CMD_GetTime				1		//编码中时间信息
 #define PLAY_CMD_GetFileRate			2		//帧率信息
 #define PLAY_CMD_GetMediaInfo			3		//媒体信息
+#define PLAY_CMD_GetRenderNum			4		//当前要渲染的帧号
+#define PLAY_CMD_GetRenderTime			5		//当前要渲染的时间
+#define PLAY_CMD_GetSrcTime				6
 
 #define AVI_MEDIACHANGE_FRAMERATE		1		//帧率改变
 #define AVI_MEDIACHANGE_RESOLUTION		2		//分辨率改变
@@ -109,57 +164,426 @@ extern "C" {
 #define DH_PLAY_UPDATE_ERROR			23		//显示overlay失败
 #define DH_PLAY_MEMORY_TOOSMALL			24		//缓冲太小
 
+
+// 大华SVAC解码库宏定义
+//SVC  flags
+#define SVC_LAYER_BASE    0x0001
+#define SVC_LAYER_ENHANCE 0x0002
+
+#define MAX_CUSTOM_EXT_COUNT            8
+#define MAX_EXT_ROI_REGION_NUM          32  //最大ROI区域扩展的个数    //标准协议里没规定最大值是多少，这里我们暂定为32应该够用
+#define MAX_EXT_EVENT_REGION_NUM        32  //最大监控事件扩展的个数
+#define MAX_EXT_ALERT_NUM               32  //最大监控报警扩展的个数
+
+//扩展数据的类型
+#define EXT_TYPE_ROI        0x0001      //ROI区域扩展
+#define EXT_TYPE_TIME       0x0002      //绝对时间扩展
+#define EXT_TYPE_ALERT      0x0004      //报警扩展
+#define EXT_TYPE_EVENT      0x0008      //监控事件扩展
+#define EXT_TYPE_AUTH       0x0010      //认证数据
+#define EXT_TYPE_CUSTOM     0x1000      //自定义扩展
+
+
 /************************************************************************/
 /* 结构体	                                                            */
 /************************************************************************/
 
 typedef enum __tPicFormats
 {
-	PicFormat_BMP = 0,						//BMP类型
-	PicFormat_JPEG,							//JPEG类型
+	PicFormat_BMP = 0,				        //BMP32类型
+    PicFormat_JPEG,							//JPEG类型
 	PicFormat_JPEG_70,						//70%质量的JPEG类型
 	PicFormat_JPEG_50,						//50%质量的JPEG类型
 	PicFormat_JPEG_30,						//30%质量的JPEG类型
 	PicFormat_JPEG_10,						//10%质量的JPEG类型
+	PicFormat_BMP24,                        //BMP24类型
+	PicFormat_TIFF							//TIFF类型
 } tPicFormats;
 
-typedef struct{
-	long			nFilePos;				//指定帧在文件中的偏移位置
-	long			nFrameLen;				//帧长度
-	long			nFrameNum;				//帧序号
-	long			nFrameTime;				//帧时间
-	long			nErrorFrameNum;			//保留,暂无使用
+typedef struct
+{
+	LONGLONG		nFilePos;				//指定帧在文件中的偏移位置
+	LONG			nFrameLen;				//帧长度
+	LONG			nFrameNum;				//帧序号
+	LONG			nFrameTime;				//帧时间
+	LONG			nErrorFrameNum;			//保留,暂无使用
 	SYSTEMTIME*		pErrorTime;				//保留,暂无使用
-	long			nErrorLostFrameNum;		//保留,暂无使用
-	long			nErrorFrameSize;		//保留,暂无使用
+	LONG			nErrorLostFrameNum;		//保留,暂无使用
+	LONG			nErrorFrameSize;		//保留,暂无使用
 }FRAME_POS,*PFRAME_POS;
 
-typedef struct{
-	long			nWidth;					//画面宽,单位像素.如果是音频数据则为0.
-	long			nHeight;				//画面高,如果是音频数据则为0
-	long			nStamp;					//时标信息,单位毫秒
-	long			nType;					//视频帧类型,T_AUDIO16,T_RGB32,T_IYUV
-	long			nFrameRate;				//编码时产生的图像帧率
+typedef struct
+{
+	LONG			nWidth;					//画面宽,单位像素.如果是音频数据则为0.
+	LONG			nHeight;				//画面高,如果是音频数据则为0
+	LONG			nStamp;					//时标信息,单位毫秒
+	LONG			nType;					//视频帧类型,T_AUDIO16,T_RGB32,T_IYUV
+	LONG			nFrameRate;				//编码时产生的图像帧率
 }FRAME_INFO;
 
-typedef struct {
-	long			lWidth;					//画面宽,单位像素.
-	long			lHeight;				//画面高
-	long			lFrameRate;				//帧率
-	long			lChannel;				//音频通道数
-	long			lBitPerSample;			//音频采样位数
-	long			lSamplesPerSec;			//音频采样频率
+typedef struct
+{
+	#define FRAME_TYPE_VIDEO 0				//视频帧
+	#define FRAME_TYPE_AUDIO 1				//音频帧
+	int				nFrameType;				//视频帧类型,见上面定义
+	int				nFrameSeq;				//帧序号
+	int				nStamp;					//时标信息,单位毫秒
+	int				nWidth;					//画面宽,单位像素.如果是音频数据则为0.
+	int 			nHeight;				//画面高,如果是音频数据则为0
+	int				nFrameRate;				//编码时产生的图像帧率
+	int				nChannels;				//音频通道数
+	int				nBitPerSample;			//音频采样位数
+	int				nSamplesPerSec;			//音频采样频率
+	int				nRemainData;			//缓冲剩余数据量
+	SYSTEMTIME		nDataTime;				//时间
+	int				nReserved[59];			//保留字段
+}FRAME_INFO_EX;
+
+typedef struct 
+{
+	int				nFrameType;					//帧类型,定义见FRAME_INFO_EX里nFrameType字段
+	
+	void*			pAudioData;				//音频数据,如果是音频帧
+	int				nAudioDataLen;			//音频数据长度
+
+	void*			pVideoData[3];			//分别表示视频的YUV三个分量
+	int				nStride[3];				//分别表示YUV三个分量的跨距
+	int				nWidth[3];				//分别表示YUV三个分量的宽度
+	int				nHeight[3];				//分别表示YUV三个分量的高度
+	int				nReserved[64];			//保留字段
+}FRAME_DECODE_INFO;
+
+typedef struct 
+{
+	int			lWidth;					//画面宽,单位像素.
+	int			lHeight;				//画面高
+	int			lFrameRate;				//帧率
+	int			lChannel;				//音频通道数
+	int			lBitPerSample;			//音频采样位数
+	int			lSamplesPerSec;			//音频采样频率
 }MEDIA_INFO;
 
 typedef struct 
 {
 	char*			pDataBuf;				//帧数据
-	long			nSize;					//帧数据长度
-	long			nFrameNum;				//帧序号
+	LONG			nSize;					//帧数据长度
+	LONG			nFrameNum;				//帧序号
 	BOOL			bIsAudio;				//是否音频帧
-	long			nReserved;				//保留
+	LONG			nReserved;				//保留
 }FRAME_TYPE;
 
+
+
+// 解码附加信息
+typedef struct
+{
+    LONG			nVideoEncodeType;   // 码流类型
+    LONG	        nDataLen;           // 解码数据长度
+    char*           pUserData;              // 解码信息
+    LONG	        nReserved[2];
+}FRAME_DEC_EXT_INFO;
+
+// 大华SVAC解码库解码附加信息自定义字段
+typedef struct
+{
+    unsigned char type;             // 信息类型
+    unsigned char length;           // 信息长度
+    unsigned char *pbuf;            // 信息指针
+    unsigned char reserved[2];      // 保留
+}DEC_EXT_INFO_CUSTOM;
+
+typedef struct
+{
+    int flags;                              //扩展数据类型标记
+
+    int time_year;                          //绝对时间扩展
+    int time_month;
+    int time_day;
+    int time_hour;
+    int time_minute;
+    int time_second;
+    int time_sec_fractional;
+    int time_frame_num;
+
+    int roi_region_num;                             // ROI区域扩展
+    int roi_top_left_x[MAX_EXT_ROI_REGION_NUM];     // ROI区域左上角像素x坐标
+    int roi_top_left_y[MAX_EXT_ROI_REGION_NUM];     // ROI区域左上角像素y坐标
+    int roi_width[MAX_EXT_ROI_REGION_NUM];          // ROI区域宽度
+    int roi_height[MAX_EXT_ROI_REGION_NUM];         // ROI区域高度
+
+    int event_region_num;                           // 监控事件扩展
+    int event_num[MAX_EXT_EVENT_REGION_NUM];
+    int event_region_event_id[MAX_EXT_EVENT_REGION_NUM][16];
+
+    int alert_num;                                  // 监控报警扩展
+    int alert_region_id[MAX_EXT_ALERT_NUM];
+    int alert_event_id[MAX_EXT_ALERT_NUM];
+    int alert_frame_num[MAX_EXT_ALERT_NUM];
+
+    //认证数据相关参数
+    int *auth_buf[2];                               // 认证数据buf, auth_buf[0]是基本层认证数据, auth_buf[1]是增强层认证数据
+    int auth_len[2];                                // 认证数据长度, 不存在认证数据时，长度应该设置为 0
+    int auth_signature_type[2];
+    int auth_hash_hierarchy_flag[2];
+
+    DEC_EXT_INFO_CUSTOM svac_ext_info_custom[MAX_CUSTOM_EXT_COUNT];     // 扩展
+}DEC_EXT_PARAM_SVAC;
+
+/***begin鱼眼定义***/
+typedef enum
+{
+	FISHEYEMOUNT_MODE_INVALID = 0,
+	FISHEYEMOUNT_MODE_CEIL = 1,						/*顶装*/
+	FISHEYEMOUNT_MODE_WALL,							/*壁装*/
+	FISHEYEMOUNT_MODE_FLOOR,						/*地装*/
+	FISHEYEMOUNT_MODE_NUM
+}FISHEYE_MOUNTMODE;
+
+typedef enum
+{
+	FISHEYECALIBRATE_MODE_INVALID = 0,
+	FISHEYECALIBRATE_MODE_OFF = 1,								/*关闭鱼眼算法库，外部关闭*/
+	FISHEYECALIBRATE_MODE_ORIGINAL,								/*原始模式(正方形),带缩放比例*/
+	FISHEYECALIBRATE_MODE_PANORAMA,								/*1p*/
+	FISHEYECALIBRATE_MODE_PANORAMA_PLUS_ONE_EPTZ,				/*1p+1*/
+	FISHEYECALIBRATE_MODE_DOUBLE_PANORAMA,						/*2p*/
+	FISHEYECALIBRATE_MODE_ORIGINAL_PLUS_DOUBLE_PANORAMA,		/*1+2p*/
+	FISHEYECALIBRATE_MODE_ORIGINAL_PLUS_THREE_EPTZ_REGION,		/*1+3*/
+	FISHEYECALIBRATE_MODE_PANORAMA_PLUS_THREE_EPTZ_REGION,		/*1p+3*/
+	FISHEYECALIBRATE_MODE_ORIGINAL_PLUS_TWO_EPTZ_REGION,		/*1+2*/	
+	FISHEYECALIBRATE_MODE_ORIGINAL_PLUS_FOUR_EPTZ_REGION,		/*1+4*/
+	FISHEYECALIBRATE_MODE_PANORAMA_PLUS_FOUR_EPTZ_REGION,		/*1p+4*/
+	FISHEYECALIBRATE_MODE_PANORAMA_PLUS_SIX_EPTZ_REGION,		/*1p+6*/
+	FISHEYECALIBRATE_MODE_ORIGINAL_PLUS_EIGHT_EPTZ_REGION,		/*1+8*/
+	FISHEYECALIBRATE_MODE_PANORAMA_PLUS_EIGHT_EPTZ_REGION,		/*1p+8*/
+	FISHEYECALIBRATE_MODE_TWO_EPTZ_REGION_WITH_ORIGINAL,		/*1F+2*/	
+	FISHEYECALIBRATE_MODE_FOUR_EPTZ_REGION_WITH_ORIGINAL,		/*1F+4*/	
+	FISHEYECALIBRATE_MODE_DOUBLE_PANORAMA_WITH_ORIGINAL,		/*1F+2p*/
+	FISHEYECALIBRATE_MODE_FOUR_EPTZ_REGION_WITH_PANORAMA,		/*1p(F)+4*/
+	FISHEYECALIBRATE_MODE_TWO_EPTZ_REGION,		                /*2画面*/
+	FISHEYECALIBRATE_MODE_SINGLE,								/*单画面*/
+	FISHEYECALIBRATE_MODE_FOUR_EPTZ_REGION,						/*4画面*/
+	FISHEYECALIBRATE_MODE_USER_DEFINED,				    		/*用户自定义*/
+	FISHEYECALIBRATE_MODE_PHONE,								/*手机模式*/
+	FISHEYECALIBRATE_MODE_ORIGINAL_PLUS_ONE_EPTZ_REGION,		/*1+1*/
+	FISHEYECALIBRATE_MODE_ONE_EPTZ_REGION,						/*1画面*/
+
+	FISHEYECALIBRATE_MODE_NUM
+}FISHEYE_CALIBRATMODE;
+
+typedef enum
+{
+	FISHEYEEPTZ_CMD_INVALID = 0,	
+	FISHEYEEPTZ_CMD_ZOOM_IN = 1,						/*放大*/
+	FISHEYEEPTZ_CMD_ZOOM_OUT,							/*缩小*/
+	FISHEYEEPTZ_CMD_UP,									/*向上移动*/
+	FISHEYEEPTZ_CMD_DOWN,								/*向下移动*/
+	FISHEYEEPTZ_CMD_LEFT,								/*向左移动*/
+	FISHEYEEPTZ_CMD_RIGHT,								/*向右移动*/
+	FISHEYEEPTZ_CMD_ROTATE_CLOCKWISE_AUTO,				/*自动顺时针旋转*/
+	FISHEYEEPTZ_CMD_ROTATE_ANTICLOCKWISE_AUTO,			/*自动逆时针旋转*/
+	FISHEYEEPTZ_CMD_STOP,								/*停止*/
+	FISHEYEEPTZ_CMD_SHOW_REGION,						/*框选放大*/
+	FISHEYEEPTZ_CMD_EXIT_SHOW_REGION,					/*退出框选放大*/
+	FISHEYEEPTZ_CMD_DEFAULT,						    /*恢复默认*/
+	FISHEYEEPTZ_CMD_ORIGIN_ROTATE,						/*圆旋转*/
+
+	FISHEYEEPTZ_CMD_SET_CUR_REGION = 0x20,             /*配置指定窗口的位置信息*/
+	FISHEYEEPTZ_CMD_GET_CUR_REGION,                    /*获取指定窗口的位置信息*/
+	FISHEYEEPTZ_CMD_IS_IN_PANORAMA_REGION,             /*输入点是否在当前全景点链区域内*/
+	FISHEYEEPTZ_CMD_TAP_VIEW,							/*显示指定位置,即点即看*/
+	FISHEYEEPTZ_CMD_SET_FOCUS,	 				        /*设置窗口位置信息*/
+	FISHEYEEPTZ_CMD_GET_FOCUS,							/*获取窗口位置信息*/
+
+	FISHEYEEPTZ_CMD_PTZ_CALI,							/*鱼球联动标定*/
+	FISHEYEEPTZ_CMD_GET_PTZ_RLT,						/*获取鱼球联动定位信息*/
+	FISHEYEEPTZ_CMD_NUM
+}FISHEYE_EPTZCMD;
+
+typedef struct
+{
+	int w;
+	int h;
+}FISHEYE_SIZE;
+
+typedef struct
+{
+	short x;
+	short y;
+}FISHEYE_POINT2D;
+
+typedef struct
+{
+	FISHEYE_MOUNTMODE     subMountMode;			    /*子图像安装模式, 仅当图像主校正模式为用户自定义模式时, 该值有效*/
+	FISHEYE_CALIBRATMODE  subCalibrateMode;	        /*子图像校正模式, 仅当图像主校正模式为用户自定义模式时, 该值有效*/
+	FISHEYE_SIZE          imgOutput;                /*子图像输出分辨率*/
+	FISHEYE_POINT2D       upperLeft;                /*子图像偏移*/
+	int					  reserved[3];				/*保留字节*/
+}FISHEYE_SUBMODE;
+
+typedef struct
+{
+	FISHEYE_SIZE          mainShowSize;		        /*暂不启用, 主显示比例, 4:3, 16:9等, 算法据此输出适合的最优结果（不变形情况下尽量达到该比例）*/
+	FISHEYE_SIZE          floatMainShowSize;		/*输出双buffer时使用，目前暂时还是用老的操作方法，浮动窗口的主显示窗口分辨率, 浮动圆的宽高比需要为1:1，浮动壁装全景的宽高比需要为16:9*/
+	FISHEYE_SIZE          imgOutput;                /*输出图像分辨率(缩放前), 图像主校正模式为用户自定义模式时为外部输入, 其他模式为内部返回*/
+	FISHEYE_SUBMODE*	  subMode;                  /*子模式信息, 图像主校正模式为用户自定义模式时为外部输入, 其他模式为内部返回*/
+	int		              subModeNum;               /*子模式数, 图像主校正模式为用户自定义模式时为外部输入, 其他模式为内部返回*/
+	int                   outputSizeRatio;		    /*暂不启用, 校正输出图像的缩放比,Q8格式,范围0-256, 256为保持最大输出分辨率*/
+	int                   reserved[1];				/*保留字节*/
+}FISHEYE_OUTPUTFORMAT;
+
+typedef struct
+{
+	int x;
+	int y;
+	int hAngle;
+	int vAngle;
+	int available;
+	int reserved[3];
+}FISHEYE_REGIONPARAM;
+
+typedef struct
+{
+	FISHEYE_REGIONPARAM   regionParam[9];
+	int              circularOffset;
+	int              panoramaOffset;
+	int              useRegionParam;           /*为1时表明有效，使用该值进行初始化；没有保存信息时请置为0*/
+	int              reserved[1];
+}FISHEYE_MODEINITPARAM;
+
+#ifndef MFPTZ_OPEN
+#define MFPTZ_OPEN
+#endif
+
+#ifndef FTRACK_MODE
+#define FTRACK_MODE
+#endif
+
+#ifdef MFPTZ_OPEN
+/*枪机类型*/
+typedef enum CAM_TYPE
+{
+	//枪机类型
+	IPCTYPE_200WN				= 0,	//
+	IPCTYPE_130WN				= 1,
+	IPCTYPE_D1WN				= 2,
+	IPCTYPE_100WN				= 3,
+	IPCTYPE_FE					= 4,	//鱼眼
+
+	//球机类型
+	SPCTYPE_D6501				= 100,	//sony机芯65球机
+	HSPCTYPE_D6A2030E			= 101,	//大华机芯2030E，6A球机
+	HSPCTYPE_D65A2030E			= 102	//大华机芯2030E，65A球机
+}CAM_TYPE;
+
+/*镜头类型*/
+typedef enum LEN_TYPE
+{
+	LENTYPE_NORM				= 0,	//无畸变镜头
+	LENTYPE_Lens0361 			= 1,	//3.6毫米枪机镜头
+	LENTYPE_Lens2880			= 2,	//130度广角枪机镜头
+	LENTYPE_Lens0362 			= 3,	//3.6毫米枪机镜头
+	LENTYPE_Lens0401 			= 4,	//4.0毫米枪机镜头
+
+	LENTYPE_TEST1				= 100	//调试用参数
+}LEN_TYPE;
+
+typedef struct
+{	
+	/*必设参数*/
+	int zoom_type;							//倍数控制模式----期望自适应变倍和根据框选目标大小变倍两种模式
+	int hcam_wax;							//期望倍数对应球机角度x（水平）
+	int hcam_way;							//期望倍数对应球机角度y（垂直）
+	int hcam_wmul;							//期望倍数设置（基准倍数）
+	int cfg_type;							//配置方式，默认为1：使用配置参数方式,1：使用参数配置方式，0：使用设备类型配置方式
+
+	//主相机参数							         
+	//镜头参数
+	int prm_re;								//投影半径
+	int prm_mul;							//投影倍率
+	int prm_dx;								//x方向偏移
+	int prm_dy;								//y方向偏移
+	int prm_cw;								//CMOS宽（实际使用宽）
+	int prm_ch;								//CMOS高（实际使用高）
+
+	//主相机和从相机类型配置（cfg_type为0时设置该参数才有效）            //默认130度、130万枪机和200W65球机
+	LEN_TYPE mlen_type;						//主相机镜头类型
+	CAM_TYPE mcam_type;						//主相机类型
+	CAM_TYPE hcam_type;						//从相机类型
+
+	//球机参数
+	int himg_width;                         //从相机图像宽
+	int himg_height;                        //从相机图像高
+	int prm_fax;                            //球机水平视场角
+
+	/*可默认的参数*/
+	//主相机参数
+	int mcam_fc;							//相机等效焦距
+	int mcam_cw;							//镜头靶面高
+	int mcam_ch;							//镜头靶面宽 
+	int cam_height;                         //相机架设高度（米），（暂时未使用）
+	int prm_ma;								//焦距参数
+
+	//从相机参数
+	//球机参数
+	int prm_hw;								//CMOS宽
+	int prm_hh;								//CMOS高
+	int prm_fo;								//等效焦距
+	int prm_ca;								//视野参数
+	int prm_mmul;							//最大倍率
+}MHFPTZ_CONFIGPARAM;
+#endif
+
+typedef struct
+{
+	FISHEYE_SIZE     mainStreamSize;		    /*对应主码流原始宽高，当传入分辨率与之不等时表明为辅码流是此分辨率缩放而来*/
+	int              originX;					/*输入图像中鱼眼圆的圆心横坐标, 归一化至0-8192坐标系*/
+	int              originY;					/*输入图像中鱼眼圆的圆心纵坐标, 归一化至0-8192坐标系*/
+	int              radius;					/*输入图像中鱼眼圆的半径, 归一化至0-8192坐标系*/ 
+	int              lensDirection;		        /*旋转角度, Q7格式, 范围0-360*128, 一般配为0*/
+	FISHEYE_MOUNTMODE     mainMountMode;		/*主安装模式*/
+	FISHEYE_CALIBRATMODE  mainCalibrateMode;	/*图像主校正模式*/
+	FISHEYE_MODEINITPARAM modeInitParam;        /*外部传入模式初始化各画面信息，适用于模式切换恢复到上一次的状态,*/
+	FISHEYE_OUTPUTFORMAT *outputFormat;         /*输出图像信息*/
+#ifdef MFPTZ_OPEN
+	MHFPTZ_CONFIGPARAM   *configParam;          /*鱼球联动配置参数*/
+#endif
+	int              enableAutoContrast;       /*开启自动对比度, 0关闭, 1开启, 该功能会增加算法耗时, 需要性能好的机器才建议开启*/
+	int              alphaHistogram;           /*直方图IIR强度0-255, 默认128, 越大越参考当前帧*/
+	int              alphaGray;                /*灰度拉伸强度0-255, 默认245, 越大越对比度弱*/
+	FISHEYE_SIZE     captureSize;		       /*对应当前模式下的抓图分辨率*/
+#ifdef MFPTZ_OPEN
+	int              mhfptzIndex;               //IN 鱼球联动球机序号0,1,2....
+#endif
+	int              reserved[1];				/*保留字节*/
+}FISHEYE_OPTPARAM;
+
+typedef struct
+{
+	FISHEYE_EPTZCMD   ePtzCmd;			/*云台操作，说明见FISHEYE_EPtzCmd定义*/
+	int          winId;				    /*要进行eptz的窗口编号，左上角winId为0，从左到右递增*/							
+	int          arg1;
+	int          arg2;
+	int          arg3;
+	int          arg4;
+	int          arg5;
+	int          arg6;
+	int          reserved0[6];			   /*保留字节*/
+	void*        pParam;                   /*鱼球联动*/
+	void*        pResult;
+	void*        pArg;   
+
+	int          reserved1[7];			   /*保留字节*/
+
+}FISHEYE_EPTZPARAM;
+
+typedef enum
+{
+	FISHEYE_SETPARAM,
+	FISHEYE_GETPARAM
+
+}FISHEYE_OPERATETYPE;
+/***end鱼眼定义***/
 
 /************************************************************************/
 /* 接口		                                                            */
@@ -276,6 +700,15 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_OneByOne(LONG nPort);
 PLAYSDK_API BOOL CALLMETHOD PLAY_SetPlayPos(LONG nPort,float fRelativePos);
 
 //------------------------------------------------------------------------
+// 函数: PLAY_SetPlayDirection
+// 描述: 设置播放方向
+// 参数: nPort,通道号
+//		 emDirection,播放方向：0，向前，1，向后
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+//------------------------------------------------------------------------
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetPlayDirection(LONG nPort, DWORD emDirection);
+
+//------------------------------------------------------------------------
 // 函数: PLAY_GetPlayPos
 // 描述: 获取文件播放指针的相对位置(百分比)
 // 参数: nPort,通道号
@@ -321,23 +754,6 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_StopSound();
 PLAYSDK_API BOOL CALLMETHOD PLAY_PlaySound(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_GetCaps
-// 描述: 测试播放所需系统功能
-// 参数: 
-// 返回: 属性值，按位取值,每位含义如下:
-//		SUPPORT_DDRAW 支持DIRECTDRAW,如果不支持,则播放器不能工作
-//		SUPPORT_BLT	显卡支持BLT操作,如果不支持,则播放器不能工作
-//		SUPPORT_BLTFOURCC 显卡BLT支持颜色转换,如果不支持,播放器会使用软件方式作RGB转换
-//		SUPPORT_BLTSHRINKX 显卡BLT支持X轴缩小,如果不支持,系统使用软件方式转换
-//		SUPPORT_BLTSHRINKY 显卡BLT支持Y轴缩小,如果不支持,系统使用软件方式转换
-//		SUPPORT_BLTSTRETCHX	显卡BLT支持X轴放大,如果不支持,系统使用软件方式转换
-//		SUPPORT_BLTSTRETCHY	显卡BLT支持Y轴放大,如果不支持,系统使用软件方式转换
-//		SUPPORT_SSE CPU支持SSE指令,Intel Pentium3以上支持SSE指令
-//		SUPPORT_MMX CPU支持MMX指令集
-//------------------------------------------------------------------------
-PLAYSDK_API int	CALLMETHOD PLAY_GetCaps();
-
-//------------------------------------------------------------------------
 // 函数: PLAY_GetFileTime
 // 描述: 获取文件总时间
 // 参数: nPort,通道号
@@ -362,41 +778,22 @@ PLAYSDK_API DWORD CALLMETHOD PLAY_GetPlayedTime(LONG nPort);
 PLAYSDK_API DWORD CALLMETHOD PLAY_GetPlayedFrames(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_SetDecCallBack
+// 函数: PLAY_SetDecodeCallBack
 // 描述: 设置解码回调,替换播放器中的显示部分,由用户自己控制显示,该函数在
 //			PLAY_Play之前调用,在PLAY_Stop时自动失效,下次调用PLAY_Play之前
 //			需要重新设置.解码部分不控制速度,只要用户从回调函数中返回,解码器
 //			就会解码下一部分数据.适用于只解码不显示的情形。
 // 参数: nPort,通道号
-//		 DecCBFun,解码回调函数指针,不能为NULL.回调函数参数含义如下:
+//		 cbDec,解码回调函数指针,不能为NULL.回调函数参数含义如下:
 //			nPort,通道号
-//			pBuf,解码后的音视频数据
-//			nSize,解码后的音视频数据pBuf的长度
+//			pFrameDecodeInfo,解码后的音视频数据
 //			pFrameInfo,图像和声音信息,请参见FRAME_INFO结构体
-//			nReserved1,保留参数
-//			nReserved2,保留参数	
+//			pUser,用户自定义参数
+//		 pUser,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDecCallBack(LONG nPort,void (CALLBACK* DecCBFun)(long nPort,char * pBuf,	long nSize,FRAME_INFO * pFrameInfo, long nReserved1,long nReserved2));
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetDecCallBackEx
-// 描述: 设置解码回调,替换播放器中的显示部分,由用户自己控制显示,该函数在
-//			PLAY_Play之前调用,在PLAY_Stop时自动失效,下次调用PLAY_Play之前
-//			需要重新设置.解码部分不控制速度,只要用户从回调函数中返回,解码器
-//			就会解码下一部分数据.适用于只解码不显示的情形。
-// 参数: nPort,通道号
-//		 DecCBFun,解码回调函数指针,不能为NULL.回调函数参数含义如下:
-//			nPort,通道号
-//			pBuf,解码后的音视频数据
-//			nSize,解码后的音视频数据pBuf的长度
-//			pFrameInfo,图像和声音信息,请参见FRAME_INFO结构体
-//			nReserved1,用户自定义参数
-//			nReserved2,保留参数	
-//		 nUser,用户自定义参数
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDecCallBackEx(LONG nPort,void (CALLBACK* DecCBFun)(long nPort,char * pBuf, long nSize, FRAME_INFO * pFrameInfo, long nReserved1,long nReserved2), long nUser = 0);
+typedef void (CALLBACK* fCBDecode)(LONG nPort, FRAME_DECODE_INFO* pFrameDecodeInfo, FRAME_INFO_EX* pFrameInfo, void* pUser);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetDecodeCallBack(LONG nPort, fCBDecode cbDec, void* pUser);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetDisplayCallBack
@@ -411,11 +808,12 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetDecCallBackEx(LONG nPort,void (CALLBACK* Dec
 //			nHeight,画面高
 //			nStamp,时标信息，单位毫秒
 //			nType,数据类型,T_RGB32,T_UYVY,详见宏定义说明
-//			nReceaved,保留参数
-//		 nUser,用户自定义参数
+//			nReceaved,对应用户自定义参数
+//		 pUserData,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayCallBack(LONG nPort,void (CALLBACK* DisplayCBFun)(long nPort,char * pBuf,long nSize,long nWidth,long nHeight,long nStamp,long nType,long nReserved), long nUser = 0);
+typedef void (CALLBACK* fDisplayCBFun)(LONG nPort,char * pBuf,LONG nSize,LONG nWidth,LONG nHeight,LONG nStamp,LONG nType, void* pReserved);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayCallBack(LONG nPort, fDisplayCBFun DisplayCBFun, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_ConvertToBmpFile
@@ -428,7 +826,7 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayCallBack(LONG nPort,void (CALLBACK* D
 //		 sFileName,要保存的文件名.最好以BMP作为文件扩展名.
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_ConvertToBmpFile(char * pBuf,long nSize,long nWidth,long nHeight,long nType,char *sFileName);
+PLAYSDK_API BOOL CALLMETHOD PLAY_ConvertToBmpFile(char * pBuf,LONG nSize,LONG nWidth,LONG nHeight,LONG nType, char *sFileName);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_ConvertToJpegFile
@@ -440,7 +838,7 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_ConvertToBmpFile(char * pBuf,long nSize,long nW
 //		 quality,图片压缩质量,范围(0, 100].
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_ConvertToJpegFile(char *pYUVBuf, long nWidth, long nHeight, int YUVtype, int quality, char *sFileName);
+PLAYSDK_API BOOL CALLMETHOD PLAY_ConvertToJpegFile(char *pYUVBuf, LONG nWidth, LONG nHeight, int YUVtype, int quality, char *sFileName);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_GetFileTotalFrames
@@ -496,14 +894,6 @@ PLAYSDK_API DWORD CALLMETHOD PLAY_GetCurrentFrameNum(LONG nPort);
 PLAYSDK_API BOOL CALLMETHOD PLAY_SetStreamOpenMode(LONG nPort,DWORD nMode);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_GetFileHeadLength
-// 描述: 获取文件头长度
-// 参数: 
-// 返回: 当前版本播放器能播放的文件的文件头长度.
-//------------------------------------------------------------------------
-PLAYSDK_API DWORD CALLMETHOD PLAY_GetFileHeadLength();
-
-//------------------------------------------------------------------------
 // 函数: PLAY_GetSdkVersion
 // 描述: 获取播放库SDK版本号,次版本号和补丁号
 // 参数: 
@@ -529,29 +919,6 @@ PLAYSDK_API DWORD CALLMETHOD PLAY_GetLastError(LONG nPort);
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
 PLAYSDK_API BOOL CALLMETHOD PLAY_RefreshPlay(LONG nPort);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetOverlayMode
-// 描述: 设置Overlay模式和关键色,设置OVERLAY模式显示画面.在一块显卡中一般同一
-//			时刻只能有一个OVERLAY表面处于活动状态,如果此时系统中已经有程序使用
-//			了OVERLAY,那么播放器就不能再创建OVERLAY表面,它将自动改用Off_Screen
-//			表面,并不返回FALSE.一些常用的播放器,以及我们卡的预览都可能使用了
-//			OVERLAY表面.同样,如果播放器使用了OVERLAY表面,那么,其他的程序将不能
-//			使用OVERLAY表面.使用OVERLAY模式的优点是:大部份的显卡都支持OVERLAY,
-//			在一些不支持BLT硬件缩放和颜色转换的显卡上(SIS系列显卡)使用OVERLAY模
-//			式(OVERLAY模式下的缩放和颜色转换由显卡支持),可以大大减小CPU利用率并
-//			提高画面质量(相对于软件缩放和颜色转换).缺点是只能有一路播放器使用.
-//			该设置必须在PLAY之前使用，而且需要设置透明色.
-// 参数: nPort,通道号
-//		 bOverlay,TRUE表示将首先尝试使用OVERLAY模式,如果不行再使用其他模式.
-//			FALSE则不进行OVERLAY模式的尝试.
-//		 colorKey,用户设置的透明色,透明色相当于一层透视膜,显示的画面只能穿过这
-//			种颜色,而其他的颜色将挡住显示的画面.用户应该在显示窗口中涂上这种颜
-//			色,那样才能看到显示画面.一般应该使用一种不常用的颜色作为透明色.这是
-//			一个双字节值0x00rrggbb,最高字节为0,后三个字节分别表示r,g,b的值.
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetOverlayMode(LONG nPort,BOOL bOverlay,COLORREF colorKey);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_GetPictureSize
@@ -600,22 +967,6 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_StopSoundShare(LONG nPort);
 PLAYSDK_API LONG CALLMETHOD PLAY_GetStreamOpenMode(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_GetOverlayMode
-// 描述: 获取当前是否使用了OVERLAY显示模式.
-// 参数: nPort,通道号
-// 返回: LONG,0表示没有使用OVERLAY;1表示使用了OVERLAY表面.
-//------------------------------------------------------------------------
-PLAYSDK_API LONG CALLMETHOD PLAY_GetOverlayMode(LONG nPort);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_GetColorKey
-// 描述: 获取OVERLAY关键色
-// 参数: nPort,通道号
-// 返回: COLORREF,颜色值.
-//------------------------------------------------------------------------
-PLAYSDK_API COLORREF CALLMETHOD PLAY_GetColorKey(LONG nPort);
-
-//------------------------------------------------------------------------
 // 函数: PLAY_GetVolume
 // 描述: 获取音量,这里的音量是指声卡输出的音量.
 // 参数: nPort,通道号
@@ -649,51 +1000,6 @@ PLAYSDK_API DWORD CALLMETHOD PLAY_GetSourceBufferRemain(LONG nPort);
 PLAYSDK_API BOOL CALLMETHOD PLAY_ResetSourceBuffer(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_SetSourceBufCallBack
-// 描述: 设置源缓冲区阈值及回调指针
-// 参数: nPort,通道号
-//		 nThreShold,阈值
-//		 SourceBufCallBack,回调函数指针,其参数含义如下:
-//			nPort,通道号
-//			nBufSize,缓冲中的数据长度
-//			dwUser,用户数据
-//			pResvered,保留
-//		 dwUser,用户自定义参数
-//		 pReserved,保留
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetSourceBufCallBack(LONG nPort,
-													  DWORD nThreShold,
-													  void (CALLBACK * SourceBuf__stdcall)(long nPort,DWORD nBufSize,DWORD dwUser,void*pResvered),
-													  DWORD dwUser,
-													  void *pReserved);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_ResetSourceBufFlag
-// 描述: 重置回调标志为有效状态
-// 参数: nPort,通道号
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_ResetSourceBufFlag(LONG nPort);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetDisplayBuf
-// 描述: 设置播放缓冲区最大缓冲帧数,PLAY_Play之前调用有效.
-// 参数: nPort,通道号
-//		 nNum,播放缓冲区最大缓冲帧数,范围[MIN_DIS_FRAMES,MAX_DIS_FRAMES].
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayBuf(LONG nPort,DWORD nNum);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_GetDisplayBuf
-// 描述: 获取播放缓冲区最大缓冲帧数
-// 参数: nPort,通道号
-// 返回: DWORD,播放缓冲区最大缓冲帧数
-//------------------------------------------------------------------------
-PLAYSDK_API DWORD CALLMETHOD PLAY_GetDisplayBuf(LONG nPort);
-
-//------------------------------------------------------------------------
 // 函数: PLAY_OneByOneBack
 // 描述: 单帧回退,此接口只支持文件播放,必须在文件索引生成之后才能调用.每调
 //			用一次倒退一帧
@@ -701,22 +1007,6 @@ PLAYSDK_API DWORD CALLMETHOD PLAY_GetDisplayBuf(LONG nPort);
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
 PLAYSDK_API BOOL CALLMETHOD PLAY_OneByOneBack(LONG nPort);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetFileRefCallBack
-// 描述: 设置建立索引回调,在文件打开时生成文件索引.这个过程耗时比较长,大约
-//			每秒处理40M左右的数据,因为从硬盘读数据比较慢,建立索引的过程是在
-//			后台完成,需要使用索引的函数要等待这个过程结束,其他接口不受影响.
-// 参数: nPort,通道号
-//		 pFileRefDone,回调函数指针,其参数含义如下:
-//			nPort,通道号
-//			nUser,用户自定义参数
-//		 nUser,用户自定义参数
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetFileRefCallBack(LONG nPort, 
-													void (CALLBACK *pFileRefDone)(DWORD nPort,DWORD nUser),
-													DWORD nUser);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetCurrentFrameNum
@@ -757,26 +1047,6 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_GetKeyFramePos(LONG nPort,DWORD nValue, DWORD n
 PLAYSDK_API BOOL CALLMETHOD PLAY_GetNextKeyFramePos(LONG nPort,DWORD nValue, DWORD nType, PFRAME_POS pFramePos);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_SetDisplayType
-// 描述: 设置显示的模式,在小画面显示时,采用DISPLAY_QUARTER可以减小显卡工作量,
-//			从而支持更多路显示,但画面显示质量有下降.在正常和大画面显示时应该
-//			使用DISPLAY_NORMAL.
-// 参数: nPort,通道号
-//		 nType,两种模式:DISPLAY_NORMAL,正常分辨率数据送显卡显示;
-//					    DISPLAY_QUARTER,1/4分辨率数据送显卡显示;
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayType(LONG nPort,LONG nType);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_GetDisplayType
-// 描述: 获取显示模式
-// 参数: nPort,通道号
-// 返回: long,DISPLAY_NORMAL或DISPLAY_QUARTER
-//------------------------------------------------------------------------
-PLAYSDK_API long CALLMETHOD PLAY_GetDisplayType(LONG nPort);
-
-//------------------------------------------------------------------------
 // 函数: PLAY_SetDecCBStream
 // 描述: 设置解码回调流类型,在PLAY_Play之前调用.
 // 参数: nPort,通道号
@@ -795,16 +1065,8 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetDecCBStream(LONG nPort,DWORD nStream);
 //		 bEnable,打开(设置)或关闭显示区域
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayRegion(LONG nPort,DWORD nRegionNum, RECT *pSrcRect, HWND hDestWnd, BOOL bEnable);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayRegion(LONG nPort,DWORD nRegionNum, DISPLAYRECT *pSrcRect, HWND hDestWnd, BOOL bEnable);
 
-//------------------------------------------------------------------------
-// 函数: PLAY_RefreshPlayEx
-// 描述: 刷新显示,同PLAY_RefreshPlay.为支持PLAY_SetDisplayRegion而增加一个参数.
-// 参数: nPort,通道号
-//		 nRegionNum,显示区域序号
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_RefreshPlayEx(LONG nPort,DWORD nRegionNum);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_GetRefValue
@@ -820,54 +1082,13 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_GetRefValue(LONG nPort,BYTE *pBuffer, DWORD *pS
 //------------------------------------------------------------------------
 // 函数: PLAY_SetRefValue
 // 描述: 设置文件索引,索引信息及其长度必须准确.如果已经有了文件索引信息,可以
-//			不再调用生成索引的回调函数PLAY_SetFileRefCallBack,直接输入索引信息.
+//			不再调用生成索引的回调函数PLAY_SetFileRefCallBackEx,直接输入索引信息.
 // 参数: nPort,通道号
 //		 pBuffer,索引信息
 //		 nSize,索引信息的长度
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
 PLAYSDK_API BOOL CALLMETHOD PLAY_SetRefValue(LONG nPort,BYTE *pBuffer, DWORD nSize);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_OpenStreamEx
-// 描述: 打开流,以音视频分开方式输入方式.
-// 参数: nPort,通道号
-//		 pFileHeadBuf,目前不使用,填NULL
-//		 nSize,目前不使用,填0
-//		 nBufPoolSize,设置播放器中存放数据流的缓冲区大小,范围是[SOURCE_BUF_MIN,SOURCE_BUF_MAX]
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_OpenStreamEx(LONG nPort,PBYTE pFileHeadBuf,DWORD nSize,DWORD nBufPoolSize);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_CloseStreamEx
-// 描述: 关闭流(以音视频分开方式输入方式).
-// 参数: nPort,通道号
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_CloseStreamEx(LONG nPort);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_InputVideoData
-// 描述: 输入视频流(可以是复合流,但音频数据会被忽略).打开流之后才能输入数据,
-// 参数: nPort,通道号
-//		 pBuf,缓冲区地址
-//		 nSize,缓冲区大小
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.返回FALSE时,一般是内部缓冲区已满，用
-//			户可暂停输入,一段时间之后再输入流,确保播放库不丢失数据.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_InputVideoData(LONG nPort,PBYTE pBuf,DWORD nSize);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_InputAudioData
-// 描述: 输入音频流,打开声音之后才能输入数据.
-// 参数: nPort,通道号
-//		 pBuf,缓冲区地址
-//		 nSize,缓冲区大小
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.返回FALSE时,一般是内部缓冲区已满，用
-//			户可暂停输入,一段时间之后再输入流,确保播放库不丢失数据.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_InputAudioData(LONG nPort,PBYTE pBuf,DWORD nSize);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_RigisterDrawFun
@@ -879,32 +1100,11 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_InputAudioData(LONG nPort,PBYTE pBuf,DWORD nSiz
 //		 DrawFun,画图回调函数,其参数含义如下:
 //			nPort,通道号
 //			hDc,OffScreen表面设备上下文.
-//			nUser,用户数据,就是上面输入的用户数据
+//			pUserData,用户数据,就是上面输入的用户数据
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_RigisterDrawFun(LONG nPort,void (CALLBACK* DrawFun)(long nPort,HDC hDc,LONG nUser),LONG nUser);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetTimerType
-// 描述: 设置播放使用的定时器类型.
-// 参数: nPort,通道号
-//		 nTimerType,TIMER_1 多媒体定时器,精度高,但一个进程中不能超过16个.
-//					TIMER_2 线程定时器,精度略低,无数量限制.
-//		 nReserved,保留
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetTimerType(LONG nPort,DWORD nTimerType,DWORD nReserved);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_GetTimerType
-// 描述: 获取播放使用的定时器类型
-// 参数: nPort,通道号
-//		 pTimerType,TIMER_1 多媒体定时器,精度高,但一个进程中不能超过16个.
-//					TIMER_2 线程定时器,精度略低,无数量限制.
-//		 pReserved,保留
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_GetTimerType(LONG nPort,DWORD *pTimerType,DWORD *pReserved);
+typedef void (CALLBACK* fDrawCBFun)(LONG nPort,HDC hDc, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_RigisterDrawFun(LONG nPort, fDrawCBFun DrawCBFun, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_ResetBuffer
@@ -943,22 +1143,6 @@ PLAYSDK_API DWORD CALLMETHOD PLAY_GetBufferValue(LONG nPort,DWORD nBufType);
 PLAYSDK_API BOOL CALLMETHOD PLAY_AdjustWaveAudio(LONG nPort,LONG nCoefficient);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_SetVerifyCallBack
-// 描述: 注册一个回调函数,校验数据是否被修改,实现水印功能.
-// 参数: nPort,通道号
-//		 nBeginTime,校验开始时间，单位ms
-//		 nEndTime,校验结束时间，单位ms
-//		 funVerify,水印回调函数指针,其参数含义如下
-//			nPort,通道号
-//			pFilePos,帧信息
-//			bIsVideo,是否是视频数据
-//			nUser,用户自定义参数
-//		 nUser,用户自定义参数
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetVerifyCallBack(LONG nPort, DWORD nBeginTime, DWORD nEndTime, void (CALLBACK * funVerify)(long nPort, FRAME_POS * pFilePos, DWORD bIsVideo, DWORD nUser),  DWORD  nUser);
-
-//------------------------------------------------------------------------
 // 函数: PLAY_SetAudioCallBack
 // 描述: 音频解码后的WAVE数据回调.
 // 参数: nPort,通道号
@@ -968,10 +1152,11 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetVerifyCallBack(LONG nPort, DWORD nBeginTime,
 //			nSize,音频数据长度
 //			nStamp,时标(ms)
 //			nType,音频类型T_AUDIO16, 采样率8000，单声道，每个采样点16位表示
-//			nUser,用户自定义数据
+//			pUserData,用户自定义数据
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetAudioCallBack(LONG nPort, void (CALLBACK * funAudio)(long nPort, char * pAudioBuf, long nSize, long nStamp, long nType, long nUser), long nUser);
+typedef void (CALLBACK * fAudioCBFun)(LONG nPort, char * pAudioBuf, LONG nSize, LONG nStamp, LONG nType, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetAudioCallBack(LONG nPort, fAudioCBFun AudioCBFun, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetEncTypeChangeCallBack
@@ -979,11 +1164,25 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetAudioCallBack(LONG nPort, void (CALLBACK * f
 // 参数: nPort,通道号
 //		 funEncChange,回调函数
 //			nPort,通道号
-//			nUser,用户自定义数据
-//		 nUser,用户自定义参数
+//			pUserData,用户自定义数据
+//		 pUserData,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetEncTypeChangeCallBack(LONG nPort,void(CALLBACK *funEncChange)(long nPort, long nUser),long nUser);
+typedef void(CALLBACK *fEncChangeCBFun)(LONG nPort, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetEncTypeChangeCallBack(LONG nPort, fEncChangeCBFun EncChangeCBFun, void* pUserData);
+
+//------------------------------------------------------------------------
+// 函数: PLAY_SetEncTypeChangeCallBackEx
+// 描述: 设置图像分辨率改变通知回调,打开文件前使用.
+// 参数: nPort,通道号
+//		 funEncChange,回调函数
+//			nPort,通道号
+//			pUserData,用户自定义数据
+//		 pUserData,用户自定义参数
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+//------------------------------------------------------------------------
+typedef void(CALLBACK *fEncChangeCBFunEx)(LONG nPort, void* pUserData,LONG nWidth, LONG nHeight);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetEncTypeChangeCallBackEx(LONG nPort, fEncChangeCBFunEx EncChangeCBFun, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetColor
@@ -1022,38 +1221,6 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_GetColor(LONG nPort, DWORD nRegionNum, int *pBr
 PLAYSDK_API BOOL CALLMETHOD PLAY_SetEncChangeMsg(LONG nPort,HWND hWnd,UINT nMsg);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_SetMDRange
-// 描述: 设置搜索区域及范围
-// 参数: nPort,通道号
-//		 rc,搜索区域,为播放画面的某一部分
-//		 nVauleBegin,搜索范围的上限,可以是时间或帧号,取决于nType.
-//		 nValueEnd,搜索范围的下限,可以是时间或帧号,取决于nType.
-//		 nType,可以是BY_FRAMENUM或BY_FRAMETIME.
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetMDRange(LONG nPort,RECT* rc,DWORD nVauleBegin,DWORD nValueEnd,DWORD nType);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetMDThreShold
-// 描述: 设置智能搜索的阈值
-// 参数: nPort,通道号
-//		 ThreShold,阈值
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetMDThreShold(LONG nPort, DWORD ThreShold);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_GetMDPosition
-// 描述: 获取搜索到的数据帧的帧序号
-// 参数: nPort,通道号
-//		 Direction,搜索方向,0 向前搜索;1 向后搜索.
-//		 nFrame,参考帧
-//		 MDValue,搜索到的数据帧的阈值
-// 返回: DWORD,搜索到的动检帧的帧序号
-//------------------------------------------------------------------------
-PLAYSDK_API DWORD CALLMETHOD PLAY_GetMDPosition(LONG nPort, DWORD Direction, DWORD nFrame, DWORD* MDValue);
-
-//------------------------------------------------------------------------
 // 函数: PLAY_CatchPic
 // 描述: 抓图,将BMP图片保存为指定的文件.PLAY_SetDisplayCallBack设置的视频数
 //			据回调函数,只有在有视频数据解码出来时才调用,并由用户处理视频数
@@ -1083,21 +1250,32 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_CatchPicEx(LONG nPort,char* sFileName,tPicForma
 // 参数: nPort,通道号
 //		 pFileEnd,回调函数指针,其参数含义如下:
 //			nPort,通道号
-//			nUser,用户自定义参数
-//		 nUser,用户自定义参数
+//			pUserData,用户自定义参数
+//		 pUserData,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetFileEndCallBack(LONG nPort, void (CALLBACK *pFileEnd)(DWORD nPort,DWORD nUser),DWORD nUser);
+typedef void (CALLBACK *fpFileEndCBFun)(DWORD nPort, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetFileEndCallBack(LONG nPort, fpFileEndCBFun pFileEndCBFun, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_StartDataRecord
 // 描述: 开始流数据录像,只对流模式有用,在PLAY_Play之后调用.
 // 参数: nPort,通道号
 //		 sFileName,录像文件名,如果文件名中有不存在的文件夹,就创建该文件夹.
-//		 idataType,0表示原始视频流;1表示转换成AVI格式;2表示转换成ASF格式
+//		 idataType,0表示原始视频流;1表示转换成AVI格式;2表示转换成ASF格式;3分段保存文件
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_StartDataRecord(LONG nPort, char *sFileName, int idataType=0);
+PLAYSDK_API BOOL CALLMETHOD PLAY_StartDataRecord(LONG nPort, char *sFileName, int idataType);
+
+//------------------------------------------------------------------------
+// 函数: PLAY_WriteData
+// 描述: 保存原始码流
+// 参数: nPort,通道号
+//		 pBuf,流数据
+//		 nSize,大小
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+//------------------------------------------------------------------------
+PLAYSDK_API BOOL CALLMETHOD PLAY_WriteData(LONG nPort, PBYTE pBuf,DWORD nSize);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_StopDataRecord
@@ -1108,38 +1286,14 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_StartDataRecord(LONG nPort, char *sFileName, in
 PLAYSDK_API BOOL CALLMETHOD PLAY_StopDataRecord(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_AdjustFluency
-// 描述: 调整图象播放的流畅性,流畅性和实时性互为矛盾.
+// 函数: PLAY_SetPlaySpeed
+// 描述: 改变图像播放的速度,
 // 参数: nPort,通道号
-//		 level,当level为0时,图象最流畅;当level为6时,图象最实时;Level的默认值为3.
-// 返回: BOOL,成功返回TRUE,失败返回FALSE
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_AdjustFluency(LONG nPort, int level);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_ChangeRate
-// 描述: 改变图像播放的帧率
-// 参数: nPort,通道号
-//		 rate,播放帧率,范围[0-250].
+//		 fCoff,播放速度,范围[1/64~64.0],小于1表示慢放，大于1表示正放.
+//			   当播放速度较快时可能会抽帧播放.
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_ChangeRate(LONG nPort, int rate);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetDemuxCallBack
-// 描述: 源数据分析完的数据回调
-// 参数: nPort,通道号
-//		 DecCBFun,分析数据回调指针
-//			nPort,通道号
-//			pBuf,数据指针
-//			nSize,数据长度
-//			pParam,帧信息
-//			nReserved,保留
-//			nUser,用户自定义数据
-//		 nUser,用户自定义数据
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDemuxCallBack(LONG nPort, void (CALLBACK* DecCBFun)(long nPort,char * pBuf,	long nSize,void * pParam, long nReserved,long nUser), long nUser);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetPlaySpeed(LONG nPort, float fCoff);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_QueryInfo
@@ -1149,6 +1303,7 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetDemuxCallBack(LONG nPort, void (CALLBACK* De
 //			PLAY_CMD_GetTime   获取编码中时间信息,单位ms.
 //			PLAY_CMD_GetFileRate  获取帧率信息
 //			PLAY_CMD_GetMediaInfo  获取媒体信息,信息结构为 MEDIA_INFO
+//			PLAY_CMD_GetRenderTime  信息结构为tm，在<time.h>中定义
 //		 buf,存放信息的缓冲
 //		 buflen,缓冲长度
 //		 returnlen,获取的信息的有效数据长度
@@ -1162,16 +1317,16 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_QueryInfo(LONG nPort , int cmdType, char* buf, 
 // 参数: pProc,音频采集数据回调指针,其参数含义如下:
 //			pDataBuffer,回调数据指针
 //			DataLength,回调数据长度
-//			nUser,用户数据
+//			pUserData,用户数据
 //		 nBitsPerSample,表示每个采样所需要的位数
 //		 nSamplesPerSec,采样率
 //		 nLength,数据缓冲的长度
 //		 nReserved,保留
-//		 nUser,用户自定义数据
+//		 pUserData,用户自定义数据
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-typedef void (WINAPI *pCallFunction)(LPBYTE pDataBuffer, DWORD DataLength, long nUser);
-PLAYSDK_API BOOL CALLMETHOD PLAY_OpenAudioRecord(pCallFunction pProc, long nBitsPerSample, long nSamplesPerSec, long nLength, long nReserved, long nUser);
+typedef void (CALLBACK *pCallFunction)(LPBYTE pDataBuffer, DWORD DataLength, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_OpenAudioRecord(pCallFunction pProc, LONG nBitsPerSample, LONG nSamplesPerSec, LONG nLength, LONG nReserved, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_CloseAudioRecord
@@ -1183,23 +1338,23 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_CloseAudioRecord();
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetWaterMarkCallBack
-// 描述: 设置水印数据回调
+// 描述: 设置水印数据回调。注意：水印校验回调设置后将不会进行解码显示
 // 参数: nPort,通道号
 //		 pFunc,水印信息获取回调函数,其参数含义如下:
 //			buf,水印数据buffer指针
 //			key,区分不同水印信息
 //			len,缓冲的最大长度
 //			reallen,缓冲的实际长度
-//			reserved,数值范围[0,3],含义如下
+//			type,数值范围[0,3],含义如下
 //				0  I帧帧数据水印信息
 //				1  帧水印
 //				2  水印校验 
 //				3  智能分析帧
-//		 nUser,用户自定义参数 
+//		 pUserData,用户自定义参数 
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-typedef int (__stdcall* GetWaterMarkInfoCallbackFunc)(char* buf, long key, long len, long reallen, long reserved, long nUser);	
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetWaterMarkCallBack(LONG nPort, GetWaterMarkInfoCallbackFunc pFunc, long nUser);
+typedef int (CALLBACK* GetWaterMarkInfoCallbackFunc)(char* buf, LONG key, LONG len, LONG reallen, LONG type, void* pUserData);	
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetWaterMarkCallBack(LONG nPort, GetWaterMarkInfoCallbackFunc pFunc, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_CreateFile
@@ -1235,7 +1390,7 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_DestroyStream(LONG nPort);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_GetFreePort
-// 描述: 获取空闲通道号,上限为501.与PLAY_RealsePort匹对使用.
+// 描述: 获取空闲通道号,上限为501.与PLAY_ReleasePort匹对使用.
 // 参数: plPort,输出参数,返回获取的通道号.
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
@@ -1273,6 +1428,21 @@ PLAYSDK_API	BOOL CALLMETHOD PLAY_VerticalSyncEnable(LONG nPort, BOOL bEnable);
 PLAYSDK_API BOOL CALLMETHOD PLAY_GetPicBMP(LONG nPort, PBYTE pBmpBuf, DWORD dwBufSize, DWORD* pBmpSize);
 
 //------------------------------------------------------------------------
+// 函数: PLAY_GetPicBMPEx
+// 描述: 抓取BMP图像
+// 参数: nPort,通道号
+//		 pBmpBuf,存放BMP图像数据的缓冲地址,由用户分配,不得小于bmp 图像大小,
+//			推荐大小:sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+w*h*4,
+//			其中w和h分别为图像宽高.
+//		 dwBufSize,缓冲区大小
+//		 pBmpSize,获取到的实际bmp 图像大小
+//		 nWidth,指定的bmp的宽
+//		 nHeight,指定的bmp的高
+//		 nRgbType,指定RGB格式 0：RGB32;1：RGB24;
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+PLAYSDK_API BOOL CALLMETHOD PLAY_GetPicBMPEx(LONG nPort, PBYTE pBmpBuf, DWORD dwBufSize, DWORD* pBmpSize, LONG nWidth, LONG nHeight, int nRgbType);
+
+//------------------------------------------------------------------------
 // 函数: PLAY_GetPicJPEG
 // 描述: 抓取JPEG图像.
 // 参数: nPort,通道号
@@ -1283,26 +1453,34 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_GetPicBMP(LONG nPort, PBYTE pBmpBuf, DWORD dwBu
 //		 quality,JPEG图像的压缩质量,取值范围为(0,100].
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_GetPicJPEG(LONG nPort, PBYTE pJpegBuf, DWORD dwBufSize, DWORD* pJpegSize, int quality=100);
+PLAYSDK_API BOOL CALLMETHOD PLAY_GetPicJPEG(LONG nPort, PBYTE pJpegBuf, DWORD dwBufSize, DWORD* pJpegSize, int quality);
 
 //------------------------------------------------------------------------
-// 函数: 
-// 描述: 解码回调.与PLAY_SetDecCallBackEx基本相同,不同的是解码回调的同时可以
-//			显示视频,建议不要在回调函数里面做长时间的逻辑处理,以免增加显示的延时.
+// 函数: PLAY_GetPicTIFF
+// 描述: 抓取TIFF图像
 // 参数: nPort,通道号
-//		 DecCBFun,回调函数指针,不能为NULL,其参数含义如下:
-//			nPort,通道号
-//			pBuf,解码后的音视频数据
-//			nSize,数据长度
-//			pFrameInfo,帧信息,详见FRAME_INFO结构体.
-//			nReserved1,用户自定义参数
-//			nReserved1,保留参数.
-//		 nUser,用户自定义参数.
+//		 pTiffBuf,存放TIFF图像数据的缓冲地址,由用户分配,不得小于tiff图像大小,
+//			推荐大小:w*h*3+1024,
+//			其中w和h分别为图像宽高.
+//		 dwBufSize,缓冲区大小
+//		 pTiffSize,获取到的实际TIFF图像大小
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetVisibleDecCallBack(LONG nPort,
-													   void (CALLBACK* DecCBFun)(long nPort,char * pBuf,long nSize,FRAME_INFO * pFrameInfo, long nReserved1,long nReserved2),
-													   long nUser);
+PLAYSDK_API BOOL CALLMETHOD PLAY_GetPicTIFF(LONG nPort, PBYTE pTiffBuf, DWORD dwBufSize, DWORD* pTiffSize);
+
+//------------------------------------------------------------------------
+// 函数: PLAY_SetVisibleDecodeCallBack
+// 描述: 解码回调.与PLAY_SetDecodeCallBack基本相同,不同的是解码回调的同时可以
+//			显示视频,建议不要在回调函数里面做长时间的逻辑处理,以免增加显示的延时.
+// 参数: nPort,通道号
+//		 cbDec,解码回调函数指针,不能为NULL.回调函数参数含义如下:
+//			nPort,通道号
+//			pFrameDecodeInfo,解码后的音视频数据
+//			pFrameInfo,图像和声音信息,请参见FRAME_INFO结构体
+//			pUser,用户自定义参数
+//		 pUser,用户自定义参数
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetVisibleDecodeCallBack(LONG nPort, fCBDecode cbDec, void* pUser);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_RigisterDrawFunEx
@@ -1315,14 +1493,12 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetVisibleDecCallBack(LONG nPort,
 //		 DrawFunEx,画图回调函数,其参数含义如下:
 //			nPort,通道号
 //			hDc,Off-Screen表面的设备上下文(DC)
-//			nUser,用户自定义参数
-//		 nUser,用户自定义参数
+//			pUserData,用户自定义参数
+//		 pUserData,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_RigisterDrawFunEx(LONG nPort, 
-												   LONG nReginNum, 
-												   void (CALLBACK* DrawFunEx)(long nPort,long nReginNum,HDC hDc,LONG nUser),
-												   LONG nUser);
+typedef void (CALLBACK* fDrawCBFunEx)(LONG nPort,LONG nReginNum,HDC hDc, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_RigisterDrawFunEx(LONG nPort, LONG nReginNum, fDrawCBFunEx DrawFunEx, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_CatchResizePic
@@ -1345,24 +1521,6 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_CatchResizePic(LONG nPort, char* sFileName, LON
 //------------------------------------------------------------------------
 PLAYSDK_API BOOL CALLMETHOD PLAY_GetRealFrameBitRate(LONG nPort, double* pBitRate);
 
-//------------------------------------------------------------------------
-// 函数: PLAY_StartAVIResizeConvert
-// 描述: 开始AVI数据录像,可指定视频宽高.只对流模式有用,在PLAY_Play之后调用.
-// 参数: nPort,通道号
-//		 sFileName,录像文件名,如果文件名中有不存在的文件夹,就创建该文件夹.
-//		 lWidth,视频格式宽度
-//		 lHeight,视频格式高度
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_StartAVIResizeConvert(LONG nPort, char *sFileName, long lWidth, long lHeight);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_StopAVIResizeConvert
-// 描述: 停止AVI数据录像,与PLAY_StartAVIResizeConvert匹对使用.
-// 参数: nPort,通道号
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_StopAVIResizeConvert(LONG nPort);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetFileRefCallBackEx
@@ -1371,32 +1529,12 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_StopAVIResizeConvert(LONG nPort);
 //		 pFileRefDoneEx,回调函数指针,其参数含义如下:
 //			nPort,通道号
 //			bIndexCreated,索引创建标志,TRUE索引创建成功;FALSE失败.
-//			nUser,用户自定义参数
-//		 nUser,用户自定义参数
+//			pUserData,用户自定义参数
+//		 pUserData,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetFileRefCallBackEx(LONG nPort, 
-													  void (CALLBACK *pFileRefDoneEx)(DWORD nPort, BOOL bIndexCreated, DWORD nUser),
-													  DWORD nUser);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetPandoraWaterMarkCallBack
-// 描述: 设置编码水印数据回调
-// 参数: nPort,通道号
-//		 pFunc,回调函数,其参数含义如下:
-//			buf,水印数据buffer指针
-//			key,区分不同水印信息
-//			len,缓冲的最大长度
-//			reallen,缓冲的实际长度
-//			reserved,数值范围[0,3],含义如下
-//				0  I帧帧数据水印信息
-//				1  帧水印
-//				2  水印校验 
-//				3  智能分析帧
-//		 nUser,用户自定义参数 		
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetPandoraWaterMarkCallBack(LONG nPort, GetWaterMarkInfoCallbackFunc pFunc, long nUser);
+typedef void (CALLBACK *fpFileRefDoneCBFunEx)(DWORD nPort, BOOL bIndexCreated, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetFileRefCallBackEx(LONG nPort, fpFileRefDoneCBFunEx pFileRefDoneCBFunEx, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_StartAVIConvert
@@ -1404,15 +1542,15 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetPandoraWaterMarkCallBack(LONG nPort, GetWate
 // 参数: nPort,通道号
 //		 pAVIFunc,回调函数,其参数含义如下:
 //			nPort,通道号
-//			lMediaChangeType,AVI_MEDIACHANGE_FRAMERATE表示帧率改变;AVI_MEDIACHANGE_FRAMERATE表示分辨率改变
+//			lMediaChangeType,AVI_MEDIACHANGE_FRAMERATE表示帧率改变;AVI_MEDIACHANGE_RESOLUTION表示分辨率改变
 //			lUser,用户自定义参数
 //			pbIfContinue,TRUE继续转换;FALSE 停止转换
 //			sNewFileName,如果继续转换,新的录像文件名
 //		 lUser,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-typedef void (__stdcall*AVIConvertCallback)(long nPort, long lMediaChangeType, long lUser, BOOL *pbIfContinue, char *sNewFileName);
-PLAYSDK_API BOOL CALLMETHOD PLAY_StartAVIConvert(LONG nPort, char *sFileName, AVIConvertCallback pAVIFunc, long lUser);
+typedef void (CALLBACK* AVIConvertCallback)(LONG nPort, LONG lMediaChangeType, void* pUserData, BOOL *pbIfContinue, char *sNewFileName);
+PLAYSDK_API BOOL CALLMETHOD PLAY_StartAVIConvert(LONG nPort, char *sFileName, AVIConvertCallback pAVIFunc, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_StopAVIConvert
@@ -1424,7 +1562,7 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_StopAVIConvert(LONG nPort);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetWaterMarkCallBackEx
-// 描述: 设置水印数据回调.
+// 描述: 设置水印数据回调。注意：水印校验回调设置后将不会进行解码显示
 // 参数: nPort,通道号
 //		 pFunc,函数指针,其参数含义如下:
 //			nPort,通道号
@@ -1435,50 +1573,11 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_StopAVIConvert(LONG nPort);
 //		 len,缓冲的最大长度
 //		 reallen,缓冲的实际长度
 //		 lCheckResult,1没有错误;2水印错误;3帧数据错误;4帧号错误
-//		 nUser,用户自定义参数
+//		 pUserData,用户自定义参数
 // 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-typedef int (__stdcall* GetWaterMarkInfoCallbackEx)(long nPort, char* buf, long lTimeStamp, long lInfoType, long len, long reallen, long lCheckResult, long nUser);
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetWaterMarkCallBackEx(LONG nPort, GetWaterMarkInfoCallbackEx pFunc, long nUser);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_CutFileSegment
-// 描述: 切割文件
-// 参数: nPort,通道号
-//		 lBeginTime,开始时间
-//		 lEndTime,结束时间
-//		 pFunc,回调函数,其参数含义如下:
-//			nPort,通道号
-//			iProgress,切割进度,范围[0,100].
-//			dwUser,用户自定义参数.
-//		 sOutFilePath,文件名
-//		 dwUser,用户自定义参数.
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-typedef void (__stdcall *CutProgressFunc)(DWORD nPort, int iProgress, DWORD dwUser);
-PLAYSDK_API BOOL CALLMETHOD PLAY_CutFileSegment(LONG nPort, 
-												long lBeginTime, 
-												long lEndTime, 
-												CutProgressFunc pFunc, 
-												char *sOutFilePath, 
-												DWORD dwUser);
-
-//------------------------------------------------------------------------
-// 函数: PLAY_SetVideoPerTimer
-// 描述: 设置每个定时器管理的视频个数
-// 参数: iVal,每个定时器管理视频路数.
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetVideoPerTimer(int iVal);
-// Get the number of video controlled by one timer
-
-//------------------------------------------------------------------------
-// 函数: PLAY_GetVideoPerTimer
-// 描述: 获取每个定时器管理的视频个数
-// 参数: pVal,输出参数,返回每个定时器管理视频路数.
-// 返回: BOOL,成功返回TRUE,失败返回FALSE.
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_GetVideoPerTimer(int* pVal);
+typedef int (CALLBACK* GetWaterMarkInfoCallbackFuncEx)(LONG nPort, char* buf, LONG lTimeStamp, LONG lInfoType, LONG len, LONG reallen, LONG lCheckResult, void* pUserData);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetWaterMarkCallBackEx(LONG nPort, GetWaterMarkInfoCallbackFuncEx pFunc, void* pUserData);
 
 //------------------------------------------------------------------------
 // 函数: PLAY_SetAudioRecScaling
@@ -1523,6 +1622,26 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_GetAudioRenderScaling(LONG nPort, float* pfRati
 PLAYSDK_API BOOL CALLMETHOD PLAY_SetRotateAngle(LONG nPort , int nrotateType);
 
 //------------------------------------------------------------------------
+// 函数: PLAY_SetDelayTime
+// 描述: 设置延迟时间
+// 参数: nDelay(ms),延迟时间，缓冲多少时间开始播放，缓冲小于此值开始稍微慢放
+//       nThreshold(ms),阀值时间，到达阀值开始稍微快放
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+//------------------------------------------------------------------------
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetDelayTime(LONG nPort, int nDelay, int nThreshold);
+
+//------------------------------------------------------------------------
+// 函数: PLAY_SetPlayMethod
+// 描述: 设置播放策略参数，只对实时流有效
+// 参数: nStartTime,开始播放的时间(ms)
+//       nSlowTime,开始慢放的时间(ms)
+//		 nFastTime,开始快放的时间(ms)
+//		 nFailedTime,超过此时间投递数据失败(ms)
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+//------------------------------------------------------------------------
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetPlayMethod(LONG nPort, int nStartTime, int nSlowTime, int nFastTime, int nFailedTime);
+
+//------------------------------------------------------------------------
 // 函数: PLAY_BackOne
 // 描述: 与PLAY_OneByOneBack重复，请使用PLAY_OneByOneBack
 // 参数: 
@@ -1531,98 +1650,205 @@ PLAYSDK_API BOOL CALLMETHOD PLAY_SetRotateAngle(LONG nPort , int nrotateType);
 PLAYSDK_API BOOL CALLMETHOD PLAY_BackOne(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_InitDDraw
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_SetDecCallBack(建议使用PLAY_SetDecodeCallBack)
+// 描述: 设置解码回调,替换播放器中的显示部分,由用户自己控制显示,该函数在
+//			PLAY_Play之前调用,在PLAY_Stop时自动失效,下次调用PLAY_Play之前
+//			需要重新设置.解码部分不控制速度,只要用户从回调函数中返回,解码器
+//			就会解码下一部分数据.适用于只解码不显示的情形。
+// 参数: nPort,通道号
+//		 DecCBFun,解码回调函数指针,不能为NULL.回调函数参数含义如下:
+//			nPort,通道号
+//			pBuf,解码后的音视频数据
+//			nSize,解码后的音视频数据pBuf的长度
+//			pFrameInfo,图像和声音信息,请参见FRAME_INFO结构体
+//			nReserved1,保留参数
+//			nReserved2,保留参数	
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_InitDDraw(HWND hWnd);
+typedef void (CALLBACK* fDecCBFun)(LONG nPort,char * pBuf,LONG nSize,FRAME_INFO * pFrameInfo, void* pUserData, LONG nReserved2);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetDecCallBack(LONG nPort, fDecCBFun DecCBFun);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_RealeseDDraw
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_SetDecCallBackEx(建议使用PLAY_SetDecodeCallBack)
+// 描述: 设置解码回调,替换播放器中的显示部分,由用户自己控制显示,该函数在
+//			PLAY_Play之前调用,在PLAY_Stop时自动失效,下次调用PLAY_Play之前
+//			需要重新设置.解码部分不控制速度,只要用户从回调函数中返回,解码器
+//			就会解码下一部分数据.适用于只解码不显示的情形。
+// 参数: nPort,通道号
+//		 DecCBFun,解码回调函数指针,不能为NULL.回调函数参数含义如下:
+//			nPort,通道号
+//			pBuf,解码后的音视频数据
+//			nSize,解码后的音视频数据pBuf的长度
+//			pFrameInfo,图像和声音信息,请参见FRAME_INFO结构体
+//			nReserved1,用户自定义参数
+//			nReserved2,保留参数	
+//		 pUserData,用户自定义参数
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_RealeseDDraw();
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetDecCallBackEx(LONG nPort, fDecCBFun DecCBFun, void* pUserData);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_GetDDrawDeviceTotalNums
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_SetVisibleDecCallBack(建议使用PLAY_SetVisibleDecodeCallBack)
+// 描述: 解码回调.与PLAY_SetDecCallBackEx基本相同,不同的是解码回调的同时可以
+//			显示视频,建议不要在回调函数里面做长时间的逻辑处理,以免增加显示的延时.
+// 参数: nPort,通道号
+//		 DecCBFun,回调函数指针,不能为NULL,其参数含义如下:
+//			nPort,通道号
+//			pBuf,解码后的音视频数据
+//			nSize,数据长度
+//			pFrameInfo,帧信息,详见FRAME_INFO结构体.
+//			pUserData,用户自定义参数
+//			pReserved1,保留参数.
+//		 pUserData,用户自定义参数.
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API DWORD CALLMETHOD PLAY_GetDDrawDeviceTotalNums();
+typedef void (CALLBACK* fVisibleDecCBFun)(LONG nPort,char * pBuf,LONG nSize,FRAME_INFO * pFrameInfo, void* pUserData, LONG nReserved1);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetVisibleDecCallBack(LONG nPort, fVisibleDecCBFun DecCBFun, void* pUserData);
+
 
 //------------------------------------------------------------------------
-// 函数: PLAY_SetDDrawDevice
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_SetDisplayScale
+// 描述: 设置显示比例大小，IOS专用以便适配不同的机型.
+// 参数: nPort,通道号
+//		 fScale，显示比例，默认为1.0
+//		 nRegionNum,显示区域序号,0~(MAX_DISPLAY_WND-1),如果为0,则将设置的区域显示在主窗口中.
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDDrawDevice(LONG nPort,DWORD nDeviceNum);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetDisplayScale(LONG nPort, float fScale, DWORD nRegionNum);
+
 
 //------------------------------------------------------------------------
-// 函数: PLAY_GetDDrawDeviceInfo
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+//	函数名: PLAY_SetSecurityKey
+//	描述: 设置aes解密密钥
+//  输入参数:   nPort:		解码通道。
+//				szKey:		密钥的指针
+//				nKeylen:	密钥的长度       
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_GetDDrawDeviceInfo(DWORD nDeviceNum,LPSTR  lpDriverDescription,DWORD nDespLen,LPSTR lpDriverName ,DWORD nNameLen,long *hhMonitor);
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetSecurityKey(LONG nPort,const char* szKey,DWORD nKeylen);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_GetCapsEx
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_StartFisheye
+// 描述: 开启视频鱼眼算法功能，需要包含fisheye.dll库
+// 参数: [in]nPort : 通道号
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API int	CALLMETHOD PLAY_GetCapsEx(DWORD nDDrawDeviceNum);
+PLAYSDK_API BOOL CALLMETHOD PLAY_StartFisheye(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_ThrowBFrameNum
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
-//------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_ThrowBFrameNum(LONG nPort,DWORD nNum);
+// 函数: PLAY_OperateFisheyeParams
+// 描述: 设置/获取鱼眼参数
+// 参数: [in]nPort					:  通道号
+//		 [in]operatetype			:  操作类型
+//       [in]pOptParam	    		:  鱼眼参数
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
+//-----------------------------------------------------------------------
+PLAYSDK_API BOOL CALLMETHOD PLAY_OptFisheyeParams(LONG nPort, FISHEYE_OPERATETYPE operatetype, FISHEYE_OPTPARAM* pOptParam);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_InitDDrawDevice
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_FisheyeSecondRegion
+// 描述: 用于浮动模式下开启或关闭第二个鱼眼窗口
+// 参数: [in]nPort			: 通道号
+//		 [in]hDestWnd		: 显示窗口句柄
+//		 [in]pOptParam		: 第二个窗口对应的鱼眼参数
+//		 [in]bEnable		: 打开或关闭显示区域
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL	CALLMETHOD PLAY_InitDDrawDevice();
+PLAYSDK_API BOOL CALLMETHOD PLAY_FisheyeSecondRegion(LONG nPort, HWND hDestWnd, FISHEYE_OPTPARAM* pOptParam, BOOL bEnable);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_ReleaseDDrawDevice
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_FisheyeEptzUpdate
+// 描述: 开启eptz(电子云台），进行缩放移动
+// 参数: [in]nPort           :  通道号
+//       [in/out]pEptzParam  :  调节参数
+//		 [in]bSecondRegion	 ：	是否为浮动模式下的第二个窗口，1为真，默认填0
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API void CALLMETHOD PLAY_ReleaseDDrawDevice();
+PLAYSDK_API BOOL CALLMETHOD PLAY_FisheyeEptzUpdate(LONG nPort, FISHEYE_EPTZPARAM* pEptzParam, BOOL bSecondRegion);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_Back
-// 描述: 此接口无效
-// 参数: 
-// 返回: 
+// 函数: PLAY_StopFisheye
+// 描述: 停止视频鱼眼算法功能
+// 参数: [in]nPort : 通道号
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_Back(LONG nPort);
+PLAYSDK_API BOOL CALLMETHOD PLAY_StopFisheye(LONG nPort);
 
 //------------------------------------------------------------------------
-// 函数: PLAY_SetDDrawDeviceEx
-// 描述: 此接口无效 
-// 参数: 
-// 返回: 
+// 函数: PLAY_SetFishEyeInfoCallBack
+// 描述: 设置获取鱼眼回调
+// 参数: nPort,通道号
+//		 pFishEyeInfoFun,回调函数指针,不能为NULL,其参数含义如下:
+//			nPort,通道号
+//          byCorrectMode,矫正模式
+//          wRadius,半径
+//          wCircleX,圆心横坐标
+//          wCircleY,圆心纵坐标
+//			widthRatio, 宽比率
+//			heightRatio,高比率
+//			gain, 增益
+//			denoiseLevel, 降噪等级
+//			InstallStyle, 鱼眼安装方式
+//		 pUserData,用户自定义参数.
+// 返回: BOOL,成功返回TRUE,失败返回FALSE.
 //------------------------------------------------------------------------
-PLAYSDK_API BOOL CALLMETHOD PLAY_SetDDrawDeviceEx(LONG nPort,DWORD nRegionNum,DWORD nDeviceNum);
+typedef void (CALLBACK* fCBFishEyeInfoFun)( 
+	LONG nPort,
+	BYTE byCorrectMode,
+	WORD wRadius,
+	WORD wCircleX,
+	WORD wCircleY,
+	UINT widthRatio,
+	UINT heightRatio,
+	BYTE gain,
+	BYTE denoiseLevel,
+	BYTE installStyle,
+	void* pUserData );
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetFishEyeInfoCallBack(
+	LONG nPort, 
+	fCBFishEyeInfoFun pFishEyeInfoFun, 
+	void* pUserData );
 
-#define IVSINFOTYPE_PRESETPOS		1
-#define IVSINFOTYPE_MOTINTRKS		2
-typedef void (__stdcall*GetIVSInfoCallbackFunc)(char* buf, long type, long len, long reallen, long reserved, long nUser);
-PLAYSDK_API BOOL	CALLMETHOD PLAY_SetIVSCallBack(LONG nPort, GetIVSInfoCallbackFunc pFunc, long nUser);
+typedef enum
+{
+	RENDER_NONE = 0,
+	RENDER_GDI,
+	RENDER_D3D,
+	RENDER_DDRAW,
 
+	RENDER_D3D_FAST = 5	 // 必须与 DECODE_HW_FAST连用
+
+}RenderType;
+
+typedef enum
+{
+	DECODE_NONE = 0,
+	DECODE_SW,
+	DECODE_HW,
+	DECODE_HW_FAST, //直接在显卡显示，必须与RENDER_D3D_FAST连用
+	DECODE_MSDK
+}DecodeType;
+/************************************************************************/
+/* 函数: PLAY_SetEngine
+   描述: 指定解码器(Windows平台), PLAY_Play之前调用有效
+   参数: nPort,通道号
+	     decodeType, 解码模式（仅限于H264)
+	     renderType, 渲染模式
+   返回: BOOL,成功返回TRUE,失败返回FALSE.   
+   备注：如果单一设置其中一个Engine，可以将另一个传入NONE,
+         例如:PLAY_SetEngine(0, DECODE_MSDK, RENDER_NONE);         */
+/************************************************************************/
+PLAYSDK_API BOOL CALLMETHOD PLAY_SetEngine(LONG nPort, DecodeType decodeType, RenderType renderType);
+
+/************************************************************************/
+/* 函数: PLAY_CheckHWDecEnv
+   描述: 指定解码器(Windows平台)
+   参数: 
+   返回: BOOL,支持返回TRUE,不支持返回FALSE.   
+   备注：本函数是提前检查PLAY_SetEngine 中DECODE_HW 是否支持。如果不支持调用
+	PLAY_SetEngine 入参DECODE_HW 会失败。
+/************************************************************************/
+PLAYSDK_API BOOL CALLMETHOD PLAY_CheckHWDecEnv();
 
 #ifdef __cplusplus
 }

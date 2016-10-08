@@ -250,7 +250,7 @@ void CWidgetVCAProgress::EventFilterProcess(DISPLAYCALLBCK_INFO *pInfo)
 	VCA5_PACKET_OBJECTS *pPacketObjects = pVCAMetaLib->GetObjects();
 	int ulTotalEvents = pVCAMetaLib->GetEvents()->ulTotalEvents;
 	
-	//int dCurrentTime = m_PlayCtrlVCA->GetCurPlayTime();
+	int dCurrentTime = m_PlayCtrlVCA->GetCurPlayTime();
 	int dCurrentTime = pInfo->nStamp;
 	
 	int hour = dCurrentTime / 3600;

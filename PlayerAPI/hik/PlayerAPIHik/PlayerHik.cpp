@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "../inc/windowsPlayM4.h"
 #pragma comment(lib,"../lib/PlayCtrl.lib")
 
 char* CPlayerFactoryHik::Name()
@@ -11,9 +10,8 @@ char* CPlayerFactoryHik::Name()
 	return "海康";
 }
 
-BOOL CPlayerFactoryHik::IsBelongThis(char *pFile)
+BOOL CPlayerFactoryHik::IsBelongThisHead(char *pFile)
 {
-	
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
 	if (pfd)//打开文件成功
@@ -21,12 +19,13 @@ BOOL CPlayerFactoryHik::IsBelongThis(char *pFile)
 		char buf[8];
 		memset(buf, 0, 8);
 		fread(buf, 8, 1, pfd);
+		fclose(pfd);
 
-		if (strncmp(buf, "IMKH", 4) == 0 || strncmp(buf, "4HKH", 4)==0)
+		if (strncmp(buf, "IMKH", 4) == 0 || strncmp(buf, "4HKH", 4) == 0 /*|| strncmp(buf, "STAR", 4) == 0*/)
 		{
 			return true;
 		}
-		fclose(pfd);
+		
 	}
 
 	/*
@@ -59,6 +58,12 @@ BOOL CPlayerFactoryHik::IsBelongThis(char *pFile)
 		PlayM4_FreePort(nport);
 	}
 	*/
+	return false;
+}
+
+
+BOOL CPlayerFactoryHik::IsBelongThis(char *pFile)
+{
 	return false;
 }
 
@@ -115,7 +120,7 @@ BOOL CPlayerHik::Pause(DWORD nPause)
 
 BOOL CPlayerHik::Stop()
 {
-	RemoveDisplayCallback(m_nPort);
+	//RemoveDisplayCallback(m_nPort);
 	 PlayM4_Stop(m_nPort);
 	 PlayM4_CloseFile(m_nPort);
 	return PlayM4_FreePort(m_nPort);
@@ -216,16 +221,17 @@ BOOL  CPlayerHik::SetFileEndCallback(LONG nID, FileEndCallback callBack, void *p
 
 BOOL  CPlayerHik::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
 {
-	bool bRet=PlayM4_SetDisplayCallBack(m_nPort, (DisplayCBFun)&DisplayCBFunBack);
+//	bool bRet=PlayM4_SetDisplayCallBack(m_nPort, (DisplayCBFun)&DisplayCBFunBack);
+	bool bRet = PlayM4_SetDisplayCallBackEx(m_nPort, (DisplayCBFun)&DisplayCBFunBackEx,(long)this);
 	if (bRet)
 	{
-		AddDisplayCallbackList(m_nPort);
+		//AddDisplayCallbackList(m_nPort);
 		m_DisplayCallbackFun = displayCallback;
 		m_DisplayCalUser = nUser;
 	}
 	return bRet;
 }
-
+/*
 std::list<CPlayerHik*>  CPlayerHik::m_sPlayerHik;
 void CPlayerHik::AddDisplayCallbackList(long nPort)
 {
@@ -258,7 +264,36 @@ void CPlayerHik::RemoveDisplayCallback(long nPort)
 		iter++;
 	}
 }
+*/
+void CPlayerHik::DisplayCBFunBackEx(DISPLAY_INFO *pstDisplayInfo)
+{
+	CPlayerHik *pPlayer = (CPlayerHik*)pstDisplayInfo->nUser;
+	if (pPlayer)
+	{
+		if (pPlayer->m_bPic)
+		{
 
+			pPlayer->SavePic(pstDisplayInfo->pBuf, pstDisplayInfo->nBufLen, pstDisplayInfo->nWidth, pstDisplayInfo->nHeight, pstDisplayInfo->nType);
+			pPlayer->m_bPic = false;
+		}
+		//CPlayerHik::m_sPlayerHik.erase(iter);
+		if (pPlayer->m_DisplayCallbackFun)
+		{
+			DISPLAYCALLBCK_INFO displayInfo;
+			displayInfo.pBuf = pstDisplayInfo->pBuf;
+			displayInfo.nBufLen = pstDisplayInfo->nBufLen;
+			displayInfo.nWidth = pstDisplayInfo->nWidth;
+			displayInfo.nHeight = pstDisplayInfo->nHeight;
+			displayInfo.nStamp = pstDisplayInfo->nStamp;
+			//displayInfo.nStamp = pPlayer->GetPlayedTime();
+
+			displayInfo.nUser = (long)pPlayer->m_DisplayCalUser;
+			pPlayer->m_DisplayCallbackFun(&displayInfo);
+
+		}
+	}
+}
+/*
 void CPlayerHik::DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long nReserved)
 {
 	std::list<CPlayerHik*>::iterator iter = CPlayerHik::m_sPlayerHik.begin();
@@ -282,6 +317,8 @@ void CPlayerHik::DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWid
 				displayInfo.nWidth = nWidth;
 				displayInfo.nHeight = nHeight;
 				displayInfo.nStamp = nStamp;
+				//displayInfo.nStamp = PlayM4_GetPlayedTime(m_nPort);
+				
 				displayInfo.nUser =(long) pPlayer->m_DisplayCalUser;
 				pPlayer->m_DisplayCallbackFun(&displayInfo);
 				
@@ -291,7 +328,7 @@ void CPlayerHik::DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWid
 		iter++;
 	}
 }
-
+*/
 BOOL  CPlayerHik::GetSystemTime(unsigned long long *systemTime)
 {
 	PLAYM4_SYSTEM_TIME sysTime;
@@ -325,17 +362,25 @@ BOOL  CPlayerHik::SavePic(char * pBuf, long nSize, long nWidth, long nHeight, lo
 BOOL  CPlayerHik::CapturePic(char *pSaveFile, int iType)
 {
 	//设置显示回调
-	bool bRet=PlayM4_SetDisplayCallBack(m_nPort, (DisplayCBFun)&DisplayCBFunBack);
+//	bool bRet=PlayM4_SetDisplayCallBack(m_nPort, (DisplayCBFun)&DisplayCBFunBack);
+	bool bRet = PlayM4_SetDisplayCallBackEx(m_nPort, (DisplayCBFun)&DisplayCBFunBackEx, (long)this);
 	if (!bRet)
 	{
 		return bRet;
 	}
-
+	int i = 0;
+	while (m_bPic&&i<5)
+	{
+		//WaitForSingleObject()
+		Sleep(10);
+		i++;
+	}
 	memset(m_saveFile, 0, 256);
 	strncpy_s(m_saveFile, pSaveFile, strlen(pSaveFile)>256 ? 256 : strlen(pSaveFile));
 	m_iType = iType;
-
-	char *pimageBuf=new char[2800 * 2800 * 3];
+	m_bPic = true;
+	return true;
+/*	char *pimageBuf=new char[2800 * 2800 * 3];
 	memset(pimageBuf, 255, 2800 * 2800 * 3);
 	DWORD imageSize = 0;
 	LONG width = 0;
@@ -347,10 +392,9 @@ BOOL  CPlayerHik::CapturePic(char *pSaveFile, int iType)
 		ret = PlayM4_GetBMP(m_nPort, (PBYTE)pimageBuf, 2800 * 2800 * 3, &imageSize);
 		if (ret)
 		{
-			AddDisplayCallbackList(m_nPort);
-			m_bPic = true;
-			//m_sPlayerHik.push_back(this);
-			//ret = PlayM4_ConvertToBmpFile((char*)pimageBuf, imageSize, width, height, T_RGB32, pSaveFile);
+			//AddDisplayCallbackList(m_nPort);
+			m_bPic = true;		
+		//	ret = PlayM4_ConvertToBmpFile((char*)pimageBuf, imageSize, width, height, T_RGB32, pSaveFile);
 		}
 	}
 	else if (iType == 1)
@@ -358,7 +402,7 @@ BOOL  CPlayerHik::CapturePic(char *pSaveFile, int iType)
 		ret = PlayM4_GetBMP(m_nPort, (PBYTE)pimageBuf, 2800 * 2800 * 3, &imageSize);
 		if (ret)
 		{
-			AddDisplayCallbackList(m_nPort);
+			//AddDisplayCallbackList(m_nPort);
 			m_bPic = true;
 			//m_sPlayerHik.push_back(this);
 			//ret = PlayM4_ConvertToJpegFile((char*)pimageBuf, imageSize, width, height, T_RGB32, pSaveFile);//存的文件为空字节
@@ -366,7 +410,7 @@ BOOL  CPlayerHik::CapturePic(char *pSaveFile, int iType)
 	}
 	delete pimageBuf;
 	pimageBuf = NULL;
-	return ret;
+	return ret;*/
 }
 
 BOOL CPlayerHik::FileCutStart(const char* srcFileName, const char* destFileName, unsigned __int64 startTime, unsigned __int64 endTime, BOOL bFast)

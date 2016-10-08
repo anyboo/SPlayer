@@ -12,7 +12,7 @@ BOOL CPlayerFactoryBlueSky::IsSupportFastCut()
 	return true;
 }
 
-BOOL CPlayerFactoryBlueSky::IsBelongThis(char *pFile)
+BOOL CPlayerFactoryBlueSky::IsBelongThisHead(char *pFile)
 {
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
@@ -21,14 +21,23 @@ BOOL CPlayerFactoryBlueSky::IsBelongThis(char *pFile)
 		char buf[8];
 		memset(buf, 0, 8);
 		fread(buf, 8, 1, pfd);
+		fclose(pfd);
 
 		if (strncmp(buf, "BLUESKY", 7) == 0)
 		{
 			return true;
-		}
-		fclose(pfd);
+		}	
 	}
 
+	return false;
+}
+
+BOOL CPlayerFactoryBlueSky::IsBelongThis(char *pFile)
+{
+	if (strstr(pFile, ".bsr") )//еп╤онд╪Ч
+	{
+		return true;
+	}
 
 	return false;
 }

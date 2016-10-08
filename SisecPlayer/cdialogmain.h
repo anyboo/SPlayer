@@ -132,6 +132,7 @@ protected slots:
 	void OnUkeyDown();
 	void OnUkeyUp();
 	void OnTerminated();
+	void OnSplitterMoved(int pos, int index);
 private:
 	CFormPlayCtrl *m_PlayCtrl[NUM];
 	CWidgetPlayWnd *m_PlayWnd[NUM];
@@ -139,16 +140,8 @@ private:
 	CDialogDubbing m_DubDlg;
 	PLAY_MODE m_PlayMode;
 	int m_iCurFocus;
-//	bool m_bPlay;
-//	QString m_strCurPlayFileName;
-	bool m_bHide;
-//	QRect m_rcFrameSystemMenu;
-	QRect m_rcFrameSysBar;
-	QRect m_rcFrameFileList;
-	QRect m_rcFrameToolBar;
-	QRect m_rcFileList;
 
-	QRect m_rcComboxFileOpen;
+	bool m_bHide;
 
 	int m_iScreenWidth;
 	int m_iScreenHeigth;

@@ -29,6 +29,8 @@ For details, see http://www.bstar.com.cn/
 #include "dvxSdkType.h"
 #include "IATypeDef.h"
 #include "dvxPlayer.h"
+#include "NatTypes.h"
+
 #ifdef __cplusplus
 #define EXTERNC extern "C"
 #else
@@ -49,7 +51,9 @@ DVXSDK_API int dvxSdkDeInit();
 DVXSDK_API int dvxSdkGetVersion();
 DVXSDK_API int dvxSdkSetRegCallback( unsigned short port, int (*pfRegRoutine)( void*, SOCKET ), void* pRegPara );
 DVXSDK_API int dvxCreate( const char* ip, unsigned short nCmdPort, unsigned short nDataPort, 
-                         const char* szUserName, const char* szPasswd, DvxHandle* pDvr );
+                         const char* szUserName, const char* szPasswd, DvxHandle* pDvr , bool bReceiveAlerts=true);
+DVXSDK_API int dvxCreateEx( const char* ip, unsigned short nCmdPort, unsigned short nDataPort, 
+                         const char* szUserName, const char* szPasswd, DvxHandle* pDvr , bool bReceiveAlerts=true, unsigned int timeOut=3000);
 DVXSDK_API int dvxCreateBySocket( SOCKET sDvr, DvxHandle* pDvx, unsigned short nDataPort );
 DVXSDK_API int dvxDestory( DvxHandle hDvx );
 DVXSDK_API int dvxSetReconnect( DvxHandle hDvx, bool bIsReconn );
@@ -59,10 +63,10 @@ DVXSDK_API void dvxSetDataPort( DvxHandle hDvx, int  nDataPort );
 //‘ˆº”œ˚œ¢Õ®÷™ªÿµ˜∫Ø ˝
 DVXSDK_API int dvxSetNotifyCallback( DvxHandle hDvx, int (*pfNotifyRoutine)( HANDLE hOwner, unsigned int notifyId, LPVOID lpUserData ), LPVOID lpUserData );
 
-DVXSDK_API int dvxLogin( DvxHandle hDvx, const char* szUserName, const char* szPasswd, int msTimeout );
+DVXSDK_API int dvxLogin( DvxHandle hDvx, const char* szUserName, const char* szPasswd, int msTimeout, bool bReceiveAlerts=true );
 DVXSDK_API int dvxLogout( DvxHandle hDvx );
 DVXSDK_API bool dvxIsLogin( DvxHandle hDvx );
-DVXSDK_API bool dvxRegisterAlarmCallback( DvxHandle hDvx,  void (*pfAlarmRoutine)( DvxAlarmInfo* pInfo, LPVOID pUserData ), LPVOID pUserData );
+DVXSDK_API bool dvxRegisterAlarmCallback( DvxHandle hDvx,  void (*pfAlarmRoutine)( DvxAlarmInfoHeader* pInfo, LPVOID pUserData ), LPVOID pUserData );
 DVXSDK_API int dvxRegisterAlarmClose( DvxHandle hDvx );
 /**********************************************************************************/
 // œ÷≥°π‹¿Ì
@@ -87,9 +91,8 @@ DVXSDK_API bool dvxRealIsSaving( RealHandle hReal );
 DVXSDK_API int dvxRealSetDataCallback( RealHandle hReal, int (*pfDataRoutine)( void*, void*, int ), void* pPara );
 DVXSDK_API int dvxRealImageEnhance( RealHandle hReal, bool bImageEnhance );
 DVXSDK_API int dvxRealSetVideoPlayMode( RealHandle hReal, int nFifoMode );
-DVXSDK_API int dvxRealCapture( DvxHandle hDvx, int chnnl, char *pathname, 
-							                 int dataport, int timeout,
-											 int &width, int &height );
+DVXSDK_API int dvxRealCapture( DvxHandle hDvx, int chnnl, char *pathname, int dataport, int timeout, int &width, int &height );
+DVXSDK_API int dvxRealSetStreamDataCallback(RealHandle hReal, int (*pfStreamDataRoutine)(void *,void *,int ), void *param, int nType);
 /**********************************************************************************/
 // Õ∏√˜Õ®µ¿π‹¿Ì
 
@@ -109,6 +112,9 @@ DVXSDK_API int dvxSpeechOpen( DvxHandle hDvx, SpeechOpenPara* pPara,
 DVXSDK_API int dvxSpeechOpenEx( DvxHandle hDvx, SpeechOpenPara* pPara,  HWND hNotifyWnd, unsigned int msgId,
                              int( *pfDataRoutine )( void* pUserData, char* pData, int readLen, int majorType, int subType ), void *pUserData, SpeechHandle* phSpeech ); 
 DVXSDK_API int dvxSpeechStart( SpeechHandle hSpeech, bool bNeedEnc=false );
+DVXSDK_API int dvxCloudSpeechStart( SOCKET SpeechSocket, SpeechHandle* hSpeech, HWND hwnd, bool bNeedEnc=false);
+DVXSDK_API int dvxCloudSpeechOver(SpeechHandle hSpeech);
+
 DVXSDK_API int dvxSpeechStop( SpeechHandle hSpeech );
 DVXSDK_API int dvxSpeechClose( SpeechHandle &hSpeech );
 DVXSDK_API int dvxSpeechState( SpeechHandle hSpeech, StreamState* pState );
@@ -128,26 +134,26 @@ DVXSDK_API int dvxSpeechSendData( SpeechHandle hSpeech, char *pData, int len );
 /**********************************************************************************/
 // ºÏÀ˜π‹¿Ì
 DVXSDK_API int dvxEventOpen(DvxHandle hDvx, ArchEventOpts* opts, unsigned int* total, int msTimeout);
-DVXSDK_API int dvxEventOpenATM(DvxHandle hDvx, ArchEventATMOpts* opts, unsigned int* total, int msTimeout);
+DVXSDK_API int dvxEventOpenATM(DvxHandle hDvx, ArchEventATMOpts* opts, unsigned int* total, int msTimeout, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxEventOpenIpcSD(DvxHandle hDvx, ArchEventATMOpts* opts, unsigned int* total, int msTimeout);
 DVXSDK_API int dvxEventClose(DvxHandle hDvx/*, ArchEventOpts* opts, unsigned int* total, int msTimeout*/);
 DVXSDK_API int dvxEventCloseIpcSD(DvxHandle hDvx/*, ArchEventOpts* opts, unsigned int* total, int msTimeout*/);
 DVXSDK_API int dvxEventFetch(DvxHandle hDvx, int rowId, int rowCount, FetchResult* pFetchList);
 DVXSDK_API int dvxEventFetchIpcSD(DvxHandle hDvx, int rowId, int rowCount, FetchResultIpcSD* pFetchList);
-DVXSDK_API int dvxEventPlot(DvxHandle hDvx, EventPlotOpts* opts,EventPlotResult *pResult);
-DVXSDK_API int dvxEventPlotATM(DvxHandle hDvx, EventPlotATMOpts* opts,EventPlotResult *pResult);
+DVXSDK_API int dvxEventPlot(DvxHandle hDvx, EventPlotOpts* opts,EventPlotResult *pResult, unsigned int ChannelsRound=0);
+DVXSDK_API int dvxEventPlotATM(DvxHandle hDvx, EventPlotATMOpts* opts,EventPlotResult *pResult, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxEventCalender(DvxHandle hDvx, EventCalendar* opts, EventCalendarList *pResult);
 //DVXSDK_API int dvxEventDescribe(DvxHandle hDvx, int channel, long long id, EventDescribe *pResult);
 DVXSDK_API int dvxEventXlate(DvxHandle hDvx, EventXlate *pXlate);
 
 DVXSDK_API int dvxBackupGet(DvxHandle hDvx, BackupPara* pPara);
 DVXSDK_API int dvxBackupSet(DvxHandle hDvx, BackupPara* pPara);
-DVXSDK_API int dvxBackupEXGet(DvxHandle hDvx, BackupParaEX* pPara);
-DVXSDK_API int dvxBackupEXSet(DvxHandle hDvx, BackupParaEX* pPara);
-DVXSDK_API int dvxBackupImgeGet(DvxHandle hDvx, int* task, BackupParaEX* pPara);
+DVXSDK_API int dvxBackupEXGet(DvxHandle hDvx, BackupParaEX* pPara, unsigned int nIndexChannelsRound=0);
+DVXSDK_API int dvxBackupEXSet(DvxHandle hDvx, BackupParaEX* pPara, unsigned int nIndexChannelsRound=0);
+DVXSDK_API int dvxBackupImgeGet(DvxHandle hDvx, int* task, BackupParaEX* pPara, unsigned int nIndexChannelsRound=0);
 
 //Õº∆¨ºÏÀ˜
-DVXSDK_API int dvxEventPicOpen(DvxHandle hDvx, ArchEventATMOpts* opts, unsigned int* total, int msTimeout);
+DVXSDK_API int dvxEventPicOpen(DvxHandle hDvx, ArchEventATMOpts* opts, unsigned int* total, int msTimeout, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxEventPicClose(DvxHandle hDvx);
 DVXSDK_API int dvxEventPicFetch(DvxHandle hDvx, int rowId, int rowCount, PicFetchResult* pFetchList);
 DVXSDK_API int dvxEventPicPlot(DvxHandle hDvx, ArchEventOpts* opts, EventPlotResult *pResult);
@@ -291,7 +297,15 @@ DVXSDK_API bool dvxPlayIAInfoShow( PlayHandle hPlay );             // «∑Òœ‘ æ÷«ƒ
 DVXSDK_API void dvxPlayShowAiLang(PlayHandle hPlay, int nLanguage);//…Ë÷√œ‘ æ÷«ƒ‹µ˛º”–≈œ¢µƒ”Ô—‘
 DVXSDK_API bool dvxPlayHasIAInfo(PlayHandle hPlay);				// «∑Ò”–µ˛º”÷«ƒ‹–≈œ¢
 DVXSDK_API void dvxPlaySetDecCallback( PlayHandle hPlay, void (CALLBACK *pDecDataRoutine)( dvxDecFrameInfo *pInfo, void* pUser ), void *pUser );
+DVXSDK_API void dvxPlaySetDecIvsFishCallback( PlayHandle hPlay
+                                             , void (CALLBACK *pIvsFishDataRoutine)( ivsFishOutInfo *pInfo, void* pUser )
+                                             , void *pUser );
 DVXSDK_API bool dvxPlaySetTrapwirePoint(PlayHandle hPlay, char *pPoint);
+DVXSDK_API int dvxSetPlayIvsUserParam(PlayHandle hPlay, ivsFishUserParam ivsUserParam);
+DVXSDK_API int dvxGetPlayIvsOutInfo(PlayHandle hPlay, ivsFishOutInfo *pInfo);
+
+//…Ë÷√∞¥±»¿˝‘§¿¿ µ ±ª≠√Ê
+DVXSDK_API bool dvxPlaySetStretchBlt(PlayerHandle hPlay, int pWidthRate, int pHeightRate, bool bOn);
  
 //…Ë÷√ƒÒÓ´
 DVXSDK_API bool dvxPlaySetAirScapeRect( PlayerHandle hPlay, RECT miniRect, RECT selRect, bool bOn );
@@ -333,6 +347,8 @@ DVXSDK_API int dvxAlarmImgRcvInfoGet(DvxHandle hDvx, void* pInfo, int nSize);
 //÷ÿ÷√±®æØ¡™∂ØÕº∆¨…œ¥´–≈œ¢£¨‘⁄≤ª∂œø™¡¨Ω”µƒ«Èøˆœ¬«Èøˆª∫¥Ê
 DVXSDK_API int dvxAlarmImgRcvInfoReset(DvxHandle hDvx);
 
+
+
 /**********************************************************************************/
 // »’÷æπ‹¿Ì
 DVXSDK_API int dvxSyslogOpen( DvxHandle hDvx,SyslogOpenOpts* opt, unsigned int* total);
@@ -367,6 +383,10 @@ DVXSDK_API int dvxSysGetSdCodecCapEx(DvxHandle hDvx, DevAvCapEx* pCap);
 DVXSDK_API int dvxSysLocaleGet( DvxHandle hDvx, int* locale);
 DVXSDK_API int dvxSysLocaleSet( DvxHandle hDvx, int locale);
 DVXSDK_API int dvxSysShell( DvxHandle hDvx, char* cmd, int wait, int* retValue, char* text);
+
+DVXSDK_API int dvxSysGetPincode( DvxHandle hDvx, int* res, sysPincode* para);
+DVXSDK_API int dvxSysSetPincode( DvxHandle hDvx, sysPincode* para);
+
 DVXSDK_API int dvxSysTop( DvxHandle hDvx, char* text);
 DVXSDK_API int dvxSysReboot( DvxHandle hDvx, RebootStatus* pConflictStatus );
 DVXSDK_API int dvxSysHalt( DvxHandle hDvx);
@@ -378,8 +398,21 @@ DVXSDK_API int dvxSysBurnState( DvxHandle hDvx, int *stage, int* percent);
 DVXSDK_API int dvxSysExport( DvxHandle hDvx, int type, char* path, int *retValue);
 DVXSDK_API int dvxSysImport( DvxHandle hDvx, int type, char* path, int *retValue);
 
+DVXSDK_API int dvxSysTickNoSet(DvxHandle hDvx, SysTickNo* pTickNo);
+DVXSDK_API int dvxSysWorkIdSet(DvxHandle hDvx, SysWorkID* pWorkId);
+DVXSDK_API int dvxSysUpLoadFile(DvxHandle hDvx, int type, char* path, int* retValue);
+DVXSDK_API int dvxSysCaptureFile(DvxHandle hDvx, int type, char* path, int* retValue);
+DVXSDK_API int dvxSysLicaiConfigSet(DvxHandle hDvx, LicaiConfig* pLicaiCfg);
+DVXSDK_API int dvxSysLicaiStatusGet(DvxHandle hDvx, signalStatusGet nres, LicaiWorkStatus* pLicaiStatus);
+
+DVXSDK_API int dvxSysImprtAudioFile(DvxHandle hDvx, int type, char* path, int* retValue);
+
+DVXSDK_API int dvxSysCaptureLogFileExport( DvxHandle hDvx, int type, char* path, int *retValue);
+
 /**********************************************************************************/
 // Õ¯¬Áπ‹¿Ì
+DVXSDK_API	int dvxPlatformAccessGet( DvxHandle hDvx, PlatformAccess* platformAccess);
+DVXSDK_API	int dvxPlatformAccessSet( DvxHandle hDvx, PlatformAccess* platformAccess);
 DVXSDK_API  int dvxNetLinkState( DvxHandle hDvx, int iface, NetLinkState* pState);
 DVXSDK_API  int dvxNetLinkGet( DvxHandle hDvx,int iface, NetLinkPara* pPara);
 DVXSDK_API  int dvxNetLinkSet( DvxHandle hDvx,NetLinkPara* pPara);
@@ -403,7 +436,23 @@ DVXSDK_API  int dvxNetRegLogon( DvxHandle hDvx);
 DVXSDK_API  int dvxNetRegLogoff( DvxHandle hDvx);
 DVXSDK_API  int dvxNetReportCfgGet( DvxHandle hDvx,StatusUpload* pPara );
 DVXSDK_API  int dvxNetReportCfgSet( DvxHandle hDvx,StatusUpload* pPara );
+DVXSDK_API  int dvxNetReportBandsInfoGet( DvxHandle hDvx,int nPara, BandsInfo* pPara );
 DVXSDK_API  int dvxDdnsSvrListGet( DvxHandle hDvx,int nPara, DdnsSvrList* pList);
+DVXSDK_API  int dvxNetLinkIpv6Get(DvxHandle hDvx, int iFace, NetLinkIpv6* pPara);
+DVXSDK_API  int dvxNetLinkIpv6Set(DvxHandle hDvx, NetLinkIpv6* pPara);
+DVXSDK_API	int dvxNetLinkTcpDump(DvxHandle hDvx, NetLinkTcpDump* pPara);
+DVXSDK_API  int dvxNetServiceAddrGetEx(DvxHandle hDvx,ServicePortExCfg* pPara);
+DVXSDK_API  int dvxNetServiceAddrSetEx(DvxHandle hDvx,ServicePortExCfg* pPara);
+DVXSDK_API  int dvxNetUPNPConfigGet(DvxHandle hDvx, uPnpParameterCfg* pPara);
+DVXSDK_API	int dvxNetUPNPConfigSet(DvxHandle hDvx, uPnpParameterCfg* pPara);
+DVXSDK_API  int dvxNetDevPortPermissionGet(DvxHandle hDvx, NetAuth* pPara);
+DVXSDK_API	int dvxNetDevPortPermissionSet(DvxHandle hDvx, NetAuth* pPara);
+DVXSDK_API	int dvxNetWifiCfgGet(IpcHandle hIpc,WifiCfgInputPara* pParaIn, wifiConfig* pParaOut);
+DVXSDK_API	int dvxNetWifiCfgSet(IpcHandle hIpc,wifiConfig* pParaIn);
+DVXSDK_API	int dvxNetWifiSearch(IpcHandle hIpc,WifiSearchInputPara* pParaIn, wifiSearchInfo* pParaOut);
+DVXSDK_API	int dvxNetWifiInfoSearch(IpcHandle hIpc,wifiPage* pParaIn,wifiFetchSearchInfo* pParaOut);
+DVXSDK_API	int dvxNetWlanCfgGet(IpcHandle hIpc, WlanCfgInputPara* pParaIn, wlanConfig* pParaOut);
+DVXSDK_API	int dvxNetWlanCfgSet(IpcHandle hIpc, wlanConfig* pParaIn);
 //SIP…Ë∂®
 DVXSDK_API int dvxSIPBasicParamGet(DvxHandle hDvx, SIPBasicParam* pPara);
 DVXSDK_API int dvxSIPBasicParamSet(DvxHandle hDvx, SIPBasicParam* pPara);
@@ -412,6 +461,13 @@ DVXSDK_API int dvxSIPChanIdentCodeSet(DvxHandle hDvx, SIPChanIdent* pPara);
 DVXSDK_API int dvxSIPAlarmInSitIdentCodeGet(DvxHandle hDvx, unsigned int* count, SIPSitsIdent* pPara);
 DVXSDK_API int dvxSIPAlarmInSitIdentCodeSet(DvxHandle hDvx, SIPSitsIdent* pPara);
 DVXSDK_API int dvxNetServiceTest( DvxHandle hDvx, NetServiceTestIn* pParaIn, NetServiceTestOut *pParaOut);
+
+//–«º ‘∆
+DVXSDK_API int	dvxInterCloudsParamGet( DvxHandle hDvx, bsrCloud* pCloudParam);
+DVXSDK_API int	dvxInterCloudsParamSet( DvxHandle hDvx, bsrCloud* pCloudParam);
+//÷–π˙µÁ–≈ ÷ª˙ø¥µÍ∆ΩÃ®
+DVXSDK_API int	dvxTeleLookAFPlatGet( DvxHandle hDvx, TeleLookAfterPlat* teleLookAfterPlat);
+DVXSDK_API int	dvxTeleLookAFPlatSet( DvxHandle hDvx, TeleLookAfterPlat* teleLookAfterPlat);
 
 /**********************************************************************************/
 // ∞≤»´π‹¿Ì
@@ -424,24 +480,26 @@ DVXSDK_API  int dvxSecurityUserEdit( DvxHandle hDvx,SecurityUser* user);
 DVXSDK_API  int dvxSecurityUserDel( DvxHandle hDvx,char* user);
 DVXSDK_API  int dvxSecurityUserList( DvxHandle hDvx,SecurityUserList* pList);
 DVXSDK_API  int dvxSecurityUserPasswd( DvxHandle hDvx,char* user, char* oldPassword, char* newPassword);
-DVXSDK_API  int dvxSecurityUserPrivGet( DvxHandle hDvx, char* user, SecurityUserPrivilege* pPriv);
-DVXSDK_API  int dvxSecurityRmtUserPrivGet( DvxHandle hDvx, char* user, SecurityRmtUserPrivilege* pPriv);
+DVXSDK_API  int dvxSecurityUserPrivGet( DvxHandle hDvx, char* user, SecurityUserPrivilege* pPriv, unsigned int ChannelsRound=0);
+DVXSDK_API  int dvxSecurityRmtUserPrivGet( DvxHandle hDvx, char* user, SecurityRmtUserPrivilege* pPriv, unsigned int ChannelsRound=0);
 DVXSDK_API  int dvxSecurityUserMaxConGet(DvxHandle hDvx,  int *count);
-DVXSDK_API  int dvxSecurityUserPrivSet(DvxHandle hDvx, SecurityUserPrivilege* pPriv);
-DVXSDK_API  int dvxSecurityRmtUserPrivSet(DvxHandle hDvx, SecurityRmtUserPrivilege* pPriv);
+DVXSDK_API  int dvxSecurityUserPrivSet(DvxHandle hDvx, SecurityUserPrivilege* pPriv, unsigned int ChannelsRound=0);
+DVXSDK_API  int dvxSecurityUserNetUserEnableGet(DvxHandle hDvx, InternetUsers * pPara);
+DVXSDK_API  int dvxSecurityUserNetUserEnableSet(DvxHandle hDvx, InternetUsers * pPara);
+DVXSDK_API  int dvxSecurityRmtUserPrivSet(DvxHandle hDvx, SecurityRmtUserPrivilege* pPriv, unsigned int ChannelsRound=0);
 DVXSDK_API  int dvxSecurityUserMaxConSet(DvxHandle hDvx,  int *count);
 DVXSDK_API  int dvxSecurityRoleList( DvxHandle hDvx,SecurityRoleList* pList);
-DVXSDK_API  int dvxSecurityRolePrivGet( DvxHandle hDvx, char* role, SecurityRolePrivilege* pPriv);
-DVXSDK_API  int dvxSecurityRoleRmtPrivGet( DvxHandle hDvx, char* role, SecurityRoleRmtPrivilege* pPriv);
-DVXSDK_API  int dvxSecurityRolePrivSet( DvxHandle hDvx,SecurityRolePrivilege* pPriv);
-DVXSDK_API  int dvxSecurityRoleRmtPrivSet( DvxHandle hDvx,SecurityRoleRmtPrivilege* pPriv);
+DVXSDK_API  int dvxSecurityRolePrivGet( DvxHandle hDvx, char* role, SecurityRolePrivilege* pPriv, unsigned int ChannelsRound=0);
+DVXSDK_API  int dvxSecurityRoleRmtPrivGet( DvxHandle hDvx, char* role, SecurityRoleRmtPrivilege* pPriv, unsigned int ChannelsRound=0);
+DVXSDK_API  int dvxSecurityRolePrivSet( DvxHandle hDvx,SecurityRolePrivilege* pPriv, unsigned int ChannelsRound=0);
+DVXSDK_API  int dvxSecurityRoleRmtPrivSet( DvxHandle hDvx,SecurityRoleRmtPrivilege* pPriv, unsigned int ChannelsRound=0);
 DVXSDK_API  int dvxSecuritySessionAuthizeSet( DvxHandle hDvx, UkeyAuthizeParam* pParam, int *pValue);
 DVXSDK_API  int dvxSecuritySessionAuthClear( DvxHandle hDvx );
 
 /**********************************************************************************/
 // ¥Ê¥¢π‹¿Ì
 DVXSDK_API  int dvxStorageDiskList( DvxHandle hDvx, DiskStatusList* pList);
-DVXSDK_API  int dvxStorageDiskListEx(DvxHandle hDvx, DiskStatusListEx* pList);
+DVXSDK_API  int dvxStorageDiskListEx(DvxHandle hDvx,DiskStatusListExIn* res, DiskStatusListEx* pList);
 DVXSDK_API  int dvxStorageDiskDescribe( DvxHandle hDvx, char disk, DiskPartInfo* pPart);
 DVXSDK_API  int dvxStorageDiskState( DvxHandle hDvx, char disk, DiskStateInfo* pInfo);
 DVXSDK_API  int dvxStorageDiskStateEx(DvxHandle hDvx, char disk, DiskStateInfoEx* pInfo);
@@ -458,6 +516,17 @@ DVXSDK_API  int dvxStorageDiskSchemGet( DvxHandle hDvx, DiskSchemePara* pPara);
 DVXSDK_API  int dvxStorageDiskSchemGetEx(DvxHandle hDvx,DiskSchemeParaEx* pPara);
 DVXSDK_API  int dvxStorageDiskSchemSet( DvxHandle hDvx, DiskSchemePara* pPara);
 DVXSDK_API  int dvxStorageDiskSchemSetEx(DvxHandle hDvx, DiskSchemeParaEx* pPara);
+
+
+DVXSDK_API  int dvxStorageDiskRAIDGet(DvxHandle hDvx, int res, DiskRaid *pPara);
+DVXSDK_API  int dvxStorageDiskRAIDSet(DvxHandle hDvx, DiskRaid *pPara);
+DVXSDK_API  int dvxStorageDiskStatusCfgGet(DvxHandle hDvx, UINT iIndex, PhyDisk *pPara);
+DVXSDK_API  int dvxStorageDiskRAIDCreate(DvxHandle hDvx, AddRaid *pPara);
+DVXSDK_API  int dvxStorageDiskSpareSet(DvxHandle hDvx, SpareMod *pPara);
+DVXSDK_API  int dvxStorageDiskSpareDelete(DvxHandle hDvx, SpareMod *pPara);
+DVXSDK_API  int dvxStorageDiskRAIDCfgGet(DvxHandle hDvx, UINT iIndex, bscpRaidAlbumInfo *pPara);
+DVXSDK_API  int dvxStorageDiskRAIDDelete(DvxHandle hDvx, UINT iIndex);
+DVXSDK_API  int dvxStorageDiskManualRebuild(DvxHandle hDvx, SpareMod *pPara);
 
 //ªÒ»°”≤≈Ã∏Ò ΩªØ◊¥Ã¨
 DVXSDK_API  int dvxStorageDiskFormatState( DvxHandle hDvx, unsigned int disk,  DiskFormatStatus *pStatus );
@@ -526,6 +595,13 @@ DVXSDK_API int dvxManualRaiseAlertOut(DvxHandle hDvx, const ManualRaiseAlertOut*
 DVXSDK_API int dvxEventFilterCfgGet(DvxHandle hDvx, int alertType, unsigned int alertCount,unsigned int* alertIds, FilterCfg* pCfg);
 DVXSDK_API int dvxEventFilterCfgSet(DvxHandle hDvx, FilterCfg* pCfg);
 /**********************************************************************************/
+DVXSDK_API int dvxSceneMonitorCfgGet(DvxHandle hDvx, int* monitor, SceneMonitorCfg* pCfg);
+DVXSDK_API int dvxSceneMonitorCfgSet(DvxHandle hDvx, SceneMonitorCfg* pCfg);
+DVXSDK_API int dvxSceneMonitorPictureGet(DvxHandle hDvx,int* monitor, SceneMonitorPicture* pCfg);
+DVXSDK_API int dvxSceneMonitorPictureSet(DvxHandle hDvx, SceneMonitorPicture* pCfg);
+DVXSDK_API int dvxSceneMonitorMarginGet(DvxHandle hDvx, int* monitor, SceneMonitorMargin* pCfg);
+DVXSDK_API int dvxSceneMonitorMarginSet(DvxHandle hDvx, SceneMonitorMargin* pCfg);
+
 // Õ®µ¿π‹¿Ì // Hid (Human Interface Device, »Àª˙ΩÁ√Ê…Ë±∏)
 DVXSDK_API int dvxSceneHidCfgGet( DvxHandle hDvx, SceneHidCfg* pCfg );
 DVXSDK_API int dvxSceneHidCfgSet( DvxHandle hDvx, const SceneHidCfg* pCfg );
@@ -550,8 +626,10 @@ DVXSDK_API int dvxAVRecordCfgGet( DvxHandle hDvx, unsigned int channels, AVRecor
 DVXSDK_API int dvxAVRecordCfgSet( DvxHandle hDvx, AVRecordCfgList* pList, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVRecordScheduleGet( DvxHandle hDvx, unsigned int channels, AVRecordPlanList* pList, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVRecordScheduleGetEx(DvxHandle hDvx, unsigned int channels, AVRecordPlanListEx* pList, unsigned int ChannelsRound=0);
+DVXSDK_API int dvxAVRecordTimeScheduleGetEx(DvxHandle hDvx, unsigned int channels, RcTimeRecord* pList, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVRecordScheduleSet( DvxHandle hDvx, AVRecordPlanList* pList, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVRecordScheduleSetEx(DvxHandle hDvx, AVRecordPlanListEx* pList, unsigned int ChannelsRound=0 );
+DVXSDK_API int dvxAVRecordTimeScheduleSetEx( DvxHandle hDvx, RcTimeRecord* pList, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVRecListBitrate( DvxHandle hDvx, unsigned int nStreamIndex, BitrateList* pBitrate ); 
 DVXSDK_API int dvxAVRecListBitrateSuppliment( DvxHandle hDvx, unsigned int nStreamIndex, NsdBitrateList* pBitrate );
 //DVXSDK_API int dvxAVRecordStart( DvxHandle hDvx, unsigned int channels);
@@ -566,6 +644,8 @@ DVXSDK_API int dvxAVRecordPicStart(DvxHandle hDvx, AVPicRecordStartPara* pPara, 
 DVXSDK_API int dvxAVRecordPicStop(DvxHandle hDvx, AVPicRecordStartPara* pPara, unsigned int* channel, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVRecordPicTimeStart(DvxHandle hDvx, AVPicRecordTimeStarPara* pPara, unsigned int* channel);
 DVXSDK_API int dvxAVRecordPicTimeStop(DvxHandle hDvx, AVPicRecordTimeStarPara* pPara, unsigned int* channel);
+DVXSDK_API int dvxAVRecordRecSecInfoGet(DvxHandle hDvx, int res, RecSectionInfo* pCfg);
+DVXSDK_API int dvxAVRecordRecSecInfoSet(DvxHandle hDvx, RecSectionInfo* pCfg);
 
 /**********************************************************************************/
 //‘∆Ã®øÿ÷∆
@@ -605,8 +685,8 @@ DVXSDK_API int dvxAVXEncodeCfgGet( DvxHandle hDvx, AVXEncoderCfg* translateEncod
 DVXSDK_API int dvxAVXEncodeCfgSet( DvxHandle hDvx, AVXEncoderCfg* translateEncodeEnable);
 DVXSDK_API int dvxAVInputCfgGet( DvxHandle hDvx, unsigned int channels, AVInputPara* pPara, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVInputCfgSet( DvxHandle hDvx, AVInputPara* pPara, unsigned int ChannelsRound=0);
-DVXSDK_API int dvxAVInputCfgGetEx( DvxHandle hDvx, AVInputParaIn avParaIn, AVInputParaEX* pPara);
-DVXSDK_API int dvxAVInputCfgSetEx( DvxHandle hDvx, AVInputParaEX* pPara);
+DVXSDK_API int dvxAVInputCfgGetEx( DvxHandle hDvx, AVInputParaIn avParaIn, AVInputParaEX* pPara, unsigned int ChannelsRound=0);
+DVXSDK_API int dvxAVInputCfgSetEx( DvxHandle hDvx, AVInputParaEX* pPara, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVInputPictureGetExmore( DvxHandle hDvx, unsigned int channels, AVPictureParaEx* pPara);
 DVXSDK_API int dvxAVInputPictureSetExmore( DvxHandle hDvx, AVPictureParaEx* pPara);
 DVXSDK_API int dvxAVInputPictureGet( DvxHandle hDvx, unsigned int channels, AVPicturePara* pPara, unsigned int ChannelsRound=0);
@@ -615,8 +695,8 @@ DVXSDK_API int dvxAVInputPictureSet( DvxHandle hDvx, AVPicturePara* pPara, unsig
 DVXSDK_API int dvxAVInputPictureSetEx( DvxHandle hDvx, AVPictureParaEx* pPara, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVInputImprintGet( DvxHandle hDvx, unsigned int channels, AVInputImprintPara* pPara, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVInputImprintSet( DvxHandle hDvx, AVInputImprintPara* pPara, unsigned int ChannelsRound=0);
-DVXSDK_API int dvxAVInputImprintGetEx( DvxHandle hDvx, AVInputParaIn avParaIn, AVInputImprintParaEX* pPara);
-DVXSDK_API int dvxAVInputImprintSetEx( DvxHandle hDvx, AVInputImprintParaEX* pPara);
+DVXSDK_API int dvxAVInputImprintGetEx( DvxHandle hDvx, AVInputParaIn avParaIn, AVInputImprintParaEX* pPara, unsigned int ChannelsRound=0);
+DVXSDK_API int dvxAVInputImprintSetEx( DvxHandle hDvx, AVInputImprintParaEX* pPara, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVInputMaskGet( DvxHandle hDvx, unsigned int channels, AVInputMaskPara* pPara, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVInputMaskSet( DvxHandle hDvx, AVInputMaskPara* pPara, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAVInputColorCfgGet(DvxHandle hDvx, unsigned int channels, AVInputColorCfg* pPara);
@@ -656,19 +736,51 @@ DVXSDK_API int dvxAVIPCSelfTestIRluxValueGet(DvxHandle hDvx, int* luxVal);
 DVXSDK_API int dvxAVIPCSelfTestSupportFuncGet(DvxHandle hDvx, HARDSupportFunc* ipcHardSupportFunc);
 DVXSDK_API int dvxAVIPCSelfTestIBuzzerSet(DvxHandle hDvx, int* luxVal);
 
+DVXSDK_API int dvxAVIPCSelfTestMacSet(DvxHandle hDvx, NetSetPcidMacMsg* macMsg);
+DVXSDK_API int dvxAVIPCSelfTestDvrDescribe(DvxHandle hDvx, char* res, STestCap* pCap);
+DVXSDK_API int dvxAVIPCSelfTestModeSet(DvxHandle hDvx, int *status);
+DVXSDK_API int dvxAVIPCSelfTestDvrCheck(DvxHandle hDvx, STestCheckIn* pIn, STestCheckOut *pOut);
+DVXSDK_API int dvxAVIPCSelfTestPresent(DvxHandle hDvx, int* pIn);
+
+DVXSDK_API int dvxAVIPCSelfTestSensorGet(DvxHandle hDvx, IPCSENSORSTRING *pOut);
+DVXSDK_API int dvxAVIPCSelfTestDevHardInfoGet(DvxHandle hDvx, GetDevHardInfo *pIn, DevHardInfo *pOut);
+
 DVXSDK_API int dvxAVIPCBasicparaGet(DvxHandle hDvx, PictureMakeParam* pIn, PictureMakeParam *pOut);
 DVXSDK_API int dvxAVIPCBasicparaSet(DvxHandle hDvx, PictureMakeParam* pIn);
 DVXSDK_API int dvxAVBncFormatGet(DvxHandle hDvx, int nChnnl, DevBncPara* pPara);
 DVXSDK_API int dvxAVBncFormatSet(DvxHandle hDvx, DevBncPara* pPara);
+
+DVXSDK_API int dvxAVCVBSCtrlStateGet(DvxHandle hDvx, int monitor, CVBSCtrlState* pPara);
+DVXSDK_API int dvxAVCVBSCtrlStateSet(DvxHandle hDvx, CVBSCtrlState* pPara);
 DVXSDK_API int dvxAVBncModeCapGet(DvxHandle hDvx, BNCModeCap* pPara);
 DVXSDK_API int dvxAVIpcImgAdvanceParamGet(DvxHandle hDvx, ImgAdvanceParam* pIn, ImgAdvanceParam *pOut);
 DVXSDK_API int dvxAVIpcImgAdvanceParamSet(DvxHandle hDvx, ImgAdvanceParam* pIn);
 DVXSDK_API int dvxAVIpcStartIpcAiCtrl(DvxHandle hDvx, int* pIn);
+DVXSDK_API int dvxAVIpcAEAlgorithmGet(DvxHandle hDvx, unsigned int* pIn, AEAlgorithm *pOut);
+DVXSDK_API int dvxAVIpcAEAlgorithmSet(DvxHandle hDvx, AEAlgorithm* pIn, AEReturn* pOut);
 DVXSDK_API int dvxAVIpcAiCtrlStatusGet(DvxHandle hDvx, int* pIn, int *pOut);
+DVXSDK_API int dvxAVIpcIpcAiHardwareFeatureGet(DvxHandle hDvx, unsigned int pIn, AiHardwareFeature *pOut);
 DVXSDK_API int dvxAVIpcPicTuneSceneListGet(DvxHandle hDvx, int nValue, PicTuneSceneList *pSceneList);
 DVXSDK_API int dvxAVIpcImgTunerSceneModeSet(DvxHandle hDvx, ImgScenceInfo *pSceneInfo);
 DVXSDK_API int dvxAVIpcFocusAssistSet(DvxHandle hDvx, FocusAssist *pFocusAssist);
 DVXSDK_API int dvxAVIpcFocusStatusGet(DvxHandle hDvx, FocusStatus *pFocusStatus);
+DVXSDK_API int dvxAVIpcCameraLensParamSet(DvxHandle hDvx,CameraLensParam* pCameraLensParam);
+DVXSDK_API int dvxAVInputLogoParaGet(DvxHandle hDvx, unsigned int chanmap,LogoParam* pPara);
+DVXSDK_API int dvxAVInputLogoParaSet(DvxHandle hDvx, LogoParam* pInPara);
+
+//AI–£—È
+DVXSDK_API int dvxAVIpcAITriggerParaGet(DvxHandle hDvx, AiParamValue* pCfg);
+DVXSDK_API int dvxAVIpcAITriggerParaSet(DvxHandle hDvx, AutoIrisTriggerParam* pCfg);
+
+//Smart IR
+DVXSDK_API int dvxAVInputGetSmartIRParam(DvxHandle hDvx, int* pIn, SmartIRParam* pOut);
+DVXSDK_API int dvxAVInputSetSmartIRParam(DvxHandle hDvx, SmartIRParam* pIn);
+
+//π‚»¶ºÏ≤‚
+DVXSDK_API int dvxAVIpcApertureDetection(DvxHandle hDvx, TestStart* pInParam,TestResult* pOutParam);
+
+//–¬∑Ω ΩªÒ»°¬Î¡˜
+DVXSDK_API int dvxAVNewStreamParamGet(DvxHandle hDvx, StreamInputParam* pIn, StreamParam* pOut);
 
 //œ÷≥°“Ù–ß
 DVXSDK_API int dvxSceneSoundGet(DvxHandle hDvx, SceneSoundCfg* pPara);
@@ -682,6 +794,7 @@ DVXSDK_API int dvxALGDetectCfgSet(DvxHandle hDvx, VCA_ALGDECTVIDEOPARA* pAlgPara
 DVXSDK_API int dvxVAParamGet(DvxHandle hDvx, VAConfPara* pVAParam);
 DVXSDK_API int dvxVAParamSet(DvxHandle hDvx, VAConfPara* pVAParam);
 DVXSDK_API int dvxAVEncCapGet( DvxHandle hDvx, ChnnlAVCap *pCap, unsigned int ChannelsRound=0);
+DVXSDK_API int dvxAVEncCapGetEx( DvxHandle hDvx, ChnnlAVCapEx *pCap, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxALGParamGet(DvxHandle hDvx, unsigned int channels, void* pAlgParam, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAlgParamSet(DvxHandle hDvx, unsigned int channels, void* pAlgParam, unsigned int ChannelsRound=0);
 DVXSDK_API int dvxAlgCalibrationCheck(DvxHandle hDvx, unsigned int channels, void* Calibration, void* result);
@@ -698,6 +811,39 @@ DVXSDK_API int dvxALGParamSet_V3(DvxHandle hDvx, void* pAlgParam, unsigned int n
 DVXSDK_API int dvxDetectAvdConfGet(DvxHandle hDvx, unsigned int channels, AvdConfPara* pPara);
 DVXSDK_API int dvxDetectAvdConfSet(DvxHandle hDvx, AvdConfPara* pPara);
 DVXSDK_API int dvxDetectTriggerScnMode(DvxHandle hDvx, unsigned int channels);
+
+// ”∆µ’Ô∂œ(DVR/NVR)
+DVXSDK_API int dvxAVDetectVDBaseCfgGet(DvxHandle hDvx, unsigned int nchannels, int res, VDBaseCfg* pPara);
+DVXSDK_API int dvxAVDetectVDBaseCfgSet(DvxHandle hDvx, VDBaseCfg* pPara);
+
+//2015∞Ê÷«ƒ‹
+DVXSDK_API int dvxEventNewAiCfgGet(DvxHandle hDvx, UINT nChannel, void* pCfg, unsigned int nSize);
+DVXSDK_API int dvxEventNewAiCfgSet(DvxHandle hDvx, void* pCfg, unsigned int nSize);
+
+/*
+ nat¥©Õ∏Ω”ø⁄
+*/
+/*≥ı ºªØNatø‚*/
+DVXSDK_API int dvxNatAgentLibInit(char* iceServIp, int iceServPort, char* iceUser, 
+								  char* psw,  char* stunTurnIp, int stunPort, int turnPort, 
+								  char* stunUser, char* stunPsw );
+/*÷ÿ‘ÿdvxCreateΩ”ø⁄
+natType£∫¥À…Ë±∏ π”√µƒ¥©Õ∏ƒ£ Ω
+“¿æ›dvxNatCanUsingStun£¨»Áπ˚≈–∂œstun≤ªø…”√
+‘Ú¥´»Îstunµƒ¥©Õ∏ƒ£ Ω∂ºª· ß∞‹
+*/
+DVXSDK_API int dvxNatCreate( const char* devCode, unsigned int devIp, unsigned short nCmdPort, unsigned short nDataPort, 
+						 const char* szUserName, const char* szPasswd, NATCONTYPE natType, DvxHandle* pDvr );
+
+/*ªÒ»°…Ë±∏÷ß≥÷µƒ¥©Õ∏¿‡–Õ
+retval: false:≤ªø…”√stun
+        true:stunø…”√
+isOnline: «∑Ò‘⁄œﬂ 0£∫≤ª‘⁄œﬂ 1£∫‘⁄œﬂ
+*/
+DVXSDK_API bool dvxNatCanUsingStun(char* devCode, int* isOnline);
+
+/*ªÒ»°‘⁄œﬂ…Ë±∏¡–±Ì*/
+DVXSDK_API int dvxOnlineDevGet(unsigned int type, char* onlineDevBuf, int* bufLen);
 
 
 
@@ -787,6 +933,10 @@ DVXSDK_API int dvxAVDigitalChannelMOdeCapGet(DvxHandle hDvx, unsigned int* nModi
 DVXSDK_API int dvxAVDigitalChannelModeCapSet(DvxHandle hDvx, NvrgetChannelModeCap* pPara);
 DVXSDK_API int dvxAVDigitalChannelSysCapGet(DvxHandle hDvx, int* pInPara, sysChanCapList* pOutPara);
 DVXSDK_API int dvxAVDigitalChannelSupBrandlistGet(DvxHandle hDvx, SupBrandlist* pOutPara);
+DVXSDK_API int dvxAVDigitalChIPChanApplyModeGet(DvxHandle hDvx, IPChanApplyMode* pOutPara);
+DVXSDK_API int dvxAVDigitalChIPChanApplyModeSet(DvxHandle hDvx, IPChanApplyMode* pInPara);
+DVXSDK_API int dvxAVDigitalChIPChanMacBingInfoGet(DvxHandle hDvx,ChannelMacInfo* pOutPara);
+DVXSDK_API int dvxAVDigitalChIPChanMacBingInfoSet(DvxHandle hDvx, ChannelMacInfo* pInPara);
 
 //…Óπ„∂®÷∆∞Ê±æΩ”ø⁄π¶ƒ‹
 DVXSDK_API int dvxSGConfGet(DvxHandle hDvx, SGServerConf* pPara);

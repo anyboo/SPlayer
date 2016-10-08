@@ -676,13 +676,13 @@ typedef struct
 
 typedef struct 
 {
-	UCHAR start;  //是否启动 0:不启动 1:启动
-	UCHAR bHour;  //开始时间的小时  0-23
-	UCHAR eHour;    //结束时间 0-23
-	UCHAR bMinute;  //开始的分0-59
-	UCHAR eMinute;  //结束的分0-59
-	UCHAR sensity;  //灵敏度1-9
-	UCHAR rec[2];   //
+  UCHAR start;  //是否启动 0:不启动 1:启动
+  UCHAR bHour;  //开始时间的小时  0-23
+  UCHAR eHour;    //结束时间 0-23
+  UCHAR bMinute;  //开始的分0-59
+  UCHAR eMinute;  //结束的分0-59
+  UCHAR sensity;  //灵敏度1-9
+  UCHAR rec[2];   //
 }VcaTimeSeg;
 
 //
@@ -1143,5 +1143,55 @@ struct TrapwirePoint
 	int nCount;
 	trapwriePoint trapwirePt[16];
 };
+
+#define MAX_AI_TYPE_COUNT      16    //当前最大智能类型个数
+
+//新智能
+
+typedef struct 
+{
+  unsigned char poly_type; ///多边形类型 
+  unsigned char poly_info; ///如用作伴线标示伴线方向
+  unsigned char res[2]; 
+  MotPoly  spot;    ///<  多边形区域信息
+}VcaShapePos;
+
+//2015新智能的联动
+typedef struct
+{
+  char netupload ; //网络上传1:enable, 0:disable
+  char res[23];
+}VcaLinkPara;
+
+typedef struct
+{
+  UCHAR  vca_type;  //智能算法类型：  FACE_DETECT  = 20,    //智能功能：人脸检测
+  UCHAR  vca_algId; //人脸算法类型：  1：银瀑  2：智芯原动
+  UCHAR  enable;    //当前智能是否启用
+  UCHAR  res[13];
+  union 
+  {
+    UCHAR vcaParam[64]; //智能参数
+  };
+  VcaTimeSeg    time[7][6]; //检测时间段。7天每天6个
+  VcaLinkPara   linkPara;   //联动参数
+  VcaShapePos   polylist;
+}IntelligentParam;
+
+
+typedef struct
+{
+  UCHAR enable;//启动
+  UCHAR count;// 最大为16当前的有效智能类型个数，保持参数
+  UCHAR res[2];
+  IntelligentParam  param[MAX_AI_TYPE_COUNT];//各智能类型的配置参数，有效个数由vcacount指定
+}IntelligentCfgParam;
+
+typedef struct
+{
+  UINT count ; ///通道个数 ；
+  IntelligentCfgParam cfgParam;
+}VcaParamIpcNew;
+
 
 #endif /* _BSTARPARAM_H_ */

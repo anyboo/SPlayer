@@ -13,12 +13,8 @@ char* CPlayerFactoryZNV::Name()
 	return "中兴力维";
 }
 
-BOOL CPlayerFactoryZNV::IsBelongThis(char *pFile)
-{
-	if (strstr(pFile, ".zv") || strstr(pFile, ".znv") || strstr(pFile, ".zte"))//判断ZNV文件
-	{
-		return true;
-	}
+BOOL CPlayerFactoryZNV::IsBelongThisHead(char *pFile)
+{	
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
 	if (pfd)//打开文件成功
@@ -26,14 +22,23 @@ BOOL CPlayerFactoryZNV::IsBelongThis(char *pFile)
 		char buf[8];
 		memset(buf, 0, 8);
 		fread(buf, 8, 1, pfd);
+		fclose(pfd);
 
-		if (strncmp(buf, "pu8000", 6) == 0 || strncmp(buf, "8000", 4)==0)
+		if (strncmp(buf, "pu8000", 6) == 0 || strncmp(buf, "8000", 4) == 0 )
 		{
 			return true;
 		}
-		fclose(pfd);
+		
 	}
 	return false;
+}
+
+BOOL CPlayerFactoryZNV::IsBelongThis(char *pFile)
+{
+	if (strstr(pFile, ".zv") || strstr(pFile, ".znv") || strstr(pFile, ".zte") || strstr(pFile, ".zn"))//判断ZNV文件
+	{
+		return true;
+	}
 }
 
 BOOL CPlayerFactoryZNV::Init()

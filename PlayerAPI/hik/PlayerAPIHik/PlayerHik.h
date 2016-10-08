@@ -1,5 +1,7 @@
 #pragma once
 #include "../../../PlayerFactory/IPlayer.h"
+
+#include "../inc/windowsPlayM4.h"
 #include<list>
 
 class CPlayerFactoryHik :public IPlayerFactory
@@ -9,6 +11,7 @@ public:
 	virtual ~CPlayerFactoryHik(){}
 public:
 	virtual BOOL IsBelongThis(char *pFile);
+	virtual BOOL IsBelongThisHead(char *pFile);
 	virtual char* Name();
 
 	virtual BOOL Init();
@@ -17,7 +20,8 @@ public:
 	virtual IPlayer *CreatePlayer();
 };
 
-typedef void (CALLBACK* DisplayCBFun)(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long nReserved);
+//typedef void (CALLBACK* DisplayCBFun)(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long nReserved);
+typedef void (CALLBACK* DisplayCBFun)(DISPLAY_INFO *pstDisplayInfo);
 
 class CPlayerHik :
 	public IPlayer
@@ -61,11 +65,12 @@ public:
 	int FileCutProcess();
 private:
 	BOOL  SavePic(char * pBuf, long nSize, long nWidth, long nHeight, long nType);
-	void AddDisplayCallbackList(long nPort);
-	void RemoveDisplayCallback(long nPort);
+	//void AddDisplayCallbackList(long nPort);
+	//void RemoveDisplayCallback(long nPort);
 
-	static void  DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long nReserved);
-	static std::list<CPlayerHik*>  m_sPlayerHik;
+	//static void  DisplayCBFunBack(long nPort, char * pBuf, long nSize, long nWidth, long nHeight, long nStamp, long nType, long nReserved);
+	static void  DisplayCBFunBackEx(DISPLAY_INFO *pstDisplayInfo);
+	//static std::list<CPlayerHik*>  m_sPlayerHik;
 	char m_saveFile[256];
 	bool m_bPic;
 	int m_iType;

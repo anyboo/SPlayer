@@ -84,6 +84,125 @@ enum
   DECDATA_AUDIO,
 };
 
+enum ivsFishInstallType    //安装模式
+{
+  IVS_IA_TYPE_NULL = 0,           //原始的鱼眼图
+  IVS_IA_TYPE_WALL = 1,       //壁式
+  IVS_IA_TYPE_CEIL,           //吸顶
+} ;				
+
+enum ivsFishUnfoldType   //展开模式
+{
+  IVS_IA_TYPE_FRT180 = 1,         //前180度展开
+  IVS_IA_TYPE_BCK180,         //后180度展开
+  IVS_IA_TYPE_DBL180,			//双180度展开
+  IVS_IA_TYPE_PTZ180,			//PTZ180度展开
+  IVS_IA_TYPE_AUT180,			//巡航180度展开
+  IVS_IA_TYPE_TL90,           //左上角90度
+  IVS_IA_TYPE_TR90,           //右上角90度
+  IVS_IA_TYPE_BL90,			//左下角90度
+  IVS_IA_TYPE_BR90,           //右下角90度
+  IVS_IA_TYPE_FOUR90,         //四个90度
+  IVS_IA_TYPE_FISHPTZ,		//鱼眼图PTZ展开(点击，拖动，zoom in/out)
+  IVS_IA_TYPE_PLANEPTZ,		//展开图PTZ展开(点击，拖动，zoom in/out)仅限于在90度或者鱼眼上展开才能调用
+  IVS_IA_TYPE_SETCRS,         //预置位巡航
+  IVS_IA_TYPE_SETPLAY,        //预置位巡航展开
+  IVS_IA_TYPE_AUTOSRS,        //自动巡航
+  IVS_IA_TYPE_SWITH,         //视频切换
+};				
+
+struct ivsFishImageSize
+{
+  unsigned short w;			//宽度
+  unsigned short h;			//高度
+};
+
+struct ivsFishImageParamWH
+{		
+  ivsFishImageSize fish;				//输入鱼眼图的宽和高	
+  ivsFishImageSize imgwall;			//壁式展开图的宽和高
+  ivsFishImageSize img180;			//展开前、后180度图的宽和高
+  ivsFishImageSize imgdb180;		    //展开前、后180度图的宽和高
+  ivsFishImageSize img90;			//展开单90度图的宽和高
+  ivsFishImageSize imgfour90;		//展开四幅90度图的宽和高
+  ivsFishImageSize imgptz;			//虚拟ptz展开图的宽和高
+};
+
+struct ivsFishUserParam
+{
+  int mode;//安装模式设定
+  int fold;//展开模式设定
+  short flag;		//0:未启动;1:启动(Default:0)，
+                //fold=IVS_IA_TYPE_AUTOSRS时，ptz单画面360度自动巡航标志位0:未启动;1:顺时针转动;-1:逆时针转动(Default:0)
+  short res;
+
+  //运行参数
+  POINTS  ptzpt;				//ptz的展开点坐标
+  POINTS  setcruise[6];		//预置位巡航的展开点
+
+
+  int zomnum;					//变焦倍数(1~16)
+  int autostep;				//自动巡航步长
+
+  ivsFishUserParam &operator = (const ivsFishUserParam& rhs)
+  {
+    if ( this == &rhs)
+    {
+      return *this;
+    }
+
+    mode = rhs.mode;
+    fold = rhs.fold;
+    flag = rhs.flag;
+    res = rhs.res;
+    ptzpt.x = rhs.ptzpt.x;
+    ptzpt.y = rhs.ptzpt.y;
+    memcpy(setcruise, rhs.setcruise, 6*sizeof(setcruise[0]));
+    zomnum = rhs.zomnum;
+    autostep = rhs.autostep;
+
+    return *this;
+  }
+};
+
+struct ivsFishOutInfo
+{
+  unsigned int nSrcWidth;     //原始图像宽
+  unsigned int nSrcHeight;    //原始图像高
+  unsigned int nImgWidth;     //处理后图像宽
+  unsigned int nImgHeight;    //处理后图像高
+  unsigned int nCentX;        //中心点X
+  unsigned int nCentY;        //中心点Y
+
+  ivsFishOutInfo()
+  {
+    nSrcWidth = 0;
+    nSrcHeight = 0;
+    nImgWidth = 0;
+    nImgHeight = 0;
+    nCentX = 0;
+    nCentY = 0;
+  }
+
+  ivsFishOutInfo &operator = (const ivsFishOutInfo& rhs)
+  {
+    if ( this == &rhs)
+    {
+      return *this;
+    }
+
+    nSrcWidth = rhs.nSrcWidth;
+    nSrcHeight = rhs.nSrcHeight;
+    nImgWidth = rhs.nImgWidth;
+    nImgHeight = rhs.nImgHeight;
+    nCentX = rhs.nCentX;
+    nCentY = rhs.nCentY;
+    return *this;
+  }
+
+};
+
+
 struct dvxDecFrameInfo
 {
   unsigned int sequence;				//帧序号,各通道独立,音视频独立
@@ -115,6 +234,7 @@ struct dvxDecFrameInfo
 
 //
 typedef void (CALLBACK *DecDataRoutine)( dvxDecFrameInfo *pInfo, void* pUser );
+typedef void (CALLBACK *IvsFishDataRoutine)( ivsFishOutInfo *pInfo, void* pUser );
 
 DVXPLAYER_API int dvxPlayerCreate( PlayerHandle* phPlayer, int nPlaySource, int nBufferFrameScale );
 DVXPLAYER_API int dvxPlayerDestory( PlayerHandle hPlayer );
@@ -136,12 +256,16 @@ DVXPLAYER_API int dvxPlayerSetVolume( PlayerHandle hPlayer, int nVolume );
 DVXPLAYER_API int dvxPlayerGetVolume( PlayerHandle hPlayer, int *pnVolume );
 DVXPLAYER_API int dvxPlayerGetFrameNum( PlayerHandle hPlayer, int* pnNum );
 DVXPLAYER_API int dvxPlayerSetVideoPlayMode( PlayerHandle hPlayer, int nFifoMode );
+DVXPLAYER_API int dvxPlayerSetIvsUserParam( PlayerHandle hPlayer, ivsFishUserParam ivsUserParam);
+DVXPLAYER_API int dvxPlayerGetIvsOutInfo( PlayerHandle hPlayer, ivsFishOutInfo *pInfo);
 
 // 与Render相关的功能
 DVXPLAYER_API void dvxPlayerSetDrawCallback( PlayerHandle hPlayer, 
   void (*pfDrawRoutine)( void*, HDC hDC, unsigned int nWidth, unsigned int nHeight ), void* pDrawPara );
 DVXPLAYER_API void dvxPlayerSetDrawCallbackEx( PlayerHandle hPlayer, 
   void (*pfDrawRoutine)( void*, HDC hDC, unsigned int nWndWidth, unsigned int nWndHeight, unsigned int nVideoWidth, unsigned int nVideoHeight ), void* pDrawPara );
+DVXPLAYER_API void dvxPlayerSetDrawAudioCallback( PlayerHandle hPlayer, 
+  void (*pfDrawRoutine)( void*, HDC hDC, unsigned int nWidth, unsigned int nHeight, unsigned int nOffsetX, unsigned int nOffsetY), void* pDrawPara );
 DVXPLAYER_API int dvxPlayerSavePicture( PlayerHandle hPlayer, const char* szFileName);
 DVXPLAYER_API int dvxPlayerSavePictureEx( PlayerHandle hPlayer, const char* szFileName, int nImgType=0/*0 bitmap,1 jpg*/ );
 DVXPLAYER_API int dvxPlayerRefresh( PlayerHandle hPlayer );
@@ -159,11 +283,15 @@ DVXPLAYER_API bool dvxPlayerHasAiInfo(PlayerHandle hPlayer);
 DVXPLAYER_API void dvxSetPlayerShowAiLang(PlayerHandle hPlayer, int nLanguage);//设置智能叠加信息的显示语言
 
 DVXPLAYER_API void dvxPlayerSetDecCallback( PlayerHandle hPlayer, DecDataRoutine pCallback, void* pUser );
+DVXPLAYER_API void dvxPlayerSetDecIvsFishCallback( PlayerHandle hPlayer, IvsFishDataRoutine pCallback, void* pUser );
 DVXPLAYER_API bool dvxPlayerSetTrapwirePoint(PlayerHandle hPlayer, char *pPoint);
 
 //到指定的时间开始播放，只对远程回放和本地文件播放有效
 DVXPLAYER_API bool dvxPlayerWaitForTime( PlayerHandle hPlayer, __int64 ms, int timeout );
 DVXPLAYER_API int dvxPlayerSetFluence( PlayerHandle hPlayer,int frameChacNum );
+
+//设置按比例播放
+DVXPLAYER_API BOOL dvxSetStretchBlt(PlayerHandle hPlayer, int pWidthRate, int pHeightRate, bool bOn);
 
 //设置鸟瞰
 DVXPLAYER_API BOOL dvxSetAirScapeRect( PlayerHandle hPlayer, RECT miniRect, RECT selRect, bool bOn );

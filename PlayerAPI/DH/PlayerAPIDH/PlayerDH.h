@@ -7,7 +7,8 @@ public:
 	CPlayerFactoryDH(){}
 	virtual ~CPlayerFactoryDH(){}
 public:
-	virtual BOOL IsBelongThis(char *pFile);
+	virtual BOOL IsBelongThisHead(char *pFile);
+	virtual BOOL IsBelongThis(char *pFile);	
 	virtual char* Name();
 
 	virtual BOOL Init();

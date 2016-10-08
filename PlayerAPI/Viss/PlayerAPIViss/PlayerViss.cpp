@@ -12,7 +12,7 @@ char* CPlayerFactoryViss::Name()
 
 BOOL CPlayerFactoryViss::IsBelongThis(char *pFile)
 {
-	if (strstr(pFile, ".ps") || strstr(pFile, ".mpg") )//判断Viss文件
+	if (strstr(pFile, ".ps"))//判断Viss文件
 	{
 		return true;
 	}

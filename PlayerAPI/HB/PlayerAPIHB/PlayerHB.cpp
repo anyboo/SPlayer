@@ -9,7 +9,7 @@ char* CPlayerFactoryHB::Name()
 	return "ºº°î¸ß¿Æ";
 }
 
-BOOL CPlayerFactoryHB::IsBelongThis(char *pFile)
+BOOL CPlayerFactoryHB::IsBelongThisHead(char *pFile)
 {
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");

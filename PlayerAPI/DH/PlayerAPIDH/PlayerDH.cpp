@@ -11,12 +11,19 @@ char* CPlayerFactoryDH::Name()
 	return "大华";
 }
 
+
 BOOL CPlayerFactoryDH::IsBelongThis(char *pFile)
 {
-	if (strstr(pFile, ".mbf"))//判断文件
+	if (strstr(pFile, ".mbf") || strstr(pFile, ".ps") || strstr(pFile, ".mpg") || strstr(pFile, ".ivs") || strstr(pFile, ".edh") || strstr(pFile, ".dvf"))//判断文件
 	{
 		return true;
 	}
+
+	return false;
+}
+
+BOOL CPlayerFactoryDH::IsBelongThisHead(char *pFile)
+{
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
 	if (pfd)//打开文件成功
@@ -24,15 +31,13 @@ BOOL CPlayerFactoryDH::IsBelongThis(char *pFile)
 		char buf[8];
 		memset(buf, 0, 8);
 		fread(buf, 8, 1, pfd);
+		fclose(pfd);
 
 		if (strncmp(buf, "DHAV", 4) == 0 || strncmp(buf, "MBF0", 4) == 0 || strncmp(buf, "JUFEN", 5) == 0)
 		{
 			return true;
 		}
-		fclose(pfd);
 	}
-
-
 	return false;
 }
 
@@ -172,16 +177,17 @@ BOOL  CPlayerDH::GetColor(DWORD nRegionNum, int *pBrightness, int *pContrast, in
 	return PLAY_GetColor(m_nPort, nRegionNum, pBrightness, pContrast, pSaturation, pHue);
 }
 
-typedef void (CALLBACK *pFileEnd)(DWORD nPort, DWORD nUser);
+//typedef void (CALLBACK *pFileEnd)(DWORD nPort, DWORD nUser);
 
 BOOL  CPlayerDH::SetFileEndCallback(long nID, FileEndCallback callBack, void *pUser)
 {
-	return PLAY_SetFileEndCallBack(m_nPort, (pFileEnd)callBack, (DWORD)pUser);
+	//return PLAY_SetFileEndCallBack(m_nPort, (pFileEnd)callBack, (DWORD)pUser);
+	return PLAY_SetFileEndCallBack(m_nPort, (fpFileEndCBFun)callBack, pUser);
 }
 
 BOOL  CPlayerDH::SetDisplayCallback(LONG nID, DisplayCallback displayCallback, void * nUser)
 {
-	bool bRet = PLAY_SetDisplayCallBack(m_nPort, DisplayCBFunBack, (LONG)this);
+	bool bRet = PLAY_SetDisplayCallBack(m_nPort, (fDisplayCBFun)DisplayCBFunBack, (void*)this);
 	if (bRet)
 	{
 		m_DisplayCallbackFun = displayCallback;

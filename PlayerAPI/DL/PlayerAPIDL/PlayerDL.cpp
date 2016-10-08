@@ -14,7 +14,7 @@ char* CPlayerFactoryDL::Name()
 	return "¥Û¡¢";
 }
 
-BOOL CPlayerFactoryDL::IsBelongThis(char *pFile)
+BOOL CPlayerFactoryDL::IsBelongThisHead(char *pFile)
 {
 	FILE *pfd = NULL;
 	int ret = fopen_s(&pfd, pFile, "rb");
@@ -23,15 +23,14 @@ BOOL CPlayerFactoryDL::IsBelongThis(char *pFile)
 		char buf[8];
 		memset(buf, 0, 8);
 		fread(buf, 8, 1, pfd);
+		fclose(pfd);
 
 		if (strncmp(buf, "DALI", 4) == 0)//DL
 		{
 			return true;
 		}
-		fclose(pfd);
+		
 	}
-
-
 	return false;
 }
 

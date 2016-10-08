@@ -151,8 +151,11 @@ void CUpdateDlg::httpFinished()
 	}
 
 	m_progressDialog->hide();
-	m_file->flush();
-	m_file->close();
+	if (m_file)
+	{
+		m_file->flush();
+		m_file->close();
+	}
 	
 
 	QVariant redirectionTarget = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
